@@ -1,0 +1,144 @@
+/* --------------------------------------------------------------------------
+   Home
+-------------------------------------------------------------------------- */
+$div-width: 31.5%;
+$div-spacing: 2.75%;
+
+#app.home {
+  .page-wrap {
+    background: $sub-2;
+  }
+
+  header {
+    background: transparent;
+    .navbar-brand {
+      background: url(~@/images/arg-logo-wh.png) left center / contain no-repeat;
+    }
+  }
+
+  #mainMenu {
+    > li > a {
+      color: #ffffff !important;
+    }
+
+    > li > a:hover,
+    > li > a:focus,
+    > li > a.active,
+    > li.on > a {
+      color: #fff !important;
+    }
+
+    .btn-radius {
+      color: $primary !important;
+      background: #ffffff !important;
+      cursor: pointer;
+
+      &:hover, &:focus {
+        color: #ffffff !important;
+        background: $sub-7 !important;
+      }
+    }
+  }
+
+  main {
+    // min-height: 930px;
+    &:before {
+      display: block;
+      content: "";
+      height: 622px;
+      background: url(~@/images/arg-main-banner-bg@3x.png) top center / cover no-repeat;
+      margin-top: -100px;
+    }
+  }
+}
+
+
+.wrap-div-list {
+  @include clearfix;
+  margin-top: -450px;
+
+  .div-list {
+    float: left;
+    width: $div-width;
+    text-align: center;
+
+    &:nth-of-type(3n-1) {
+      margin-right: $div-spacing;
+      margin-left: $div-spacing;
+    }
+
+    p {
+      color: #ffffff;
+      font-size: 15px;
+
+      strong {
+        color: #ffffff;
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+
+.wrap-div-card {
+  @include clearfix;
+  margin-bottom: 41px;
+
+  .h2 {
+    position: relative;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 400;
+
+    &:before {
+      display: block;
+      content: "";
+      border: 1px dashed #ffffff;
+      margin-bottom: -14px;
+    }
+
+    &:after {
+      display: block;
+      content: "";
+      width: 330px;
+      height: 40px;
+      background: $primary;
+      margin: -30px auto;
+    }
+  }
+
+  .div-card {
+    float: left;
+    width: $div-width;
+    height: 118px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 30px 0 rgba(35, 43, 65, 0.16);
+    background-color: #ffffff;
+    padding: 15px;
+    margin-bottom: 30px;
+
+    &:nth-of-type(3n-1) {
+      margin-right: $div-spacing;
+      margin-left: $div-spacing;
+    }
+
+    .title {
+      color: #3e4d74;
+      font-size: 18px;
+      margin-bottom: 20px;
+
+      &+p {
+        font-size: 18px;
+        margin-bottom: 0;
+
+        span {
+          color: $primary;
+          font-weight: 500;
+          font-size: 36px;
+          margin-right: 5px;
+        }
+      }
+    }
+
+  }
+}

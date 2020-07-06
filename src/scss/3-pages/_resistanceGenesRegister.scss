@@ -1,0 +1,13 @@
+// popover
+.table-view button[data-toggle=popover][aria-describedby] {
+  color: $primary;
+}
+
+.table-view .popover.right {
+  background-color: $primary;
+  color: #fff;
+
+  > .arrow:after {
+    border-right-color: $primary;
+  }
+}

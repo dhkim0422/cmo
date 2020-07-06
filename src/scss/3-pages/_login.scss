@@ -1,0 +1,60 @@
+/* Login(로그인) =========================  */
+#app.login  {
+  background: $sub-2;
+
+  #contents {
+    .container {
+      position: relative;
+      height: 100%;
+      background: url(~@/images/arg-login-visual.png) 50px center no-repeat;
+    }
+  }
+
+  .account-box {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 15px;
+    width: 440px;
+
+    h2 {
+      color: $primary;
+      font-size: 30px;
+    }
+
+    .form-control {
+      color: inherit;
+      box-shadow: none;
+    }
+
+    .form-row {
+      margin-right: -2.5px;
+      margin-left: -2.5px;
+    }
+    .form-row > .col, .form-row > [class*="col-"] {
+      padding-right: 2.5px;
+      padding-left: 2.5px;
+    }
+
+    input, .btn {
+      height: 60px;
+      border: 0;
+    }
+
+    .btn {
+      width: 100%;
+      font-size: 20px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    a {
+      color: $gray-sub1;
+      font-size: 16px;
+      vertical-align: middle;
+      &+span {
+        color: #b9bec3;
+      }
+    }
+  }
+}

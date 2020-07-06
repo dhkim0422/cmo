@@ -1,0 +1,42 @@
+// Layout
+
+$container-fixed: 1130px;
+
+html, body,
+#app, .page-wrap {
+  height: 100%;
+  min-height: 100%;
+}
+.container {
+  width: $container-fixed;
+  max-width: none !important;
+}
+
+/* Header(헤더) ==================================================  */
+
+header {
+  @include clearfix;
+  min-width: $container-fixed;
+  border-bottom: 1px solid $gray-sub7;
+
+  // 로고
+  .navbar-brand {
+    width: 140px;
+    height: 29px;
+    padding-bottom: 14px;
+    background: url(~@/images/arg-logo-color.png) left center / contain no-repeat;
+    margin: 35px 0;
+  }
+}
+
+/* FOOTER (푸터) ==================================================  */
+footer {
+  min-width: $container-fixed;
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 1.5;
+  background: $gray-sub1;
+  p {
+    margin: 16px auto;
+  }
+}

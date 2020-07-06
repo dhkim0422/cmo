@@ -1,0 +1,20 @@
+//
+// Buttons
+//
+
+// 아이콘 버튼
+.icon-btn {
+  cursor: pointer;
+
+  i {
+    font-size: 18px;
+
+    &:before {
+      vertical-align: top;
+    }
+  }
+
+  &:hover, &:focus {
+    color: $primary;
+  }
+}

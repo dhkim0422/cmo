@@ -1,0 +1,108 @@
+/* brand colors */
+$primary:   #5081ff;
+$sub-1:     #b1c6ff;
+$sub-2:     #edf2ff;
+$sub-3:     #ffd464;
+$sub-4:     #64ddff;
+$sub-5:     #ffd464;
+$sub-6:     #f43a6c;
+$sub-7:     #034aff;
+$sub-8:     #fdeff1;
+$primary-darker: darken($primary, 10%);
+$sub-1-darker:   darken($sub-1, 5%);
+$sub-2-darker:   darken($sub-2, 5%);
+$sub-3-darker:   darken($sub-3, 5%);
+$sub-4-darker:   darken($sub-4, 5%);
+$sub-5-darker:   darken($sub-5, 5%);
+$sub-6-darker:   darken($sub-6, 5%);
+$sub-7-darker:   darken($sub-7, 5%);
+
+/* user notification colors */
+$success:    $sub-2;
+$warning:    #ffb606;
+$error:      $sub-6;
+$info:       $primary;
+
+$shadow:     0 0 30px -10px rgba(53, 53, 53, 0.3);
+
+
+
+//== Typography
+//
+//## Font, line-height, and color for body text, headings, and more.
+
+$font-family-sans-serif:  'Noto Sans Korean', Arial, Dotum, sans-serif !default;
+
+//== Colors
+//
+//## Gray and brand colors for use across Bootstrap.
+$gray-base:              #000 !default;
+$gray-darker:            lighten($gray-base, 13.5%) !default; // #222
+$gray-dark:              lighten($gray-base, 20%) !default;   // #333
+$gray:                   lighten($gray-base, 33.5%) !default; // #555
+$gray-light:             lighten($gray-base, 46.7%) !default; // #777
+$gray-lighter:           lighten($gray-base, 93.5%) !default; // #eee
+
+$gray-sub1: #313c5b;
+$gray-sub2: #5a6573;
+$gray-sub3: #6b7889;
+$gray-sub4: #96a0ad;
+$gray-sub5: #c2c8cf;
+$gray-sub6: #eef0f2;
+$gray-sub7: #dadfeb;
+
+//== Boreder
+$common-border:        #c2c8cf;
+
+//== Scaffolding
+//
+//## Settings for some of the most global styles.
+
+//** Global text color on `<body>`.
+$text-color:            $gray-dark !default;
+
+//** Global textual link color.
+$link-color:            #555 !default;
+
+
+//== Components
+//
+//## Define common padding and border radius sizes and more. Values based on 14px text and 1.428 line-height (~20px to start).
+
+$border-radius-base:        0 !default;
+$border-radius-large:       5px !default;
+$border-radius-small:       3px !default;
+
+
+//== Navs
+//
+//## Navs for use across Bootstrap.
+
+// //=== Shared nav styles
+// $nav-link-padding:                          12px 15px !default;
+
+//== Tabs
+// $nav-tabs-border-color:                     #ccc !default;
+// $nav-tabs-active-link-hover-border-color:   #ccc !default;
+// $nav-tabs-justified-link-border-color:            #ccc !default;
+
+//== table
+// $table-accordion-th:                        #e6edf4;
+
+
+//== Forms
+//
+//##
+
+//** Text color for `<input>`s
+$input-color:                    #f6f3ec !default;
+//** `<input>` border color
+$input-border:                   #acacac !default;
+
+$text-color-1:                   #353535 !default;
+$text-color-2:                   #727272 !default;
+$text-color-3:                   #5c5c5c !default;
+$text-color-4:                   #7c7c7c !default;
+$text-color-5:                   #767370 !default;
+$text-color-6:                   #9d9a98 !default;
+$text-color-7:                   #807770 !default;
