@@ -2,20 +2,20 @@
 
 ## Project clone
 ```
-git clone https://gitlab.com/aispark/argene.git
+git clone https://gitlab.com/dhkim0422/cmo.git
 ```
 
 ### Project setup
 ```
-npm install
+yarn install
 ```
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+yarn serve
 ```
 
 ### Compiles and minifies for production
 ```
-npm run build
+yarn build
 ```
