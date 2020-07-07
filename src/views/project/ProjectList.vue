@@ -20,21 +20,18 @@
                 </div>
             </div>
             <div class="group-item">
-<!--                <button class="btn-outline-secondary-sm" type="button" data-toggle="tooltip" data-placement="top"-->
-<!--                        title="" ng-click="remove()" ng-disabled="!modelHandler.hasSelectedItems()"-->
-<!--                        ng-confirm-click="정보를 삭제합니다. 삭제된 정보는 복구할 수 없습니다." disabled="disabled"-->
-<!--                        data-original-title="삭제삭제">-->
-<!--                    <i class="xi-trash"></i><span class="sr-only">삭제</span>-->
-<!--                </button>-->
+                <!--                <button class="btn-outline-secondary-sm" type="button" data-toggle="tooltip" data-placement="top"-->
+                <!--                        title="" ng-click="remove()" ng-disabled="!modelHandler.hasSelectedItems()"-->
+                <!--                        ng-confirm-click="정보를 삭제합니다. 삭제된 정보는 복구할 수 없습니다." disabled="disabled"-->
+                <!--                        data-original-title="삭제삭제">-->
+                <!--                    <i class="xi-trash"></i><span class="sr-only">삭제</span>-->
+                <!--                </button>-->
 
-                <select class="length ng-pristine ng-untouched ng-valid ng-not-empty"
-                        ng-model="pageHandler.numberOfRows"
-                        ng-options="volume.value as volume.label for volume in pageHandler.volumes"
-                        ng-change="" aria-invalid="false">
-                    <option label="10개씩 보기" value="number:10" selected="selected">10개씩 보기</option>
-                    <option label="25개씩 보기" value="number:25">25개씩 보기</option>
-                    <option label="50개씩 보기" value="number:50">50개씩 보기</option>
-                    <option label="100개씩 보기" value="number:100">100개씩 보기</option>
+                <select v-model="resultList.data.numberOfRows" class="length" aria-invalid="false">
+                    <option label="10개씩 보기" value="10" selected="selected">10개씩 보기</option>
+                    <option label="25개씩 보기" value="25">25개씩 보기</option>
+                    <option label="50개씩 보기" value="50">50개씩 보기</option>
+                    <option label="100개씩 보기" value="100">100개씩 보기</option>
                 </select> <span data-toggle="tooltip" data-placement="top" title="" data-original-title="연구과제 등록">
 				<button class="btn-primary-sm" type="button" ng-click="onClickCreateLink()">
 					<i class="xi-file-add"></i><span class="sr-only">등록</span>
@@ -69,32 +66,39 @@
                     <tbody>
                     <tr>
                         <th scope="row">단위사업</th>
-                        <td > {{result.unitProgram}}</td>
+                        <td> {{result.unitProgram}}</td>
                         <th scope="row">KEITI 고유번호</th>
-                        <td >{{result.uniqueNo}}</td>
+                        <td>{{result.uniqueNo}}</td>
                     </tr>
                     <tr>
                         <th scope="row">과제명</th>
-                        <td colspan="3" >{{result.name}}</td>
+                        <td colspan="3">{{result.name}}</td>
                     </tr>
                     <tr>
                         <th scope="row">중분야</th>
-                        <td >{{result.middleRealm}}</td>
+                        <td>{{result.middleRealm}}</td>
                         <th scope="row">연구상태</th>
-                        <td >{{result.projectStatus.name}}</td>
+                        <td>{{result.projectStatus.name}}</td>
                     </tr>
                     <tr>
                         <th scope="row">주관기관</th>
-                        <td >{{result.institute}}</td>
+                        <td>{{result.institute}}</td>
                         <th scope="row">주관책임자</th>
-                        <td >{{result.charger}}</td>
+                        <td>{{result.charger}}</td>
                     </tr>
                     </tbody>
                 </table>
-            </div>
-        </div><!-- end ngRepeat: item in modelHandler.getItems() -->
 
-        <div v-if="resultList.data.list.length === 0" class="data-card ng-hide" ng-show="modelHandler.size() == 0" aria-hidden="true" style="">
+            </div>
+        </div>
+        <div v-show="resultList.data.list.length !== 0" class="text-center">
+
+        </div>
+        <div>
+        </div>
+
+
+        <div v-show="resultList.data.list.length === 0" class="data-card" aria-hidden="true" style="">
             <div class="card-body text-center">검색 결과가 없습니다</div>
         </div>
     </div>
@@ -103,10 +107,14 @@
 <script>
     import searchBox from '../../components/SearchBox'
     import axios from "../../utils/axios";
+    import Pagination from "../../components/Pagination";
+
 
     export default {
         name: 'ProjectList',
         components: {
+            Pagination,
+
             searchBox
         },
         data() {
@@ -116,9 +124,9 @@
                 },
                 resultList: {
                     data: {
-                        total:0,
-                        currentPage:0,
-                        numberOfRows:0,
+                        total: 0,
+                        currentPage: 0,
+                        numberOfRows: 10,
                         list: []
                     }
                 },
@@ -153,13 +161,16 @@
             },
             async selectList(params) {
                 let url = '/isg-oreo/api/projects'
-                this.resultList = await axios.get(url, params);
-                console.log(this.resultList)
+                console.log('params11', params);
+
+                params['rowSize'] = 20//this.resultList.data.numberOfRows
+                params['firstIndex'] = this.resultList.data.currentPage
+                console.log('params11', params);
+                this.resultList = await axios.get(url, {params: params});
             },
-            onClickDetailLink(project){
-                console.log('project',project);
+            onClickDetailLink(project) {
                 this.$router.push({path: '/project/projects-detail/' + project.id})
-            }
+            },
         },
     };
 </script>
