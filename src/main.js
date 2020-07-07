@@ -6,6 +6,7 @@ import axios from '@/utils/axios.js'
 import Default from './layout/Default.vue'
 import upperFirst from 'lodash/upperFirst'
 import camelCase from 'lodash/camelCase'
+import vuetify from './vuetify'
 
 
 const requireComponent = require.context(
@@ -78,5 +79,6 @@ Vue.prototype.$axios = axios
 new Vue({
     router,
     store,
+    vuetify,
     render: h => h(App)
 }).$mount('#app')

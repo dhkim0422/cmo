@@ -20,9 +20,14 @@
                     </ul>
                 </li>
                 <li><a class="pointer" @click="goto('/analysis/analysis')" title="ANALYSIS">ANALYSIS</a></li>
+                <li>
+                    <a class="pointer" @click="goto('/blast/blastSearch')" title="내정보">내정보</a>
+                    <ul>
 
-                <li><a class="pointer" @click="goto('/project/projectList')" title="과제 목록">과제</a></li>
-                <li><a class="pointer" @click="goto('/targets/targetList')" title="연구대상자 목록">연구대상자</a></li>
+                    </ul>
+                </li>
+                <li><a class="pointer" @click="goto('/project/projectList')" title="과제 목록">과제 목록</a></li>
+                <li><a class="pointer" @click="goto('/target/targetList')" title="연구대상자 목록">연구대상자 목록</a></li>
                 <li>
 
 
@@ -45,6 +50,7 @@
 </template>
 
 <script>
+    import axios from '@/utils/axios.js'
 
     export default {
         name: 'vHeader',
