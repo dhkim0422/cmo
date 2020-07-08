@@ -32,11 +32,12 @@
                     <option label="25개씩 보기" value="25">25개씩 보기</option>
                     <option label="50개씩 보기" value="50">50개씩 보기</option>
                     <option label="100개씩 보기" value="100">100개씩 보기</option>
-                </select> <span data-toggle="tooltip" data-placement="top" title="" data-original-title="연구과제 등록">
-				<button class="btn-primary-sm" type="button" ng-click="onClickCreateLink()">
-					<i class="xi-file-add"></i><span class="sr-only">등록</span>
-				</button>
-			</span>
+                </select>
+                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="연구과제 등록">
+                    <button class="btn-primary-sm" type="button" ng-click="onClickCreateLink()">
+                        <i class="xi-file-add"></i><span class="sr-only">등록</span>
+                    </button>
+                </span>
             </div>
         </div>
 

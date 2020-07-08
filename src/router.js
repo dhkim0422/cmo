@@ -80,15 +80,21 @@ export default new Router({
 
         },
         {
+            path: '/project/ProjectRegist',
+            name: 'projects regist',
+            component: () => import('./views/project/ProjectRegist')
+
+        },
+        {
             path: '/samples/samplesList',
             name: 'Samples List',
             component: () => import('./views/samples/SamplesList.vue')
 
         },
         {
-            path: '/samples/sample-detail:id',
-            name: 'Samples-detail',
-            component: () => import('./views/samples/Samples-detail.vue')
+            path: '/samples/sampleDetail:id',
+            name: 'Samples detail',
+            component: () => import('./views/samples/SamplesDetail.vue')
         },
     ]
 })

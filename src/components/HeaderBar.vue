@@ -23,11 +23,11 @@
                 <li>
                     <a class="pointer" @click="goto('/blast/blastSearch')" title="내정보">내정보</a>
                     <ul>
-
                     </ul>
                 </li>
                 <li><a class="pointer" @click="goto('/project/projectList')" title="과제 목록">과제 목록</a></li>
                 <li><a class="pointer" @click="goto('/target/targetList')" title="연구대상자 목록">연구대상자 목록</a></li>
+                <li><a class="pointer" @click="goto('/samples/samplesList')" title="샘플 목록">샘플 목록</a></li>
                 <li>
 
 

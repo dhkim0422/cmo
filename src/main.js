@@ -7,6 +7,7 @@ import Default from './layout/Default.vue'
 import upperFirst from 'lodash/upperFirst'
 import camelCase from 'lodash/camelCase'
 import vuetify from './vuetify'
+import Vuelidate from 'vuelidate'
 
 
 const requireComponent = require.context(
@@ -80,5 +81,6 @@ new Vue({
     router,
     store,
     vuetify,
+    Vuelidate,
     render: h => h(App)
 }).$mount('#app')
