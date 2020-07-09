@@ -3,7 +3,6 @@
     <!-- 검색폼 -->
     <search-box
       :filters="filters"
-      @keywordSelected="setKeywork"
       @searchClick="selectList"
     ></search-box>
     <!-- 검색 목록 -->
@@ -211,19 +210,14 @@ export default {
     changePageNo(pageNo) {
       this.currentPageNo = pageNo;
     },
-
-    setKeywork(data) {
-      console.log("keyworddata", data);
-    },
-    async selectList() {
+    async selectList(param) {
       let url = "/isg-oreo/api/projects";
-      let params = {};
+      let params = param;
       params["rowSize"] = this.resultList.data.numberOfRows;
-      params["firstIndex"] =
-        (this.currentPageNo - 1) * this.resultList.data.numberOfRows;
-      console.log("params11", params);
+      params["firstIndex"] = (this.currentPageNo - 1) * this.resultList.data.numberOfRows;
+
       this.resultList = await axios.get(url, { params: params });
-      console.log("this.resultList", this.resultList);
+
     },
     onClickDetailLink(project) {
       this.$router.push({ path: "/project/projects-detail/" + project.id });

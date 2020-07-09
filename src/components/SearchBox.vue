@@ -4,16 +4,14 @@
         <div class="dropdown">
             <button class="dropdown-toggle" type="button" data-toggle="dropdown">{{searchCallback.name}}
             </button>
-
             <ul  class="dropdown-menu">
                 <li v-for="field in filters.fields" role="button" class="dropdown-item" @click="filter_select(field)">
                     {{field.name}}
                 </li>
-
             </ul>
         </div>
         <div class="search-input-group">
-            <input class="search-input" type="text" placeholder="검색어" v-model="keyword" @keypress.enter="searchBoxClick"
+            <input class="search-input" type="text" placeholder="검색어" v-model="keyword"
                    aria-invalid="false">
             <button class="search-btn" type="button" @click="searchBoxClick">
                 <span class="sr-only">조회</span><i class="xi-search"></i>
@@ -26,6 +24,9 @@
     export default {
         name: 'SearchBox',
         props: ['filters'],
+        created() {
+            this.searchBoxClick()
+        },
 
         data() {
             return {
