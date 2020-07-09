@@ -82,7 +82,7 @@
           <li class="nav-item">
             <a
               class="nav-link"
-              @click="goto('/target/targetList')"
+              @click="goto('/targets/targetList')"
               title="연구대상자 목록"
               >연구대상자 목록</a
             >
