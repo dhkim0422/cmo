@@ -75,24 +75,24 @@
             <a
               class="nav-link"
               @click="goto('/project/projectList')"
-              title="과제 목록"
-              >과제 목록</a
+              title="과제"
+              >과제</a
             >
           </li>
           <li class="nav-item">
             <a
               class="nav-link"
               @click="goto('/target/targetList')"
-              title="연구대상자 목록"
-              >연구대상자 목록</a
+              title="연구대상자"
+              >연구대상자</a
             >
           </li>
           <li class="nav-item">
             <a
               class="nav-link"
               @click="goto('/samples/samplesList')"
-              title="샘플 목록"
-              >샘플 목록</a
+              title="샘플"
+              >샘플</a
             >
           </li>
           <li class="nav-item">
@@ -120,8 +120,10 @@
       <div class="container">
         <!-- 제목 -->
         <ol class="path">
-          <li class="path-item">대메뉴</li>
-          <li class="path-item"><h1 class="h1">제목</h1></li>
+          <li class="path-item">{{ rootMenuNm }}</li>
+          <li class="path-item">
+            <h1 class="h1">{{ menuNm }}</h1>
+          </li>
         </ol>
       </div>
     </div>
@@ -133,6 +135,32 @@ import axios from "@/utils/axios.js";
 
 export default {
   name: "vHeader",
+  data() {
+    return {
+      menuList: [
+        {
+          path: "/",
+          rootMenuNm: "Dashboard",
+          menuNm: "Dashboard",
+        },
+        {
+          path: "/analysis/analysis",
+          rootMenuNm: "ANALYSIS",
+          menuNm: "ANALYSIS",
+        },
+        { path: "/blast/blastSearch", rootMenuNm: "내정보", menuNm: "내정보" },
+        { path: "/project/projectList", rootMenuNm: "과제", menuNm: "과제" },
+        {
+          path: "/target/targetList",
+          rootMenuNm: "연구대상자",
+          menuNm: "연구대상자",
+        },
+        { path: "/samples/samplesList", rootMenuNm: "샘플", menuNm: "샘플" },
+      ],
+      rootMenuNm: "",
+      menuNm: "",
+    };
+  },
   created() {
     //생성시 토큰이 존재하는지 확인 후 토큰이 있으면 로그인 된것으로 판단한다.
     if (localStorage.getItem("x-auth-token") != null)
@@ -158,20 +186,33 @@ export default {
       this.$router.push({ path: "/" });
     },
     goto(path) {
-      if (this.$route.path !== path) {
-        this.$store.dispatch("setParams", {});
-        this.$store.dispatch("initPaginationAndList", {
-          resultList: [],
-          paginationInfo: {},
-        });
-      }
-      this.$router.push({ path: path });
+      //   if (this.$route.path !== path) {
+      // this.$store.dispatch("setParams", {});
+      // this.$store.dispatch("initPaginationAndList", {
+      //   resultList: [],
+      //   paginationInfo: {},
+      // });
+      //   }
+      //같은 페이지로 라우팅하면 에러발생하여 수정
+      //   this.$router.push({ path: path });
+      this.$router.push({ path: path }).catch(() => {});
+
+      //메뉴명 설정
+      const { rootMenuNm, menuNm } = this.menuList.find(
+        (item) => item.path === path
+      );
+      this.rootMenuNm = rootMenuNm;
+      this.menuNm = menuNm;
     },
+    getRootMenuNm() {
+      return this.menuList.find((item) => item.path === this.$route.path);
+    },
+    getMenuNm() {},
   },
 };
 </script>
 
-<style lang="scss">
+<style>
 .pointer {
   cursor: pointer;
 }
