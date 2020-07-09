@@ -76,7 +76,7 @@ export default new Router({
         {
             path: '/project/projects-detail/:id',
             name: 'projects-detail',
-            component: () => import('./views/project/projects-detail.vue')
+            component: () => import('./views/project/projects-detail')
 
         },
         {
@@ -86,15 +86,15 @@ export default new Router({
 
         },
         {
-            path: '/samples/samplesList',
+            path: '/samples/SamplesList',
             name: 'Samples List',
-            component: () => import('./views/samples/SamplesList.vue')
+            component: () => import('./views/samples/SamplesList')
 
         },
         {
-            path: '/samples/sampleDetail:id',
-            name: 'Samples detail',
-            component: () => import('./views/samples/SamplesDetail.vue')
+            path: '/samples/SamplesDetail/:id',
+            name: 'Samples-detail',
+            component: () => import('./views/samples/SamplesDetail')
         },
     ]
 })

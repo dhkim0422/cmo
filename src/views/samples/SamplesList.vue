@@ -60,7 +60,7 @@
                             <span class="sr-only">선택</span>
                     </label>
                 </td>
-                <td><a class="link-more" ng-click="onClickDetailLink(item);">{{ item.accession }}</a></td>
+                <td><a class="link-more" @click="onClickDetailLink(item);">{{ item.accession }}</a></td>
                 <td>{{ item.target.accession }}</td>
                 <td>{{ item.target.genderName }}</td>
                 <td>{{ item.uniqueNo }}</td>
@@ -119,7 +119,7 @@
                 console.log('samples', this.resultList)
             },
             onClickDetailLink(target) {
-                this.$router.push({path: '/samples/samplesDetail/' + target.id})
+                this.$router.push({path: '/samples/SamplesDetail/' + target.id})
             }
         },
     };
