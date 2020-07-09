@@ -1,10 +1,7 @@
 <template>
   <div class="container">
     <!-- 검색폼 -->
-    <search-box
-      :filters="filters"
-      @searchClick="selectList"
-    ></search-box>
+    <search-box :filters="filters" @searchClick="setParam"></search-box>
     <!-- 검색 목록 -->
     <div class="filter-group">
       <div class="group-item">
@@ -63,7 +60,6 @@
         </span>
       </div>
     </div>
-
 
     <div
       v-for="(result, index) in resultList.data.list"
@@ -197,6 +193,7 @@ export default {
           { id: "appliedTo", name: "적용분야" },
           { id: "keywords", name: "키워드" },
         ],
+        params: {},
       },
     };
   },
@@ -209,15 +206,19 @@ export default {
     //Pagination 컴포넌트의 change emit
     changePageNo(pageNo) {
       this.currentPageNo = pageNo;
+      this.selectList();
     },
-    async selectList(param) {
+    changeParams(params) {
+      this.params = params;
+      this.selectList();
+    },
+    async selectList() {
       let url = "/isg-oreo/api/projects";
-      let params = param;
       params["rowSize"] = this.resultList.data.numberOfRows;
-      params["firstIndex"] = (this.currentPageNo - 1) * this.resultList.data.numberOfRows;
+      params["firstIndex"] =
+        (this.currentPageNo - 1) * this.resultList.data.numberOfRows;
 
       this.resultList = await axios.get(url, { params: params });
-
     },
     onClickDetailLink(project) {
       this.$router.push({ path: "/project/projects-detail/" + project.id });
