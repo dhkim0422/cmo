@@ -169,6 +169,7 @@
                 let summayrData = await axios.get('/isg-oreo/statistics/summary/samples/' + id, {});
                 this.model = projectData.data
                 this.summary = summayrData.data
+                console.log('summayrData',summayrData.data)
             }
 
         },
