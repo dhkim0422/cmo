@@ -7,6 +7,7 @@ import Default from "./layout/Default.vue";
 import upperFirst from "lodash/upperFirst";
 import camelCase from "lodash/camelCase";
 import vuetify from "./vuetify";
+import Vuelidate from "vuelidate";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "@mdi/font/css/materialdesignicons.css";
 
@@ -76,5 +77,6 @@ new Vue({
   router,
   store,
   vuetify,
+  Vuelidate,
   render: (h) => h(App),
 }).$mount("#app");
