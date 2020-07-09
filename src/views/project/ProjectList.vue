@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <!-- 검색폼 -->
-    <search-box :filters="filters" @searchClick="setParam"></search-box>
+    <search-box :filters="filters" @searchClick="changeParams"></search-box>
     <!-- 검색 목록 -->
     <div class="filter-group">
       <div class="group-item">
@@ -214,11 +214,11 @@ export default {
     },
     async selectList() {
       let url = "/isg-oreo/api/projects";
-      params["rowSize"] = this.resultList.data.numberOfRows;
-      params["firstIndex"] =
+      this.params["rowSize"] = this.resultList.data.numberOfRows;
+      this.params["firstIndex"] =
         (this.currentPageNo - 1) * this.resultList.data.numberOfRows;
 
-      this.resultList = await axios.get(url, { params: params });
+      this.resultList = await axios.get(url, { params: this.params });
     },
     onClickDetailLink(project) {
       this.$router.push({ path: "/project/projects-detail/" + project.id });
