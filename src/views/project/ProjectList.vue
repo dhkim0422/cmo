@@ -64,37 +64,7 @@
         </span>
       </div>
     </div>
-    <div class="info">
-      전체
-      <span class="num ng-binding">{{ this.resultList.data.total }}</span
-      >개, 현재 페이지 <span class="num ng-binding">1</span> /
-      <span class="num ng-binding">1</span>
-    </div>
 
-    <div class="group-item">
-      <!--                <button class="btn-outline-secondary-sm" type="button" data-toggle="tooltip" data-placement="top"-->
-      <!--                        title="" ng-click="remove()" ng-disabled="!modelHandler.hasSelectedItems()"-->
-      <!--                        ng-confirm-click="정보를 삭제합니다. 삭제된 정보는 복구할 수 없습니다." disabled="disabled"-->
-      <!--                        data-original-title="삭제삭제">-->
-      <!--                    <i class="xi-trash"></i><span class="sr-only">삭제</span>-->
-      <!--                </button>-->
-
-      <span
-        data-toggle="tooltip"
-        data-placement="top"
-        title
-        data-original-title="연구과제 등록"
-      >
-        <button
-          class="btn-primary-sm"
-          type="button"
-          ng-click="onClickCreateLink()"
-        >
-          <i class="xi-file-add"></i>
-          <span class="sr-only">등록</span>
-        </button>
-      </span>
-    </div>
 
     <div
       v-for="(result, index) in resultList.data.list"
