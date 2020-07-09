@@ -17,8 +17,8 @@
                 <button class="btn-outline-secondary-sm" type="button">
                     <i class="xi-trash"></i><span class="sr-only">삭제</span>
                 </button>
-                <select v-model="resultList.data.numberOfRows" class="length" aria-invalid="false">
-                    <option label="10개씩 보기" value="10" selected="selected">10개씩 보기</option>
+                <select  @change="selectList" v-model="resultList.data.numberOfRows" class="length" aria-invalid="false">
+                    <option label="10개씩 보기" value="10" >10개씩 보기</option>
                     <option label="25개씩 보기" value="25">25개씩 보기</option>
                     <option label="50개씩 보기" value="50">50개씩 보기</option>
                     <option label="100개씩 보기" value="100">100개씩 보기</option>
@@ -71,6 +71,12 @@
             </tr>
             </tbody>
         </table>
+        <Pagination
+                @changePageNo="changePageNo"
+                :currentPageNo="resultList.data.currentPage"
+                :totalRecordCount="resultList.data.total"
+                :pageUnit="resultList.data.numberOfRows"
+        ></Pagination>
 
     </div>
 </template>
@@ -90,7 +96,9 @@
                     data: {
                         total: 0,
                         currentPage: 0,
-                        numberOfRows: 0,
+                        numberOfRows: 10,
+                        currentPageNo: 0,
+                        pageSize: 10,
                         list: [],
                         target: {},
                         origin: {},
@@ -106,17 +114,25 @@
                         {id: 'sampleName', name: '샘플명'},
                         {id: 'target', name: '연구대상자'},
                         {id: 'disease', name: '질환명'},
-                    ]
+                    ],
+                    params:{}
                 }
             }
         },
         methods: {
-            async selectList(params) {
+            //Pagination 컴포넌트의 change emit
+            changePageNo(pageNo) {
+                this.currentPageNo = pageNo;
+            },
+            async selectList(param) {
                 let url = '/isg-oreo/api/clinic-samples'
+                let params = param;
 
+                params["rowSize"] = this.resultList.data.numberOfRows;
+                params["firstIndex"] = 0
 
-                this.resultList = await axios.get(url, params);
-                console.log('samples', this.resultList)
+                this.resultList = await axios.get(url, { params: params });
+
             },
             onClickDetailLink(target) {
                 this.$router.push({path: '/samples/SamplesDetail/' + target.id})
