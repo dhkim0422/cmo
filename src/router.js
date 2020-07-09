@@ -65,7 +65,7 @@ export default new Router({
         {
             path: '/targets/targets-detail/:id',
             name: 'targets-detail',
-            component: () => import('./views/targets/Target-detail.vue')
+            component: () => import('./views/targets/TargetDetail.vue')
         },
         {
             path: '/project/projectList',
@@ -74,9 +74,9 @@ export default new Router({
 
         },
         {
-            path: '/project/projects-detail/:id',
+            path: '/project/projectsDetail/:id',
             name: 'projects-detail',
-            component: () => import('./views/project/projects-detail')
+            component: () => import('./views/project/projectsDetail')
 
         },
         {

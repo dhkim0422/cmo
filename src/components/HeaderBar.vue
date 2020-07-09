@@ -8,52 +8,6 @@
       </h1>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="http://example.com"
-              id="navbarDropdownMenuLink"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Dropdown
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li class="dropdown-submenu">
-                <a
-                  class="dropdown-item dropdown-toggle"
-                  href="http://google.com"
-                  >Google</a
-                >
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Submenu</a></li>
-                  <li><a class="dropdown-item" href="#">Submenu0</a></li>
-                  <li class="dropdown-submenu">
-                    <a class="dropdown-item dropdown-toggle" href="#"
-                      >Submenu 1</a
-                    >
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Subsubmenu1</a></li>
-                      <li><a class="dropdown-item" href="#">Subsubmenu1</a></li>
-                    </ul>
-                  </li>
-                  <li class="dropdown-submenu">
-                    <a class="dropdown-item dropdown-toggle" href="#"
-                      >Submenu 2</a
-                    >
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Subsubmenu2</a></li>
-                      <li><a class="dropdown-item" href="#">Subsubmenu2</a></li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-
           <li class="nav-item">
             <a
               class="nav-link"
@@ -62,38 +16,42 @@
               >ANALYSIS</a
             >
           </li>
-          <li class="nav-item">
+          <li class="nav-item dropdown">
             <a
-              class="nav-link"
-              @click="goto('/blast/blastSearch')"
-              title="내정보"
-              >내정보</a
-            >
-            <ul></ul>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              @click="goto('/project/projectList')"
-              title="과제"
-              >과제</a
-            >
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              @click="goto('/target/targetList')"
-              title="연구대상자"
-              >연구대상자</a
-            >
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              @click="goto('/samples/samplesList')"
-              title="샘플"
-              >샘플</a
-            >
+              class="nav-link dropdown-toggle"
+              href="http://example.com"
+              id="navbarDropdownMenuLink"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              >내정보
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <li>
+                <a
+                  class="nav-link"
+                  @click="goto('/project/projectList')"
+                  title="과제 목록"
+                  >과제 목록</a
+                >
+              </li>
+              <li>
+                <a
+                  class="nav-link"
+                  @click="goto('/targets/targetList')"
+                  title="연구대상자 목록"
+                  >연구대상자 목록
+                </a>
+              </li>
+              <li>
+                <a
+                  class="nav-link"
+                  @click="goto('/samples/samplesList')"
+                  title="샘플 목록"
+                  >샘플 목록
+                </a>
+              </li>
+            </ul>
           </li>
           <li class="nav-item">
             <a
