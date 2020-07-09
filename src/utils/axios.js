@@ -1,4 +1,6 @@
 import axios from "axios";
+import router from "../router";
+import store from "../store";
 
 // Add custom configuration here.
 const axiosInstance = axios.create({
@@ -26,16 +28,12 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async function(error) {
+    // Object.entries(error).forEach((item) => console.log(item));
     const { config } = error;
-    console.log("axios respone error", config);
-    if (error.response.data.status === 401 && config.retry === undefined) {
-      config.retry = true;
-
-      //토큰 갱신
-      //await refreshToken();
-
-      //실패한 request 재실행
-      //   return await axiosInstance(config);
+    if (error.response.status === 401) {
+      localStorage.setItem("x-auth-token", "");
+      store.dispatch("setIsLoginAt", false);
+      router.push({ name: "login" });
     }
     return Promise.reject(error);
   }
