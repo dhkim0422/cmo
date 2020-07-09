@@ -1,8 +1,11 @@
 <template>
   <div class="container">
     <!-- 검색폼 -->
-
-    <search-box :filters="filters" @keywordSelected="setKeywork" @searchClick="selectList"></search-box>
+    <search-box
+      :filters="filters"
+      @keywordSelected="setKeywork"
+      @searchClick="selectList"
+    ></search-box>
     <!-- 검색 목록 -->
     <div class="filter-group">
       <div class="group-item">
@@ -15,14 +18,15 @@
             ng-change="modelHandler.selectAll(modelHandler.checkedAll)"
             aria-invalid="false"
           />
-          <label class="custom-control-label" for="chkPrjAll">
-            <span class="sr-only">전체선택</span>
-          </label>
+          <label class="custom-control-label" for="chkPrjAll"
+            ><span class="sr-only">전체선택</span></label
+          >
         </div>
         <div class="info">
-          전체
-          <span class="num ng-binding">{{ this.resultList.data.total }}</span>개, 현재 페이지
-          <span class="num ng-binding">1</span> /
+          전체<span class="num ng-binding">{{
+            this.resultList.data.total
+          }}</span
+          >개, 현재 페이지<span class="num ng-binding">1</span> /
           <span class="num ng-binding">1</span>
         </div>
       </div>
@@ -34,22 +38,69 @@
         <!--                    <i class="xi-trash"></i><span class="sr-only">삭제</span>-->
         <!--                </button>-->
 
-        <select v-model="resultList.data.numberOfRows" class="length" aria-invalid="false">
+        <select
+          v-model="resultList.data.numberOfRows"
+          class="length"
+          aria-invalid="false"
+        >
           <option label="10개씩 보기" :value="10">10개씩 보기</option>
           <option label="25개씩 보기" :value="25">25개씩 보기</option>
           <option label="50개씩 보기" :value="50">50개씩 보기</option>
           <option label="100개씩 보기" :value="100">100개씩 보기</option>
         </select>
-        <span data-toggle="tooltip" data-placement="top" title data-original-title="연구과제 등록">
-          <button class="btn-primary-sm" type="button" ng-click="onClickCreateLink()">
-            <i class="xi-file-add"></i>
-            <span class="sr-only">등록</span>
+        <span
+          data-toggle="tooltip"
+          data-placement="top"
+          title=""
+          data-original-title="연구과제 등록"
+        >
+          <button
+            class="btn-primary-sm"
+            type="button"
+            ng-click="onClickCreateLink()"
+          >
+            <i class="xi-file-add"></i><span class="sr-only">등록</span>
           </button>
         </span>
       </div>
     </div>
+    <div class="info">
+      전체
+      <span class="num ng-binding">{{ this.resultList.data.total }}</span
+      >개, 현재 페이지 <span class="num ng-binding">1</span> /
+      <span class="num ng-binding">1</span>
+    </div>
 
-    <div v-for="(result, index) in resultList.data.list" class="data-card" :key="`result-${index}`">
+    <div class="group-item">
+      <!--                <button class="btn-outline-secondary-sm" type="button" data-toggle="tooltip" data-placement="top"-->
+      <!--                        title="" ng-click="remove()" ng-disabled="!modelHandler.hasSelectedItems()"-->
+      <!--                        ng-confirm-click="정보를 삭제합니다. 삭제된 정보는 복구할 수 없습니다." disabled="disabled"-->
+      <!--                        data-original-title="삭제삭제">-->
+      <!--                    <i class="xi-trash"></i><span class="sr-only">삭제</span>-->
+      <!--                </button>-->
+
+      <span
+        data-toggle="tooltip"
+        data-placement="top"
+        title
+        data-original-title="연구과제 등록"
+      >
+        <button
+          class="btn-primary-sm"
+          type="button"
+          ng-click="onClickCreateLink()"
+        >
+          <i class="xi-file-add"></i>
+          <span class="sr-only">등록</span>
+        </button>
+      </span>
+    </div>
+
+    <div
+      v-for="(result, index) in resultList.data.list"
+      class="data-card"
+      :key="`result-${index}`"
+    >
       <div class="card-header">
         <div class="block-group">
           <div class="block">
@@ -81,7 +132,9 @@
       </div>
       <div class="card-body">
         <table class="view-table">
-          <caption class="sr-only">상세정보</caption>
+          <caption class="sr-only">
+            상세정보
+          </caption>
           <tbody>
             <tr>
               <th scope="row">단위사업</th>
@@ -112,7 +165,12 @@
     <div v-show="resultList.data.list.length !== 0" class="text-center"></div>
     <div></div>
 
-    <div v-show="resultList.data.list.length === 0" class="data-card" aria-hidden="true" style>
+    <div
+      v-show="resultList.data.list.length === 0"
+      class="data-card"
+      aria-hidden="true"
+      style
+    >
       <div class="card-body text-center">검색 결과가 없습니다</div>
     </div>
 
@@ -132,21 +190,21 @@ import axios from "../../utils/axios";
 export default {
   name: "ProjectList",
   components: {
-    searchBox
+    searchBox,
   },
   data() {
     return {
       currentPageNo: 1,
       filter: {
-        keyword: ""
+        keyword: "",
       },
       resultList: {
         data: {
           total: 0,
           currentPage: 1,
           numberOfRows: 10,
-          list: []
-        }
+          list: [],
+        },
       },
       filters: {
         fields: [
@@ -168,9 +226,9 @@ export default {
           { id: "features", name: "개발기술 특징" },
           { id: "expectation", name: "기대효과" },
           { id: "appliedTo", name: "적용분야" },
-          { id: "keywords", name: "키워드" }
-        ]
-      }
+          { id: "keywords", name: "키워드" },
+        ],
+      },
     };
   },
   started() {},
@@ -199,7 +257,7 @@ export default {
     },
     onClickDetailLink(project) {
       this.$router.push({ path: "/project/projects-detail/" + project.id });
-    }
-  }
+    },
+  },
 };
 </script>
