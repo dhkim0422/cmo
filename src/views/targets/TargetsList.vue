@@ -2,14 +2,14 @@
     <div class="container">
 
         <!-- 검색폼 -->
-        <search-box :filters="filters" @searchClick="selectList"></search-box>
+        <search-box :filters="filters" @searchClick="changeParams"></search-box>
         <!-- 검색 목록 -->
         <div class="filter-group">
             <div class="group-item">
                 <div class="info">
                     전체 <span class="num">{{this.resultList.data.total}}</span>개,
                     페이지 <span class="num">{{this.resultList.data.currentPage}}</span> /
-                    <span class="num">{{this.resultList.data.numberOfRows}}</span>
+                    <span class="num">{{this.resultList.data.total / this.resultList.data.numberOfRows }}</span>
                 </div>
             </div>
             <div class="group-item">
@@ -19,9 +19,16 @@
                         ng-confirm-click="confirmDel">
                     <i class="xi-trash"></i><span class="sr-only">del</span>
                 </button>
-                <select class="length" ng-model="pageHandler.numberOfRows"
-                        ng-options="volume.value as volume.label for volume in pageHandler.volumes"
-                        ng-change="search()">
+                <select
+                        @change="selectList"
+                        v-model="resultList.data.numberOfRows"
+                        class="length"
+                        aria-invalid="false"
+                >
+                    <option label="10개씩 보기" value="10">10개씩 보기</option>
+                    <option label="25개씩 보기" value="25">25개씩 보기</option>
+                    <option label="50개씩 보기" value="50">50개씩 보기</option>
+                    <option label="100개씩 보기" value="100">100개씩 보기</option>
                 </select>
                 <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
                 <button class="btn-primary-sm" type="button" ng-click="onClickCreateLink()">
@@ -65,6 +72,12 @@
             </tr>
             </tbody>
         </table>
+        <Pagination
+                @changePageNo="changePageNo"
+                :currentPageNo="resultList.data.currentPage"
+                :totalRecordCount="resultList.data.total"
+                :pageUnit="resultList.data.numberOfRows"
+        ></Pagination>
     </div>
 </template>
 
@@ -79,6 +92,7 @@
         },
         data() {
             return {
+
                 summary:{
                     study:0,
                     omics:0,
@@ -90,8 +104,8 @@
                 resultList: {
                     data: {
                         total: 0,
-                        currentPage: 0,
-                        numberOfRows: 0,
+                        currentPage: 1,
+                        numberOfRows: 10,
                         list: []
                     }
                 },
@@ -103,19 +117,35 @@
                         {id: 'birthday', name: '출생일'},
                         {id: 'age', name: '나이'}
                     ]
-                }
+                },
+                params:{}
+
             }
+
         },
         methods: {
-            async selectList(params) {
+            //Pagination 컴포넌트의 change emit
+            changePageNo(pageNo) {
+                this.resultList.data.currentPage = pageNo
+
+                console.log('page' , this.resultList.data.currentPage +",,,"+ pageNo)
+                this.selectList();
+            },
+            changeParams(params) {
+                this.params = params;
+                this.selectList();
+            },
+            async selectList() {
                 let url = '/isg-oreo/api/clinic-targets'
-                this.resultList = await axios.get(url, params);
-                console.log(this.resultList)
+                this.params["rowSize"] = this.resultList.data.numberOfRows;
+                this.params["firstIndex"] = (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows;
+                this.params['currentPage'] = this.resultList.data.currentPage
+                this.resultList = await axios.get(url, {params: this.params});
             },
             onClickDetailLink(target) {
+                this.$router.push({path: '/targets/targetsDetail/' + target.id})
+            },
 
-                this.$router.push({path: '/targets/targets-detail/' + target.id})
-            }
         },
     };
 </script>

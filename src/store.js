@@ -6,6 +6,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+
+        LABEL: 1,
+        ICON: 2,
+        HIGHLIGHT: 3,
+
         userInfo: {},
         loginAt: false,
         menuList: [], // 사용자 메뉴 리스트
@@ -17,7 +22,52 @@ export default new Vuex.Store({
         checkIdList: [],  //테이블의 checkbox에 바인딩 된 id list
         analysisList: [], //통계 내역의 상위 태이블정보
         genericList: [],
-        codeArr: []
+        codeArr: [],
+        STATUS: {
+            READY: 'READY',
+            WAIT: 'WAIT',
+            RUNNING: 'RUNNING',
+            FAILED: 'FAILED',
+            SUCCESS: 'SUCCESS',
+            REVIEW: 'REVIEW', 			// 심의 중
+            CONFIRM: 'CONFIRM', 		// 승인대기
+            COMPLETED: 'COMPLETED',	// 승인완료
+            REJECT: 'REJECT',			// 반려
+            ACCEPT: 'ACCEPT', 			// 승인
+            RELEASED: 'RELEASED',
+            CLOSED: 'CLOSED', 			// 분양완료일 때 사용
+        },
+        DATA_TYPE: {
+            DISEASE: 'disease',
+            USER: 'user',
+            CODE: 'code',
+            PROJECT: 'project',
+            CLINIC_TARGET: 'target',
+            CLINIC_SAMPLE: 'sample',
+            CLINIC_STUDY: 'study',
+            OMICS_DATA: 'omics',
+            DISTIBUTE: 'distb',
+        },
+        DATA_SCOPE: {
+            PUBLIC: 'PUBLIC',
+            USER: 'USER',
+            CONFIRM: 'CONFIRM',
+            SYSTEM: 'SYSTEM',
+        },
+        ACTION: {
+            CREATE: 'CREATE',
+            CHANGE: 'CHANGE',
+            REMOVE: 'REMOVE',
+            SEARCH: 'SEARCH',
+        },
+        OMICS_TYPE: {
+            ALL: 'ALL',
+            NGS: 'NGS',
+            Microarray: 'Microarray',
+            Metabolome: 'Metabolome',
+            Proteome: 'Proteome',
+        }
+
     },
     getters: {
         geteCodeArr(state) {
@@ -104,19 +154,19 @@ export default new Vuex.Store({
 
     },
     actions: {
-        async  setCodeArr({commit}, payload) {
+        async setCodeArr({commit}, payload) {
 
-            let codeList = ['SNS','GEN','USR','PST','ARA','SSE','SOR','RSTYPE1','RSTYPE2','RSTYPE2B','STEP','IRBSTEP','OEXPER_N','OEXPER_E','MATR','RUTE']
+            let codeList = ['SNS', 'GEN', 'USR', 'PST', 'ARA', 'SSE', 'SOR', 'RSTYPE1', 'RSTYPE2', 'RSTYPE2B', 'STEP', 'IRBSTEP', 'OEXPER_N', 'OEXPER_E', 'MATR', 'RUTE']
             let dataList = {}
             for (const item of codeList) {
 
                 let url = '/isg-oreo/ajax/codeGroups/' + item
                 await axios.get(url, {params: payload.params}).then((response) => {
-                    console.log(item,response.data.data.resultList)
+                    console.log(item, response.data.data.resultList)
                     dataList[item] = response.data.data.resultList
                 })
             }
-            console.log('codeList',dataList)
+            console.log('codeList', dataList)
             commit('updateLoginAt', dataList)
 
         },
@@ -150,6 +200,7 @@ export default new Vuex.Store({
 
         //상세화면
         loadOne({commit}, payload) {
+
             axios.get(payload.url, {params: payload.params}).then((response) => {
                 commit('updateOne', response.data)
             })
@@ -190,5 +241,9 @@ export default new Vuex.Store({
                 commit('updateAnalysisList', response.data)
             })
         },
+
+
     }
+
+
 })
