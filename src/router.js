@@ -89,12 +89,12 @@ export default new Router({
       component: () => import("./views/samples/SamplesDetail"),
     },
     {
-      path: "/storage/StorageList",
+      path: "/storage/storageList",
       name: "StorageList",
       component: () => import("./views/storage/StorageList"),
     },
     {
-      path: "/storage/StorageDetail/:id",
+      path: "/storage/storageDetail/:id",
       name: "StorageDetail",
       component: () => import("./views/storage/StorageDetail"),
     },

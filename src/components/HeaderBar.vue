@@ -9,12 +9,7 @@
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a
-              class="nav-link"
-              @click="goto('/analysis/analysis')"
-              title="ANALYSIS"
-              >ANALYSIS</a
-            >
+            <a class="nav-link" @click="goto('/analysis/analysis')" title="ANALYSIS">ANALYSIS</a>
           </li>
           <li class="nav-item dropdown">
             <a
@@ -24,34 +19,21 @@
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-              >내정보
-            </a>
+            >내정보</a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <li>
-                <a
-                  class="nav-link"
-                  @click="goto('/project/projectList')"
-                  title="과제 목록"
-                  >과제 목록</a
-                >
+                <a class="nav-link" @click="goto('/project/projectList')" title="과제 목록">과제 목록</a>
               </li>
               <li>
-                <a
-                  class="nav-link"
-                  @click="goto('/targets/targetList')"
-                  title="연구대상자 목록"
-                  >연구대상자 목록
-                </a>
+                <a class="nav-link" @click="goto('/targets/targetList')" title="연구대상자 목록">연구대상자 목록</a>
               </li>
               <li>
-                <a
-                  class="nav-link"
-                  @click="goto('/samples/samplesList')"
-                  title="샘플 목록"
-                  >샘플 목록
-                </a>
+                <a class="nav-link" @click="goto('/samples/samplesList')" title="샘플 목록">샘플 목록</a>
               </li>
             </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" @click="goto('/storage/storageList')" title="저장고">저장고</a>
           </li>
           <li class="nav-item">
             <a
@@ -60,16 +42,14 @@
               @click="logout()"
               title="LOGOUT"
               :class="loginBtnClass"
-              >LOGOUT</a
-            >
+            >LOGOUT</a>
             <a
               v-else
               class="nav-link"
               @click="$router.push({ name: 'login' })"
               title="LOG IN"
               :class="loginBtnClass"
-              >LOG IN</a
-            >
+            >LOG IN</a>
           </li>
         </ul>
       </div>
@@ -99,24 +79,25 @@ export default {
         {
           path: "/",
           rootMenuNm: "Dashboard",
-          menuNm: "Dashboard",
+          menuNm: "Dashboard"
         },
         {
           path: "/analysis/analysis",
           rootMenuNm: "ANALYSIS",
-          menuNm: "ANALYSIS",
+          menuNm: "ANALYSIS"
         },
         { path: "/blast/blastSearch", rootMenuNm: "내정보", menuNm: "내정보" },
         { path: "/project/projectList", rootMenuNm: "과제", menuNm: "과제" },
         {
           path: "/target/targetList",
           rootMenuNm: "연구대상자",
-          menuNm: "연구대상자",
+          menuNm: "연구대상자"
         },
         { path: "/samples/samplesList", rootMenuNm: "샘플", menuNm: "샘플" },
+        { path: "/storage/storageList", rootMenuNm: "저장고", menuNm: "저장고" }
       ],
       rootMenuNm: "",
-      menuNm: "",
+      menuNm: ""
     };
   },
   created() {
@@ -132,9 +113,9 @@ export default {
     loginBtnClass() {
       return {
         "btn btn-radius": this.$route.name === "home",
-        "btn btn-primary btn-radius": this.$route.name !== "home",
+        "btn btn-primary btn-radius": this.$route.name !== "home"
       };
-    },
+    }
   },
 
   methods: {
@@ -157,16 +138,16 @@ export default {
 
       //메뉴명 설정
       const { rootMenuNm, menuNm } = this.menuList.find(
-        (item) => item.path === path
+        item => item.path === path
       );
       this.rootMenuNm = rootMenuNm;
       this.menuNm = menuNm;
     },
     getRootMenuNm() {
-      return this.menuList.find((item) => item.path === this.$route.path);
+      return this.menuList.find(item => item.path === this.$route.path);
     },
-    getMenuNm() {},
-  },
+    getMenuNm() {}
+  }
 };
 </script>
 
