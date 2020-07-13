@@ -1,14 +1,15 @@
 <template>
-  <div class="col-xs-6 text-left"><p class="mT-20 mB-0">전체: {{ totalRecordCount | money }}</p></div>
+  <div class="info">
+    전체<span class="num">{{resultList.data.total}}</span>개 현재 페이지
+    <span class="num">{{resultList.data.currentPage}}</span> /
+    <span class="num">{{resultList.data.currentPage}}</span>
+  </div>
 </template>
 
 <script>
-import { mapGetters} from 'vuex'
 
 export default {
   name: 'TotalRecordCount',
-  computed: {
-      ...mapGetters(['totalRecordCount']),
-  },  
+  props:['resultList']
 }
 </script>

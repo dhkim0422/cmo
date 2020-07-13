@@ -30,6 +30,9 @@
               <li>
                 <a class="nav-link" @click="goto('/samples/samplesList')" title="샘플 목록">샘플 목록</a>
               </li>
+              <li>
+                <a class="nav-link" @click="goto('/omics/omics')" title="오믹스 데이터 등록내역">오믹스 데이데</a>
+              </li>
             </ul>
           </li>
           <li class="nav-item">
@@ -76,11 +79,7 @@ export default {
   data() {
     return {
       menuList: [
-        {
-          path: "/",
-          rootMenuNm: "Dashboard",
-          menuNm: "Dashboard"
-        },
+        { path: "/", rootMenuNm: "Dashboard", menuNm: "Dashboard" },
         {
           path: "/analysis/analysis",
           rootMenuNm: "ANALYSIS",
@@ -89,11 +88,16 @@ export default {
         { path: "/blast/blastSearch", rootMenuNm: "내정보", menuNm: "내정보" },
         { path: "/project/projectList", rootMenuNm: "과제", menuNm: "과제" },
         {
-          path: "/target/targetList",
+          path: "/targets/targetList",
           rootMenuNm: "연구대상자",
           menuNm: "연구대상자"
         },
         { path: "/samples/samplesList", rootMenuNm: "샘플", menuNm: "샘플" },
+        {
+          path: "/omics/omics",
+          rootMenuNm: "마이페이지",
+          menuNm: "오믹스 데이터 등록내역"
+        },
         { path: "/storage/storageList", rootMenuNm: "저장고", menuNm: "저장고" }
       ],
       rootMenuNm: "",
@@ -117,7 +121,6 @@ export default {
       };
     }
   },
-
   methods: {
     async logout(event) {
       localStorage.removeItem("x-auth-token");
@@ -155,12 +158,15 @@ export default {
 .pointer {
   cursor: pointer;
 }
+
 .navbar-nav li:hover > ul.dropdown-menu {
   display: block;
 }
+
 .dropdown-submenu {
   position: relative;
 }
+
 .dropdown-submenu > .dropdown-menu {
   top: 0;
   left: 100%;

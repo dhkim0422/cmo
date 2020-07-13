@@ -59,7 +59,7 @@ export default new Router({
       component: () => import("./views/targets/TargetsList.vue"),
     },
     {
-      path: "/targets/targets-detail/:id",
+      path: "/targets/targetsDetail/:id",
       name: "targets-detail",
       component: () => import("./views/targets/TargetDetail.vue"),
     },
@@ -87,6 +87,12 @@ export default new Router({
       path: "/samples/SamplesDetail/:id",
       name: "Samples-detail",
       component: () => import("./views/samples/SamplesDetail"),
+    },
+
+    {
+      path: "/omics/omics/",
+      name: "omics",
+      component: () => import("./views/omics/OmicsMain"),
     },
     {
       path: "/storage/storageList",
