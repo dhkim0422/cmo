@@ -210,14 +210,14 @@
                 return false
             },
             onClickDetailLink(item) {
-
+                this.$router.push({path: "/omics/omicsDetail/" + item.id})
             },
 
             isOpend(omics){
               return true
             },
             label: function (omics) {
-                return this.isOpend(omics) ? "공개" : "비공개";
+                return this.isOpend(omics) ? "공개" : "비공개"
             },
             icon: function (omics) {
                 return this.isOpend(omics) ? "xi-eye" : "xi-eye-off";
@@ -244,7 +244,7 @@
             },
 
             isMetabolome(omics) {
-                return (omics.omicsType == 'Metabolome');
+                return (omics.omicsType == 'Metabolmoe');
             },
 
 
