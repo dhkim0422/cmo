@@ -1,35 +1,29 @@
 <template>
     <div class="container" id="content">
-
-        <!-- 탭 -->
         <ul class="tab-menu m-t-75">
-            <li class="menu-item">
-                <a class="menu-link" href="#tab1">NGS</a>
+
+            <li class="menu-item active">
+                <a data-toggle="tab" class="menu-link"  href="#tab1">NGS</a>
             </li>
             <li class="menu-item">
-                <a class="menu-link" href="#tab2">Microarray</a>
-            </li>
+                <a data-toggle="tab" class="menu-link"  href="#tab2">Microarray</a>
             <li class="menu-item">
-                <a class="menu-link" href="#tab3">metabolome</a>
+            <li>
+                <a data-toggle="tab" class="menu-link"  href="#tab3">Metabolome</a>
             </li>
         </ul>
-
-
-        <!-- 탭내용 -->
         <div class="tab-content">
-            <div class="tab-pane show" id="tab1" >
+            <div id="tab1" class="tab-pane active">
                 <span class="sr-only">NGS</span>
                 <omics-regist-list :omics-type="'NGS'" ></omics-regist-list>
             </div>
-
-            <div class="tab-pane fade show" id="tab2">
+            <div id="tab2" class="tab-pane">
                 <span class="sr-only">Microarray</span>
                 <omics-regist-list :omics-type="'Microarray'" ></omics-regist-list>
             </div>
-
-            <div class="tab-pane fade show" id="tab3">
+            <div id="tab3" class="tab-pane">
                 <span class="sr-only">metabolome</span>
-                <omics-regist-list :omics-type="'Metabolome'"  ></omics-regist-list>
+                <omics-regist-list :omics-type="Metabolome"  ></omics-regist-list>
             </div>
         </div>
     </div>
