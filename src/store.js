@@ -67,7 +67,6 @@ export default new Vuex.Store({
             Metabolome: 'Metabolome',
             Proteome: 'Proteome',
         }
-
     },
     getters: {
         geteCodeArr(state) {

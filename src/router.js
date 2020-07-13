@@ -102,6 +102,11 @@ export default new Router({
             name: 'omics',
             component: () => import('./views/omics/OmicsMain')
         },
+        {
+            path: '/omics/omicsDetail/:id',
+            name: 'Omics Detail',
+            component: () => import('./views/omics/OmicsDetail')
+        },
 
 
     ]
