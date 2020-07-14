@@ -369,9 +369,11 @@
         </table-->
 
 
+<!--
         <h2 class="h2">연관 데이터</h2>
+-->
 
-        <ul class="tab-menu m-t-75">
+       <!-- <ul class="tab-menu m-t-75">
             <li class="menu-item active">
                 <a data-toggle="tab" class="menu-link" href="#tab1">연구대상자</a>
             </li>
@@ -391,7 +393,7 @@
                 2222
             </div>
         </div>
-
+-->
         <!--<h2 class="h2"><spring:message code="main.연관_데이터"/></h2>-->
 
         <!--    &lt;!&ndash; 탭 &ndash;&gt;-->

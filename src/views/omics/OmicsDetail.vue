@@ -53,7 +53,7 @@
             </div>
             <div id="tab2" class="tab-pane">
                 <span class="sr-only">파일 목록</span>
-
+                <omics-data-file-list :id="this.$route.params.id"/>
             </div>
         </div>
     </div>
@@ -63,10 +63,11 @@
 <script>
     import axios from "../../utils/axios";
     import OmicsDataExper from "../project/OmicsDataExper";
+    import OmicsDataFileList from "./OmicsDataFileList";
 
     export default {
         name: "OmicsDetail",
-        components: {OmicsDataExper},
+        components: {OmicsDataFileList, OmicsDataExper},
         created() {
             let id = this.$route.params.id;
             console.log('log', id )
