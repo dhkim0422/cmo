@@ -6,11 +6,7 @@
         <!-- 검색 목록 -->
         <div class="filter-group">
             <div class="group-item">
-                <div class="info">
-                    전체 <span class="num">{{this.resultList.data.total}}</span>개,
-                    페이지 <span class="num">{{this.resultList.data.currentPage}}</span> /
-                    <span class="num">{{this.resultList.data.total / this.resultList.data.numberOfRows }}</span>
-                </div>
+                <total-record-count :result-list="resultList" />
             </div>
             <div class="group-item">
                 <button class="btn-outline-secondary-sm" type="button"
@@ -84,10 +80,12 @@
 <script>
     import searchBox from '../../components/SearchBox'
     import axios from "../../utils/axios";
+    import TotalRecordCount from "../../components/TotalRecordCount";
 
     export default {
         name: 'TargetsList',
         components: {
+            TotalRecordCount,
             searchBox
         },
         data() {

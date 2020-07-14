@@ -106,10 +106,6 @@ Vue.filter('groupNm', function (data, group) {
     var fileGroup = data;
     var omicsType = 'NGS';
 
-    console.log('data :',data)
-
-
-
     if (data.omicsType == '') { // 오믹스 파일인 경우
         return "";
     }else if (data.omicsType == 'NGS') { // 오믹스 파일인 경우

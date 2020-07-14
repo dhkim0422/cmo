@@ -8,7 +8,7 @@
 
                 <div class="search-input-group">
                     <input class="search-input" type="text" placeholder="검색어"
-                           ng-model="filter.keyword" @keydown.enter="search()"/>
+                           v-model="keywokd" @keydown.enter="search()"/>
                     <button class="search-btn" @click="search()">
                         <span class="sr-only">조회</span>
                         <i class="xi-search"/>
@@ -48,7 +48,7 @@
                     </div>
                 </div>-->
                 <select
-                        @change="select()"
+                        @change="select(1)"
                         v-model="resultList.data.numberOfRows"
                         class="length"
                         aria-invalid="false"
@@ -58,10 +58,7 @@
                     <option label="50개씩 보기" value="50">50개씩 보기</option>
                     <option label="100개씩 보기" value="100">100개씩 보기</option>
                 </select>
-                <!--<select class="length" ng-model="pageHandler.numberOfRows"
-                        ng-options="volume.value as volume.label for volume in pageHandler.volumes"
-                        ng-change="search()">
-                </select>-->
+
             </div>
         </div>
         <table class="data-table">
@@ -89,19 +86,19 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-hide="modelHandler.size() > 0">
+            <tr v-show="resultList.data.list.length == 0">
                 <td colspan="8" class="text-center">
                     데이터가 없습니다.
                 </td>
             </tr>
-            <tr v-for="item in resultList.data.list">
 
+            <tr v-for="item in resultList.data.list">
                 <td>{{ item.accession }}</td>
-                <td>{{ item.sample.accession }}</td>
+                <td>{{ item.sample.accession || "" }}</td>
                 <td>{{ item | groupNm }}</td>
                 <td>{{ item.type }}</td>
                 <td class="text-ellipsis-200"><a class="link-more" @click="download(item)">{{ item.name }}</a></td>
-                <td>{{ item.size | bytes }}</td>
+                <td>{{ item.size | byte }}</td>
             </tr>
             </tbody>
         </table>
@@ -123,6 +120,7 @@
         name: "OmicsDataFileList",
         components: {TotalRecordCount},
         created() {
+            this.search(1)
         },
         data() {
             return {
@@ -132,22 +130,50 @@
                         currentPage: 1,
                         numberOfRows: 100,
                         list: [],
-                    },
-                }
+                    }
+                },
+                keywokd: ''
+
             }
         },
-        props:['id'],
+        props: ['id'],
         methods: {
             changePageNo(pageNo) {
-                this.currentPageNo = pageNo;
-                this.selectList();
+                this.resultList.data.currentPage = pageNo
+                this.search(pageNo);
             },
             download() {
 
             },
-            async search() {
-                let resultListData = await axios.get('isg-oreo/api/omics/11/files/' + this.id ,{})
-                this.resultList = resultListData.data;
+            async search(pageNo = 0) {
+
+                let param = {
+                    currentPage: pageNo,
+                    firstIndex: 0,
+                    omicsId: this.id,
+                    pageSize: 10,
+                    rowSize: this.resultList.data.numberOfRows
+                }
+                param['fields'] = ['fileNo', 'fileName', 'sampleNo', 'sampleName']
+                param['proTypes'] = ['BED', 'Others', 'VCF', 'BAM', 'fasta', 'fastq']
+                param['keywokd'] = this.keywokd
+
+                console.log('param', param)
+                let resultListData = await axios.get('/isg-oreo/api/omics/' + this.id + '/files',
+                    {params: param}
+                )
+
+                let list = []
+                //sample.accession 정보가 없으면 에러가 난다
+                //가지고 오는 데이터에서 sample 정보가 없으면 내역을 임시값으로 셋팅하도록 처리
+                for (var i = 0; i < resultListData.data.list.length; i++) {
+                    list.push(resultListData.data.list[i])
+                    if (resultListData.data.list[i].sample == undefined) {
+                        list[i]['sample'] = {accession: ''}
+                    }
+                }
+                this.resultList = resultListData
+                this.resultList.data.list = list
 
             },
             cancel() {
@@ -156,11 +182,11 @@
             submit() {
 
             },
-            toggle(){
+            toggle() {
 
             },
-            select(index) {
-
+            select() {
+                this.search(1)
             }
         }
     }
