@@ -9,6 +9,12 @@ import camelCase from "lodash/camelCase";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "@mdi/font/css/materialdesignicons.css";
 
+/*
+alert 셋팅
+*/
+import VueSimpleAlert from "vue-simple-alert";
+Vue.use(VueSimpleAlert);
+
 
 
 /*
