@@ -13,7 +13,7 @@
                         data-toggle="tooltip" data-placement="top" title="del"
                         ng-click="remove()" ng-disabled="!modelHandler.hasSelectedItems()"
                         ng-confirm-click="confirmDel">
-                    <i class="xi-trash"></i><span class="sr-only">del</span>
+                    <i class="xi-trash"></i><span class="sr-only">삭제</span>
                 </button>
                 <select
                         @change="selectList"
@@ -27,7 +27,7 @@
                     <option label="100개씩 보기" value="100">100개씩 보기</option>
                 </select>
                 <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
-                <button class="btn-primary-sm" type="button" ng-click="onClickCreateLink()">
+                <button class="btn-primary-sm" type="button" @click="onClickCreateLink()">
                     <i class="xi-file-add"></i><span class="sr-only">regist</span>
                 </button>
                 </span>
@@ -143,6 +143,9 @@
             onClickDetailLink(target) {
                 this.$router.push({path: '/targets/targetsDetail/' + target.id})
             },
+            onClickCreateLink(){
+                this.$router.push({path: '/targets/targetsRegist/'})
+            }
 
         },
     };

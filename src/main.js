@@ -6,10 +6,30 @@ import axios from "@/utils/axios.js";
 import Default from "./layout/Default.vue";
 import upperFirst from "lodash/upperFirst";
 import camelCase from "lodash/camelCase";
-
-import Vuelidate from "vuelidate";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "@mdi/font/css/materialdesignicons.css";
+
+
+
+/*
+vee-validate 3.3 설정
+ */
+import { ValidationObserver, ValidationProvider, extend, localize } from 'vee-validate'; //
+import ko from 'vee-validate/dist/locale/ko.json';
+import * as rules from 'vee-validate/dist/rules';
+
+
+// install rules and localization
+Object.keys(rules).forEach(rule => {
+    extend(rule, rules[rule]);
+});
+
+localize('ko', ko);
+
+// Install components globally
+Vue.component('ValidationObserver', ValidationObserver);
+Vue.component('ValidationProvider', ValidationProvider);
+
 
 const requireComponent = require.context(
     // 컴포넌트들이 있는 폴더
@@ -140,6 +160,6 @@ Vue.prototype.$axios = axios;
 new Vue({
     router,
     store,
-    Vuelidate,
     render: (h) => h(App),
 }).$mount("#app");
+

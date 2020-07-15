@@ -21,26 +21,18 @@
                 <total-record-count :result-list="resultList"/>
             </div>
             <div class="group-item">
-                <!--                <button class="btn-outline-secondary-sm" type="button" data-toggle="tooltip" data-placement="top"-->
-                <!--                        title="" ng-click="remove()" ng-disabled="!modelHandler.hasSelectedItems()"-->
-                <!--                        ng-confirm-click="정보를 삭제합니다. 삭제된 정보는 복구할 수 없습니다." disabled="disabled"-->
-                <!--                        data-original-title="삭제삭제">-->
-                <!--                    <i class="xi-trash"></i><span class="sr-only">삭제</span>-->
-                <!--                </button>-->
-
-                
                 <span
                         data-toggle="tooltip"
                         data-placement="top"
                         title=""
                         data-original-title="연구과제 등록"
                 >
-          <button
-                  class="btn-primary-sm"
-                  type="button"
-                  ng-click="onClickCreateLink()"
-          >
-            <i class="xi-file-add"></i><span class="sr-only">등록</span>
+                <button
+                        class="btn-primary-sm"
+                        type="button"
+                        @click="onClickCreateLink()"
+                >
+          <i class="xi-file-add"></i><span class="sr-only">등록</span>
           </button>
         </span>
             </div>
@@ -210,6 +202,9 @@
             onClickDetailLink(project) {
                 this.$router.push({path: "/project/projectsDetail/" + project.id});
             },
+            onClickCreateLink(){
+                this.$router.push({path: "/project/projectsRegist/"});
+            }
         },
     };
 </script>
