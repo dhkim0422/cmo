@@ -17,7 +17,7 @@
                                 <th class="form-group required control-label">
                                     <label>{{ isCreateForm() ? "연구대상자 고유정보" : "등록번호" }}</label>
                                 </th>
-                                <td v-show="!isCreateForm()">{{ model.accession }}</td>
+                                <td v-show="!isCreateForm()">{{ this.model.accession }}</td>
                                 <th class="form-group required control-label" v-show="!isCreateForm()">
                                     <label>
                                         연구대상자 고유번호
@@ -79,7 +79,8 @@
                                 </label></th>
                                 <td>
                                     <validation-provider rules="required" v-slot="{ errors }">
-                                        <select class="form-control" placeholder="성별을_선택하세요" v-model="model.gender" name="성별">
+                                        <select class="form-control" placeholder="성별을 선택하세요" v-model="model.gender"
+                                                name="성별">
                                             <option value="">선택</option>
                                             <option v-for="code in codes.GEN" :value="code.code">
                                                 {{ code.name }}
@@ -99,7 +100,7 @@
                                         <div class="custom-control custom-radio custom-control-inline"
                                              v-for="code in codes.offerAgreeYn">
 
-                                            <input  type="radio" :value="code.code"
+                                            <input type="radio" :value="code.code"
                                                    name="제3자 정보제공 동의서"
                                                    v-model="model.agreeProvide"
 
@@ -180,15 +181,29 @@
                 }
             },
             async submit() {
-                this.$refs.form.validate().then(success => {
-                    if (!success) {
-                        console.log(this.model)
-                    }
+                //벨리데이션 체크 여부 확인
+                const success = await this.$refs.form.validate()
+                //벨리데이션 문제가 없으면 저장 실행
+                if (success) {
+                    const insertData = await axios.post('/isg-oreo/api/clinic-targets', this.model)
+                    console.log('insertData', insertData)
+                    this.model = insertData.data
+                    await this.$alert(
+                        '',
+                        '저장되었습니다.',
+                        'info'
+                    );
+                    this.$router.go(-1)
+
+                } else {
+                    this.$alert(
+                        '출력된 경고 처리 후 진행이 가능합니다.',
+                        '입력한 내용을 확인해 주세요',
+                        'error'
+                    );
+                }
 
 
-
-
-                })
             }
         }
     }
