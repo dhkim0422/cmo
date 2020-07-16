@@ -8,18 +8,6 @@ Vue.use(Router);
 const Login = () => {
   return import("@/views/Login.vue");
 };
-const ResistanceGenes = () => {
-  return import("@/views/ResistanceGenes.vue");
-};
-const ResistanceGenesDetail = () => {
-  return import("@/views/ResistanceGenesDetail.vue");
-};
-const ResistanceGenesRegister = () => {
-  return import("@/views/ResistanceGenesRegister.vue");
-};
-const VueTree = () => {
-  return import("@/views/VueTree.vue");
-};
 
 const requireAuth = (returnPath) => (from, to, next) => {
   const isAuthenticated = false;
