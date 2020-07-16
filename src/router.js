@@ -96,13 +96,18 @@ export default new Router({
     },
     {
       path: "/storage/storageList",
-      name: "StorageList",
+      name: "storageList",
       component: () => import("./views/storage/StorageList"),
     },
     {
-      path: "/storage/storageDetail/:id",
-      name: "StorageDetail",
+      path: "/storage/storageDetail/:id?",
+      name: "storageDetail",
       component: () => import("./views/storage/StorageDetail"),
+    },
+    {
+      path: "/storage/storagePosition/:id",
+      name: "storagePosition",
+      component: () => import("./views/storage/StoragePosition"),
     },
   ],
 });
