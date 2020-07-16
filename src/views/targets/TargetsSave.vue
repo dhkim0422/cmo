@@ -121,7 +121,7 @@
 
                     <!-- modal-footer -->
                     <div class="modal-footer">
-                        <button type="reset" class="btn-outline-secondary" data-dismiss="modal">
+                        <button type="reset" class="btn-outline-secondary" @click="cancle" >
                             취소하기
                         </button>
                         <button type="submit" class="btn-primary">
@@ -142,8 +142,12 @@
 
         created() {
             this.codes = this.$store.getters.getCodes
-            this.initCodeData()
-            console.log('code', this.codes)
+            this.initData()
+
+
+
+
+
         },
         computed: {},
         data() {
@@ -164,10 +168,11 @@
             }
         },
         methods: {
-            isCreateForm() {
-                return this.model.accession == ''
+            isCreateForm() {//true 면 등록 false 면 수정
+                let accession = this.model.accession
+                return (typeof accession == "undefined" || accession == null || accession == "")
             },
-            async initCodeData() {
+            async initData() {
                 let codeList = ['GEN']
                 let dataList = {}
                 for (const item of codeList) {
@@ -179,13 +184,28 @@
                     this.codes[item] = codeData.data.data.resultList
                     console.log(' ' + item, this.codes)
                 }
+
+                let paramId = this.$route.params.id
+                if(!(typeof paramId == "undefined" || paramId == null || paramId == "")){
+                    let targetsData = await axios.get('/isg-oreo/api/clinic-targets/' + paramId, {});
+                    this.model = targetsData.data
+                }
+
             },
             async submit() {
                 //벨리데이션 체크 여부 확인
                 const success = await this.$refs.form.validate()
                 //벨리데이션 문제가 없으면 저장 실행
                 if (success) {
-                    const insertData = await axios.post('/isg-oreo/api/clinic-targets', this.model)
+                    let insertData = ""
+                    if(this.isCreateForm()){
+                        console.log('C')
+                        insertData = await axios.post('/isg-oreo/api/clinic-targets', this.model)
+                    }else{
+                        console.log('U')
+                        insertData = await axios.put('/isg-oreo/api/clinic-targets/'+this.model.id, this.model)
+                    }
+
                     console.log('insertData', insertData)
                     this.model = insertData.data
                     await this.$alert(
@@ -202,8 +222,9 @@
                         'error'
                     );
                 }
-
-
+            },
+            cancle(){
+                this.$router.go(-1)
             }
         }
     }

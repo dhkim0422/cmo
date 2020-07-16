@@ -73,6 +73,11 @@ export default new Router({
             component: () => import('./views/targets/TargetsSave')
         },
         {
+            path: '/targets/targetsUpdate/:id/',
+            name: 'targets-detail',
+            component: () => import('./views/targets/TargetsSave')
+        },
+        {
             path: '/project/projectList',
             name: 'project list',
             component: () => import('./views/project/ProjectList.vue')
