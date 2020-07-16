@@ -8,19 +8,24 @@
       <div class="group-item">
         <div class="info">
           전체
-          <span class="num">{{ this.resultList.data.total }}</span>개, 페이지
-          <span class="num">{{ this.resultList.data.currentPage }}</span> /
-          <span class="num">{{ this.resultList.data.numberOfRows }}</span>
+          <span class="num">{{ this.response.data.total }}</span
+          >개, 페이지
+          <span class="num">{{ this.response.data.currentPage }}</span> /
+          <span class="num">{{ this.response.data.numberOfRows }}</span>
         </div>
       </div>
       <div class="group-item">
-        <button class="btn-outline-secondary-sm" type="button">
+        <button
+          class="btn-outline-secondary-sm"
+          type="button"
+          @click="onDelete"
+        >
           <i class="xi-trash"></i>
           <span class="sr-only">삭제</span>
         </button>
         <select
           @change="selectList"
-          v-model="resultList.data.numberOfRows"
+          v-model="response.data.numberOfRows"
           class="length"
           aria-invalid="false"
         >
@@ -29,8 +34,8 @@
           <option label="50개씩 보기" value="50">50개씩 보기</option>
           <option label="100개씩 보기" value="100">100개씩 보기</option>
         </select>
-        <span data-toggle="tooltip" data-placement="top" title="연구대상자 등록">
-          <button class="btn-primary-sm" type="button" ng-click="onClickCreateLink()">
+        <span title="저장고 등록">
+          <button class="btn-primary-sm" type="button" @click="onAdd">
             <i class="xi-file-add"></i>
             <span class="sr-only">등록</span>
           </button>
@@ -57,37 +62,49 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-if="resultList.data.list.length == 0">
+        <tr v-if="response.data.list.length == 0">
           <td colspan="8" class="text-center">데이터가 없습니다.</td>
         </tr>
-        <tr v-else v-for="(item, index) in resultList.data.list" :key="`result${index}`">
+        <tr
+          v-else
+          v-for="(item, index) in response.data.list"
+          :key="`result${index}`"
+        >
           <td class="custom-checkbox" style="min-width: 65px;">
-            <input type="checkbox" :id="`chkBody${index}`" class="custom-control-input" />
+            <input
+              type="checkbox"
+              :id="`chkBody${index}`"
+              :value="item.no"
+              v-model="checkedValues"
+              class="custom-control-input"
+            />
             <label class="custom-control-label" :for="`chkBody${index}`">
               <span class="sr-only">선택</span>
             </label>
           </td>
           <td>
-            <a class="link-more" @click="onClickDetailLink(item)">
-              {{
-              item.accession
-              }}
+            <a class="link-more" @click="onDetail(item)">
+              {{ item.no }}
             </a>
           </td>
-          <td>{{ item.target.accession }}</td>
-          <td>{{ item.target.genderName }}</td>
-          <td>{{ item.uniqueNo }}</td>
-          <td>{{ item.origin.name }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.type.name }}</td>
+          <td class="text-left">
+            <a class="link-more" @click="onPosition(item)">
+              {{ item.type | type }}
+            </a>
+          </td>
+          <td class="text-left">{{ item.name }}</td>
+          <td>{{ item.rack }}</td>
+          <td>{{ item.sector }}</td>
+          <td>{{ item.box }}</td>
+          <td>{{ item.tube == "9" ? "9 X 9" : "5 X 5" }}</td>
         </tr>
       </tbody>
     </table>
     <Pagination
       @changePageNo="changePageNo"
       :currentPageNo="currentPageNo"
-      :totalRecordCount="resultList.data.total"
-      :pageUnit="resultList.data.numberOfRows"
+      :totalRecordCount="response.data.total"
+      :pageUnit="response.data.numberOfRows"
     ></Pagination>
   </div>
 </template>
@@ -99,12 +116,13 @@ import axios from "../../utils/axios";
 export default {
   name: "StorageList",
   components: {
-    searchBox
+    searchBox,
   },
   data() {
     return {
       currentPageNo: 1,
-      resultList: {
+      checkedValues: [],
+      response: {
         data: {
           total: 0,
           currentPage: 0,
@@ -115,18 +133,27 @@ export default {
           target: {},
           origin: {},
           collectLocal: {},
-          type: {}
-        }
+          type: {},
+        },
       },
       filters: {
         //해당 내역을 서치박스의 셀렉트 리스트가 생성됩니다.
         fields: [
           { id: "", name: "전체" },
-          { id: "name", name: "저장고명" }
+          { id: "name", name: "저장고명" },
         ],
-        params: {}
-      }
+        params: {},
+      },
     };
+  },
+  filters: {
+    type(value) {
+      if (!value) return "";
+      return value === "100" ? "질소탱크" : "초저온냉동고";
+    },
+  },
+  created() {
+    this.selectList({});
   },
   methods: {
     //Pagination 컴포넌트의 change emit
@@ -138,15 +165,31 @@ export default {
       let url = "/isg-oreo/api/storages";
       let params = param;
 
-      params["rowSize"] = this.resultList.data.numberOfRows;
+      params["currentPage"] = this.currentPageNo;
+      params["rowSize"] = this.response.data.numberOfRows;
       params["firstIndex"] =
-        (this.currentPageNo - 1) * this.resultList.data.numberOfRows;
+        (this.currentPageNo - 1) * this.response.data.numberOfRows;
 
-      this.resultList = await axios.get(url, { params: params });
+      this.response = await axios.get(url, { params });
     },
-    onClickDetailLink(target) {
-      this.$router.push({ path: "/samples/SamplesDetail/" + target.id });
-    }
-  }
+    onPosition(item) {
+      this.$router.push({ path: `/storage/storagePosition/${item.no}` });
+    },
+    async onDelete() {
+      if (this.checkedValues.length > 0) {
+        for (const item of this.checkedValues) {
+          await axios.delete(`/isg-oreo/api/storages/${item}`);
+        }
+        this.currentPageNo = 1;
+        await this.selectList({});
+      }
+    },
+    onAdd() {
+      this.$router.push({ path: `/storage/storageDetail` });
+    },
+    onDetail(item) {
+      this.$router.push({ path: `/storage/storageDetail/${item.no}` });
+    },
+  },
 };
 </script>
