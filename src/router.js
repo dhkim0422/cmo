@@ -106,7 +106,7 @@ export default new Router({
     {
       path: "/samples/SamplesRegist/",
       name: "샘플 등록",
-      component: () => import("./views/samples/SamplesDetail"),
+      component: () => import("./views/samples/SamplesMerge"),
     },
 
     {
