@@ -63,11 +63,7 @@ export default new Router({
       name: "targets-detail",
       component: () => import("./views/targets/TargetDetail.vue"),
     },
-    {
-      path: "/targets/targetsRegist/",
-      name: "targets-detail",
-      component: () => import("./views/targets/TargetsMerge"),
-    },
+
     {
       path: "/targets/targetsUpdate/:id/",
       name: "targets-detail",

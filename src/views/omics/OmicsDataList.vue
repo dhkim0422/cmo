@@ -18,7 +18,7 @@
                             <i class="xi-angle-right" v-show="isPublicScope()"></i>
                         </a>
                     </div>
-                    <div class="block" v-hide="isPublicScope()">
+                    <div class="block" v-show="!isPublicScope()">
 				<span class="data-status"  v-show="isRegistScope()">
 					<i :class="icon(item)"></i><span>{{ label(item) }}</span>
 				</span>

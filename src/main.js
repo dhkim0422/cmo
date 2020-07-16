@@ -6,9 +6,17 @@ import axios from "@/utils/axios.js";
 import Default from "./layout/Default.vue";
 import upperFirst from "lodash/upperFirst";
 import camelCase from "lodash/camelCase";
-import "material-design-icons-iconfont/dist/material-design-icons.css";
-import "@mdi/font/css/materialdesignicons.css";
 
+
+/*
+부트스트랩
+*/
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+Vue.use(BootstrapVue)
+Vue.use(BootstrapVueIcons)
 /*
 alert 셋팅
 */
@@ -68,7 +76,7 @@ requireComponent.keys().forEach((fileName) => {
     );
 });
 
-let Bootstrap = require("bootstrap");
+
 import moment from "moment";
 
 Vue.component("default-layout", Default);

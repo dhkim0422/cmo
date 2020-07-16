@@ -85,8 +85,10 @@
 
     export default {
         name: "TargetsDetail",
+        props: ['targetId'],
         data() {
             return {
+
                 model: {},
                 summary: {
                     study: 0,
@@ -97,7 +99,7 @@
             }
         },
         async created() {
-            let id = this.$route.params.id
+            //let id = this.targetId
             await this.initData(id)
         },
         methods: {
@@ -108,18 +110,18 @@
                 this.summary = summayrData.data
             },
             onClickChangeLink() {
-                this.$router.push('/targets/targetsUpdate/' + this.$route.params.id)
+                this.$router.push('/targets/targetsUpdate/' + this.targetId)
             },
             async remove() {
-                const response = await axios.delete('/isg-oreo/api/clinic-targets/' + this.$route.params.id, {});
+                const response = await axios.delete('/isg-oreo/api/clinic-targets/' + this.targetId, {});
                 console.log(response)
-                if(response.status == 200){
+                if (response.status == 200) {
                     await this.$alert(
                         '',
                         response.data.accession + '가 삭제 되었습니다.',
                         'info'
                     );
-                }else{
+                } else {
                     await this.$alert(
                         '문제가 계속 발생하면 관리자에게 문의해 주세요',
                         '다시 시도 해주세요',

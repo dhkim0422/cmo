@@ -138,16 +138,16 @@
     import axios from "../../utils/axios";
 
     export default {
-        name: "TargetsRegist",
-
+        name: "TargetsMerge",
+        props:['target'],
         created() {
             this.codes = this.$store.getters.getCodes
-            this.initData()
+            //this.initData()
+        },
+        watch: {
+            data(newValue, oldValue) {
 
-
-
-
-
+            }
         },
         computed: {},
         data() {

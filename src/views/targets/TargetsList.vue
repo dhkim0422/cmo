@@ -1,12 +1,19 @@
 <template>
     <div class="container">
+        <!-- 등록 팝업  -->
 
+
+        <div class="modal fade" v-show="isMerge">
+            <targets-merge  :target-info="target"/>
+        </div>
         <!-- 검색폼 -->
         <search-box :filters="filters" @searchClick="changeParams"></search-box>
+
+
         <!-- 검색 목록 -->
         <div class="filter-group">
             <div class="group-item">
-                <total-record-count :result-list="resultList" />
+                <total-record-count :result-list="resultList"/>
             </div>
             <div class="group-item">
                 <button class="btn-outline-secondary-sm" type="button"
@@ -39,7 +46,8 @@
             <tr>
                 <th class="custom-checkbox">
                     <input type="checkbox" id="chkTargetAll" class="custom-control-input"
-                           ng-model="modelHandler.checkedAll" ng-change="modelHandler.selectAll(modelHandler.checkedAll)" />
+                           ng-model="modelHandler.checkedAll"
+                           ng-change="modelHandler.selectAll(modelHandler.checkedAll)"/>
                     <label class="custom-control-label" for="chkTargetAll"><span class="sr-only">전체선택</span></label>
                 </th>
                 <th>등록번호</th>
@@ -57,7 +65,7 @@
                 <td class="custom-checkbox">
                     <input type="checkbox" id="chkTrgt" class="custom-control-input"
                            checklist-model="modelHandler.selectedIdList" checklist-value="item.id"
-                           ng-change="modelHandler.select()" />
+                           ng-change="modelHandler.select()"/>
                     <label class="custom-control-label" for="chkTrgt"><span class="sr-only">select</span></label>
                 </td>
                 <td><a class="link-more" @click="onClickDetailLink(item);">{{ item.accession }}</a></td>
@@ -74,27 +82,41 @@
                 :totalRecordCount="resultList.data.total"
                 :pageUnit="resultList.data.numberOfRows"
         ></Pagination>
+
+        <div>
+            <b-button v-b-modal.modal-1>Launch demo modal</b-button>
+            <b-modal id="modal-1" title="BootstrapVue" class="modal fade">
+                <p class="my-4">Hello from modal!</p>
+            </b-modal>
+        </div>
+
     </div>
 </template>
 
 <script>
-    import searchBox from '../../components/SearchBox'
     import axios from "../../utils/axios";
+    import searchBox from '../../components/SearchBox'
     import TotalRecordCount from "../../components/TotalRecordCount";
+    import TargetsDetail from "./TargetDetail";
+    import TargetsMerge from "./TargetsMerge";
 
     export default {
         name: 'TargetsList',
         components: {
+            TargetsMerge,
+            TargetsDetail,
             TotalRecordCount,
             searchBox
         },
         data() {
             return {
-
-                summary:{
-                    study:0,
-                    omics:0,
-                    omicsFile:0
+                isMerge: false,
+                isDetail: false,
+                target: {},
+                summary: {
+                    study: 0,
+                    omics: 0,
+                    omicsFile: 0
                 },
                 filter: {
                     keyword: '',
@@ -116,17 +138,30 @@
                         {id: 'age', name: '나이'}
                     ]
                 },
-                params:{}
+                params: {}
 
             }
 
         },
         methods: {
+            //화면 변경에 따른
+            onInfoamtionChange(flag) {
+                this.isMerge = false
+                this.isDetail = false
+                console.log(flag)
+                if (flag != 'R' ) {
+
+                    this.isMerge = true
+                } else {
+                    console.log('R')
+                    this.isDetail = true
+                }
+            },
             //Pagination 컴포넌트의 change emit
             changePageNo(pageNo) {
                 this.resultList.data.currentPage = pageNo
 
-                console.log('page' , this.resultList.data.currentPage +",,,"+ pageNo)
+                console.log('page', this.resultList.data.currentPage + ",,," + pageNo)
                 this.selectList();
             },
             changeParams(params) {
@@ -141,12 +176,15 @@
                 this.resultList = await axios.get(url, {params: this.params});
             },
             onClickDetailLink(target) {
-                this.$router.push({path: '/targets/targetsDetail/' + target.id})
-            },
-            onClickCreateLink(){
-                this.$router.push({path: '/targets/targetsRegist/'})
-            }
 
+                this.target = target
+                this.onInfoamtionChange('R')
+
+            },
+            onClickCreateLink() {
+                //this.$router.push({path: '/targets/targetsRegist/'})
+                this.onInfoamtionChange('C')
+            }
         },
     };
 </script>
