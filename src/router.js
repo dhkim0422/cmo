@@ -70,12 +70,12 @@ export default new Router({
         {
             path: '/targets/targetsRegist/',
             name: 'targets-detail',
-            component: () => import('./views/targets/TargetsSave')
+            component: () => import('./views/targets/TargetsMerge')
         },
         {
             path: '/targets/targetsUpdate/:id/',
             name: 'targets-detail',
-            component: () => import('./views/targets/TargetsSave')
+            component: () => import('./views/targets/TargetsMerge')
         },
         {
             path: '/project/projectList',
@@ -104,6 +104,16 @@ export default new Router({
         {
             path: '/samples/SamplesDetail/:id',
             name: 'Samples-detail',
+            component: () => import('./views/samples/SamplesDetail')
+        },
+        {
+            path: '/samples/SamplesUpdate/:id',
+            name: '샘플 수정',
+            component: () => import('./views/samples/SamplesMerge')
+        },
+        {
+            path: '/samples/SamplesRegist/',
+            name: '샘플 등록',
             component: () => import('./views/samples/SamplesDetail')
         },
 
