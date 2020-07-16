@@ -64,6 +64,16 @@ export default new Router({
       component: () => import("./views/targets/TargetDetail.vue"),
     },
     {
+      path: "/targets/targetsRegist/",
+      name: "targets-detail",
+      component: () => import("./views/targets/TargetsSave"),
+    },
+    {
+      path: "/targets/targetsUpdate/:id/",
+      name: "targets-detail",
+      component: () => import("./views/targets/TargetsSave"),
+    },
+    {
       path: "/project/projectList",
       name: "project list",
       component: () => import("./views/project/ProjectList.vue"),
@@ -93,6 +103,11 @@ export default new Router({
       path: "/omics/omics/",
       name: "omics",
       component: () => import("./views/omics/OmicsMain"),
+    },
+    {
+      path: "/omics/omicsDetail/:id",
+      name: "Omics Detail",
+      component: () => import("./views/omics/OmicsDetail"),
     },
     {
       path: "/storage/storageList",

@@ -6,18 +6,14 @@
         <!-- 검색 목록 -->
         <div class="filter-group">
             <div class="group-item">
-                <div class="info">
-                    전체 <span class="num">{{this.resultList.data.total}}</span>개,
-                    페이지 <span class="num">{{this.resultList.data.currentPage}}</span> /
-                    <span class="num">{{this.resultList.data.total / this.resultList.data.numberOfRows }}</span>
-                </div>
+                <total-record-count :result-list="resultList" />
             </div>
             <div class="group-item">
                 <button class="btn-outline-secondary-sm" type="button"
                         data-toggle="tooltip" data-placement="top" title="del"
                         ng-click="remove()" ng-disabled="!modelHandler.hasSelectedItems()"
                         ng-confirm-click="confirmDel">
-                    <i class="xi-trash"></i><span class="sr-only">del</span>
+                    <i class="xi-trash"></i><span class="sr-only">삭제</span>
                 </button>
                 <select
                         @change="selectList"
@@ -31,7 +27,7 @@
                     <option label="100개씩 보기" value="100">100개씩 보기</option>
                 </select>
                 <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
-                <button class="btn-primary-sm" type="button" ng-click="onClickCreateLink()">
+                <button class="btn-primary-sm" type="button" @click="onClickCreateLink()">
                     <i class="xi-file-add"></i><span class="sr-only">regist</span>
                 </button>
                 </span>
@@ -84,10 +80,12 @@
 <script>
     import searchBox from '../../components/SearchBox'
     import axios from "../../utils/axios";
+    import TotalRecordCount from "../../components/TotalRecordCount";
 
     export default {
         name: 'TargetsList',
         components: {
+            TotalRecordCount,
             searchBox
         },
         data() {
@@ -145,6 +143,9 @@
             onClickDetailLink(target) {
                 this.$router.push({path: '/targets/targetsDetail/' + target.id})
             },
+            onClickCreateLink(){
+                this.$router.push({path: '/targets/targetsRegist/'})
+            }
 
         },
     };

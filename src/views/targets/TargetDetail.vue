@@ -33,7 +33,7 @@
             <div class="group-item">
                 <span data-toggle="tooltip" data-placement="top" title="연구대상자 삭제">
                 <button class="btn-outline-secondary-sm" type="button"
-                        ng-disabled="!removable()" ng-click="remove()"
+                        ng-disabled="!removable()" @click="remove()"
                         ng-confirm-click="정보를 삭제합니다. 삭제된 정보는 복구할 수 없습니다.">
                 <i class="xi-trash"></i><span class="sr-only">삭제</span>
                 </button>
@@ -108,6 +108,26 @@
                 this.summary = summayrData.data
             },
             onClickChangeLink() {
+                this.$router.push('/targets/targetsUpdate/' + this.$route.params.id)
+            },
+            async remove() {
+                const response = await axios.delete('/isg-oreo/api/clinic-targets/' + this.$route.params.id, {});
+                console.log(response)
+                if(response.status == 200){
+                    await this.$alert(
+                        '',
+                        response.data.accession + '가 삭제 되었습니다.',
+                        'info'
+                    );
+                }else{
+                    await this.$alert(
+                        '문제가 계속 발생하면 관리자에게 문의해 주세요',
+                        '다시 시도 해주세요',
+                        'error'
+                    );
+                }
+                this.$router.go(-1)
+
 
             }
         },

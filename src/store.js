@@ -66,10 +66,21 @@ export default new Vuex.Store({
             Microarray: 'Microarray',
             Metabolome: 'Metabolome',
             Proteome: 'Proteome',
+        },
+        codes:{
+            useAt : [ { code : 'Y', name : '사용' }, { code : 'N', name : '미사용' } ],
+            //정보제공동의서 여부
+            offerAgreeYn : [ { code : true, name : '있음' }, { code : false, name : '없음' } ],
+            readLayout : ["Single-end", "Paired-end", "Mate-pair" ], 	// NGS Read Layout
+            replicateType : ["None", "Biological replicate", "Experimental replicate" ],  // 반복실험 유형
+            analyzer : ["Magnetic sector", "Double-focusing", "Quadrupole", "TOF(time of flight)"],	// 대사체 Analyzer
+            spectrometry : ["Gas chromatography/Mass chromatography", "Liquid chromatography/Mass chromatography", "etc" ],	// 대사체 질방분석 유형
         }
-
     },
     getters: {
+        getCodes(state){
+            return state.codes
+        },
         geteCodeArr(state) {
             return state.codeArr
         },
@@ -167,7 +178,7 @@ export default new Vuex.Store({
                 })
             }
             console.log('codeList', dataList)
-            commit('updateLoginAt', dataList)
+            //commit('updateLoginAt', dataList)
 
         },
         setIsLoginAt({commit}, payload) {
