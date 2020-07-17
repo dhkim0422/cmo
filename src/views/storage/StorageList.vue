@@ -55,9 +55,9 @@
           <th>번호</th>
           <th>저장고구분</th>
           <th>저장고명</th>
-          <th>랙</th>
-          <th>섹터</th>
-          <th>박스</th>
+          <th>랙(X축)</th>
+          <th>섹터(Y축)</th>
+          <th>박스(Z축)</th>
           <th>튜브크기</th>
         </tr>
       </thead>
