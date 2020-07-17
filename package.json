@@ -15,7 +15,6 @@
     "@mdi/font": "^5.3.45",
     "@riophae/vue-treeselect": "0.0.38",
     "axios": "^0.18.0",
-    "bootstrap": "^3.4.1",
     "bootstrap-vue": "^2.15.0",
     "cache-loader": "^4.1.0",
     "chart.js": "^2.9.3",
@@ -44,7 +43,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.7.0",
     "@vue/cli-service": "^3.7.0",
-    "bootstrap-sass": "^3.4.1",
+
     "css-loader": "^2.1.1",
     "deepmerge": "^4.2.2",
     "electron": "^9.0.0",

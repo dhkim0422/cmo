@@ -39,9 +39,10 @@
                 </button>
                 </span>
                 <span data-toggle="tooltip" data-placement="top" title="연구대상자 수정">
-                <button class="btn-primary-sm" type="button" @click="onClickChangeLink()">
-                    <i class="xi-pen"></i><span class="sr-only">삭제</span>
-                </button>
+                    <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary">
+                        <i class="xi-file-add"></i><span class="sr-only">수정</span>
+                    </b-button>
+                    <targets-merge :target-info="model"/>
                 </span>
             </div>
         </div>
@@ -82,10 +83,11 @@
 
 <script>
     import axios from "../../utils/axios";
+    import TargetsMerge from "./TargetsMerge";
 
     export default {
         name: "TargetsDetail",
-        props: ['targetId'],
+        components: {TargetsMerge},
         data() {
             return {
 
@@ -99,7 +101,7 @@
             }
         },
         async created() {
-            //let id = this.targetId
+            let id = this.$route.params.id
             await this.initData(id)
         },
         methods: {
@@ -110,10 +112,10 @@
                 this.summary = summayrData.data
             },
             onClickChangeLink() {
-                this.$router.push('/targets/targetsUpdate/' + this.targetId)
+                this.$router.push('/targets/targetsUpdate/' + id)
             },
             async remove() {
-                const response = await axios.delete('/isg-oreo/api/clinic-targets/' + this.targetId, {});
+                const response = await axios.delete('/isg-oreo/api/clinic-targets/' + id, {});
                 console.log(response)
                 if (response.status == 200) {
                     await this.$alert(

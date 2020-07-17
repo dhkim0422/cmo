@@ -1,11 +1,7 @@
 <template>
     <div class="container">
-        <!-- 등록 팝업  -->
 
 
-        <div class="modal fade" v-show="isMerge">
-            <targets-merge  :target-info="target"/>
-        </div>
         <!-- 검색폼 -->
         <search-box :filters="filters" @searchClick="changeParams"></search-box>
 
@@ -22,21 +18,17 @@
                         ng-confirm-click="confirmDel">
                     <i class="xi-trash"></i><span class="sr-only">삭제</span>
                 </button>
-                <select
-                        @change="selectList"
-                        v-model="resultList.data.numberOfRows"
-                        class="length"
-                        aria-invalid="false"
-                >
-                    <option label="10개씩 보기" value="10">10개씩 보기</option>
-                    <option label="25개씩 보기" value="25">25개씩 보기</option>
-                    <option label="50개씩 보기" value="50">50개씩 보기</option>
-                    <option label="100개씩 보기" value="100">100개씩 보기</option>
-                </select>
+                <!-- 로우수를 넘겨주며 기본값을 10으로 설정 -->
+                <page-unit :page-unit="resultList.data.numberOfRows = 10" @onChangePageUnit="onChangePageUnit"></page-unit>
                 <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
-                <button class="btn-primary-sm" type="button" @click="onClickCreateLink()">
-                    <i class="xi-file-add"></i><span class="sr-only">regist</span>
-                </button>
+                    <!--등록은 id=registPopup 로연결되어 있음 -->
+                    <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary">
+                        <i class="xi-file-add"></i><span class="sr-only">등록</span>
+                    </b-button>
+                    <!--등록을 위한 페잊 컴포넌트-->
+                    <targets-merge :target-info="target" @insertOK="selectList"/>
+                <div>
+                </div>
                 </span>
             </div>
         </div>
@@ -83,12 +75,6 @@
                 :pageUnit="resultList.data.numberOfRows"
         ></Pagination>
 
-        <div>
-            <b-button v-b-modal.modal-1>Launch demo modal</b-button>
-            <b-modal id="modal-1" title="BootstrapVue" class="modal fade">
-                <p class="my-4">Hello from modal!</p>
-            </b-modal>
-        </div>
 
     </div>
 </template>
@@ -99,10 +85,12 @@
     import TotalRecordCount from "../../components/TotalRecordCount";
     import TargetsDetail from "./TargetDetail";
     import TargetsMerge from "./TargetsMerge";
+    import PageUnit from "../../components/PageUnit";
 
     export default {
         name: 'TargetsList',
         components: {
+            PageUnit,
             TargetsMerge,
             TargetsDetail,
             TotalRecordCount,
@@ -144,46 +132,30 @@
 
         },
         methods: {
-            //화면 변경에 따른
-            onInfoamtionChange(flag) {
-                this.isMerge = false
-                this.isDetail = false
-                console.log(flag)
-                if (flag != 'R' ) {
-
-                    this.isMerge = true
-                } else {
-                    console.log('R')
-                    this.isDetail = true
-                }
-            },
             //Pagination 컴포넌트의 change emit
             changePageNo(pageNo) {
                 this.resultList.data.currentPage = pageNo
-
-                console.log('page', this.resultList.data.currentPage + ",,," + pageNo)
-                this.selectList();
+                this.selectList(pageNo);
+            },
+            onChangePageUnit(unit) {
+                this.resultList.data.numberOfRows = unit
+                this.selectList()
             },
             changeParams(params) {
                 this.params = params;
-                this.selectList();
+                this.selectList()
             },
-            async selectList() {
+            async selectList(page = 1) {
                 let url = '/isg-oreo/api/clinic-targets'
                 this.params["rowSize"] = this.resultList.data.numberOfRows;
                 this.params["firstIndex"] = (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows;
-                this.params['currentPage'] = this.resultList.data.currentPage
+                this.params['currentPage'] = page
                 this.resultList = await axios.get(url, {params: this.params});
             },
             onClickDetailLink(target) {
-
                 this.target = target
-                this.onInfoamtionChange('R')
+                this.$router.push({path: '/targets/targetsDetail/' + target.id})
 
-            },
-            onClickCreateLink() {
-                //this.$router.push({path: '/targets/targetsRegist/'})
-                this.onInfoamtionChange('C')
             }
         },
     };

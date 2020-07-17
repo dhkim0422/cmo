@@ -21,10 +21,6 @@ export default {
     //HelloWorld,
     HeaderBar,
     FooterBar
-  },
-
-  mounted: function() {
-    console.log('default')
   }
 }
 </script>
