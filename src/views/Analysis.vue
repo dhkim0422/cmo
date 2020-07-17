@@ -32,12 +32,10 @@
 import { mapGetters} from 'vuex'
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 import BarChart from "./chart/BarChart";
-import { Bar } from 'vue-chartjs'
 export default {
 
   name: 'Analysis',
   components: {
-    Spinner,
     BarChart
   },
   data:() => ({
