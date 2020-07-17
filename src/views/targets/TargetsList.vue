@@ -12,70 +12,62 @@
                 <total-record-count :result-list="resultList"/>
             </div>
             <div class="group-item">
-                <button class="btn-outline-secondary-sm" type="button"
-                        data-toggle="tooltip" data-placement="top" title="del"
-                        ng-click="remove()" ng-disabled="!modelHandler.hasSelectedItems()"
-                        ng-confirm-click="confirmDel">
+                <b-button lass="btn-outline-secondary-sm" title="삭제" @click="remove">
                     <i class="xi-trash"></i><span class="sr-only">삭제</span>
-                </button>
+                </b-button>
                 <!-- 로우수를 넘겨주며 기본값을 10으로 설정 -->
-                <page-unit :page-unit="resultList.data.numberOfRows = 10" @onChangePageUnit="onChangePageUnit"></page-unit>
+                <page-unit :page-unit="resultList.data.numberOfRows"
+                           @onChangePageUnit="onChangePageUnit"></page-unit>
                 <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
                     <!--등록은 id=registPopup 로연결되어 있음 -->
                     <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary">
                         <i class="xi-file-add"></i><span class="sr-only">등록</span>
                     </b-button>
                     <!--등록을 위한 페잊 컴포넌트-->
-                    <targets-merge :target-info="target" @insertOK="selectList"/>
+                    <targets-merge @insertOK="selectList"/>
                 <div>
                 </div>
                 </span>
             </div>
         </div>
 
-        <table class="data-table">
-            <thead>
-            <tr>
-                <th class="custom-checkbox">
-                    <input type="checkbox" id="chkTargetAll" class="custom-control-input"
-                           ng-model="modelHandler.checkedAll"
-                           ng-change="modelHandler.selectAll(modelHandler.checkedAll)"/>
-                    <label class="custom-control-label" for="chkTargetAll"><span class="sr-only">전체선택</span></label>
-                </th>
-                <th>등록번호</th>
-                <th>연구대상자_고유번호</th>
-                <th>나이</th>
-                <th>성별</th>
-                <th>샘플개수</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-show="resultList.data.list.length == 0">
-                <td colspan="7" class="text-center">nodata</td>
-            </tr>
-            <tr v-for="item in resultList.data.list">
-                <td class="custom-checkbox">
-                    <input type="checkbox" id="chkTrgt" class="custom-control-input"
-                           checklist-model="modelHandler.selectedIdList" checklist-value="item.id"
-                           ng-change="modelHandler.select()"/>
-                    <label class="custom-control-label" for="chkTrgt"><span class="sr-only">select</span></label>
-                </td>
-                <td><a class="link-more" @click="onClickDetailLink(item);">{{ item.accession }}</a></td>
-                <td><a class="link-more" @click="onClickDetailLink(item);">{{ item.uniqueNo }}</a></td>
-                <td>{{ (item.unknownAge == 'true') ? '나이불명' : item.age }}</td>
-                <td>{{ item.genderName }}</td>
-                <td></td>
-            </tr>
-            </tbody>
-        </table>
-        <Pagination
-                @changePageNo="changePageNo"
-                :currentPageNo="resultList.data.currentPage"
-                :totalRecordCount="resultList.data.total"
-                :pageUnit="resultList.data.numberOfRows"
-        ></Pagination>
 
+        <b-table
+                ref="selectableTable"
+                selectable
+                select-mode="multi"
+                :items="items"
+                :fields="fields"
+                @row-selected="onRowSelected"
 
+        >
+            <template v-slot:cell(selected)="{ rowSelected }">
+                <template v-if="rowSelected">
+                    <span aria-hidden="true">&check;</span>
+                    <span class="sr-only">Selected</span>
+                </template>
+                <template v-else>
+                    <span aria-hidden="true">&nbsp;</span>
+                    <span class="sr-only">Not selected</span>
+                </template>
+            </template>
+            <template v-slot:cell(accession)="data">
+                <a :href="'target' + data.item.id" >{{data.value}}</a>
+            </template>
+            <template v-slot:cell(agreeProvide)="data">
+                {{data.value == true ? '있음' : '없음'}}
+            </template>
+            <template v-slot:cell(age)="data">
+                {{data.item.unknownAge  == true ? '나이불명' : data.value}}
+            </template>
+
+        </b-table>
+        <b-col class="my-1">
+            <b-pagination v-model="resultList.data.currentPage" :per-page="resultList.data.numberOfRows"
+                          :total-rows="resultList.data.total" size="sm" align="center"
+                          @change="changePageNo"
+            />
+        </b-col>
     </div>
 </template>
 
@@ -98,9 +90,33 @@
         },
         data() {
             return {
+                fields: [
+                    {
+                        key: 'selected',
+                        label: '선택'
+                    },
+                    {key: 'accession'},
+                    {
+                        key: 'uniqueNo',
+                        label: '고유대상 번호'
+                    },
+                    {
+                        key: 'age',
+                        label: '나이'
+                    },
+                    {
+                        key: 'agreeProvide',
+                        label: '동의여부'
+
+                    },
+                    {
+                        key: 'genderName',
+                        label: '성별'
+                    }
+                ],
+                items: [],
                 isMerge: false,
                 isDetail: false,
-                target: {},
                 summary: {
                     study: 0,
                     omics: 0,
@@ -126,12 +142,15 @@
                         {id: 'age', name: '나이'}
                     ]
                 },
-                params: {}
-
+                params: {},
+                selected: []
             }
 
         },
         methods: {
+            onRowSelected(items) {
+                this.selected = items
+            },
             //Pagination 컴포넌트의 change emit
             changePageNo(pageNo) {
                 this.resultList.data.currentPage = pageNo
@@ -146,17 +165,30 @@
                 this.selectList()
             },
             async selectList(page = 1) {
+
                 let url = '/isg-oreo/api/clinic-targets'
                 this.params["rowSize"] = this.resultList.data.numberOfRows;
                 this.params["firstIndex"] = (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows;
                 this.params['currentPage'] = page
                 this.resultList = await axios.get(url, {params: this.params});
+                this.items = this.resultList.data.list
             },
             onClickDetailLink(target) {
-                this.target = target
                 this.$router.push({path: '/targets/targetsDetail/' + target.id})
 
+            },
+            async remove() {
+                console.log("????", this.selected)
+                let url = '/isg-oreo/api/clinic-targets?action=REMOVE'
+                let response = await axios.put(url, this.selected);
+
+                console.log(response)
+                let message = response.errorList.total != 0 ? response.successList.total + '건 처리 되었습니다.' : '문제가 발생하였습니다.'
+                let icon = response.errorList.total != 0 ? 'info' : 'error'
+                this.$alert('', message, icon);
+                this.selectList()
             }
         },
+
     };
 </script>

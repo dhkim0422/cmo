@@ -100,12 +100,14 @@
         </tr>
       </tbody>
     </table>
-    <Pagination
-      @changePageNo="changePageNo"
-      :currentPageNo="currentPageNo"
-      :totalRecordCount="response.data.total"
-      :pageUnit="response.data.numberOfRows"
-    ></Pagination>
+    <b-pagination v-model="resultList.data.currentPage"
+                  :per-page="resultList.data.numberOfRows"
+                  :total-rows="resultList.data.total"
+                  size="sm"
+                  align="center"
+                  @change="changePageNo"
+    />
+
   </div>
 </template>
 

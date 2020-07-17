@@ -7,5 +7,12 @@
 <script>
     export default {
         props: ['groupCode'],
+        data() {
+            return {
+                code: {}
+            }
+        },``
+        created() {
+        }
     };
 </script>
