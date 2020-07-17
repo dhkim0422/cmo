@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="registPopup" size="xl" title="연구대상자">
+    <b-modal id="registPopup" size="xl" :title="this.title" hide-footer>
         <div class="container" id="content">
             <div class="wizard-content">
                 <validation-observer ref="form">
@@ -26,8 +26,8 @@
                                     </th>
                                     <td :colspan="isCreateForm() ? 3 : 1 ">
 
-                                        <validation-provider rules="required" v-slot="{ errors }">
-                                            <input class="form-control"
+                                        <validation-provider rules="required"  v-slot="{ errors }">
+                                            <b-form-input class="form-control"
                                                    type="text"
                                                    title="연구대상자 고유번호"
                                                    name="연구대상자 고유번호"
@@ -47,30 +47,24 @@
                                     <td>
                                         <div class="date-range">
                                             <div class="date-input-group">
-                                                <validation-provider rules="required" v-slot="{ errors }">
-                                                    <input class="form-control"
-                                                           type="text"
-                                                           title="나이"
-                                                           name="나이"
-                                                           placeholder="작성하여주세요"
-                                                           v-model="model.age"
-                                                           :disabled="model.unknownAge"
-                                                           maxlength="3"/>
-                                                    <span>{{ errors[0] }}</span>
-                                                </validation-provider>
-
+                                                <b-form-input v-model="model.age"
+                                                              :disabled="model.unknownAge"
+                                                              title="나이"
+                                                              name="나이"
+                                                              placeholder="작성하여주세요1"/>
                                             </div>
                                             <div class="date-range-dash"></div>
                                             <div class="date-input-group">
                                                 <div class="custom-checkbox">
-                                                    <input type="checkbox" id="chk-unknown-age"
-                                                           class="custom-control-input"
-                                                           v-model="model.unknownAge"
 
-                                                    />
-                                                    <label class="custom-control-label" for="chk-unknown-age">
+                                                    <b-form-checkbox
+                                                            id="chk-unknown-age"
+                                                            v-model="model.unknownAge"
+                                                    >
                                                         나이불명
-                                                    </label>
+                                                    </b-form-checkbox>
+
+
                                                 </div>
                                             </div>
                                         </div>
@@ -100,7 +94,7 @@
 
 
                                             <b-form-radio v-model="model.agreeProvide" name="제3자 정보제공 동의서"
-                                                          value="code.code">{{code.name}} >
+                                                          value="code.code">{{code.name}}
                                             </b-form-radio>
 
                                             <span>{{ errors[0] }}</span>
@@ -135,22 +129,21 @@
         props: ['targetInfo'],
         created() {
             this.codes = this.$store.getters.getCodes
-            this.target = this.targetInfo
+            this.title = (this.targetInfo === undefined ? '연구대상자 등록' : '연구대상자 수정')
             this.initData()
         },
         computed: {},
         data() {
             return {
-                target: {},
-                model: {},
+                title: '',
+                model: {id: ''},
                 codes: {}
 
             }
         },
         methods: {
             isCreateForm() {//true 면 등록 false 면 수정
-                let val = this.target.id
-                return (typeof val == "undefined" || val == null || val == "")
+                return this.targetInfo === undefined
             },
             async initData() {
                 let codeList = ['GEN']
@@ -163,8 +156,8 @@
                 }
 
 
-                if (this.isCreateForm()) {
-                    let targetsData = await axios.get('/isg-oreo/api/clinic-targets/' + this.targetInfo.id, {});
+                if (!this.isCreateForm()) {
+                    let targetsData = await axios.get('/isg-oreo/api/clinic-targets/' + this.model.id, {});
                     this.model = targetsData.data
                 }
 
@@ -186,6 +179,7 @@
                         '저장되었습니다.',
                         'info'
                     );
+                    this.close()
 
                 } else {
                     await this.$alert(
@@ -196,7 +190,7 @@
 
                 }
                 this.$emit('insertOK', 'OK')
-                this.close()
+
             },
             close() {
                 this.$bvModal.hide('registPopup')
