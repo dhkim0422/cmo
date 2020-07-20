@@ -22,7 +22,7 @@
               @click="onStep(index + 1)"
             >
               <div class="step">{{ index + 1 }}</div>
-              <div class="label h6">{{ item }}</div>
+              <div class="label">{{ item }}</div>
             </div>
             <hr
               v-if="index + 1 < headerSteps.length"
@@ -269,6 +269,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-right: 10px;
 }
 .label {
   color: #556889a3;
