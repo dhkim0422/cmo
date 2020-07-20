@@ -18,16 +18,18 @@
                                     <th class="form-group required control-label">
                                         <label>{{ isCreateForm() ? "연구대상자 고유정보" : "등록번호" }}</label>
                                     </th>
-                                    <td v-show="!isCreateForm()">{{ this.model.accession }}</td>
+                                    <td v-show="!isCreateForm()">{{ model.accession }}</td>
+                                </tr>
+                                <tr>
                                     <th class="form-group required control-label" v-show="!isCreateForm()">
                                         <label>
                                             연구대상자 고유번호
                                         </label>
                                     </th>
-                                    <td :colspan="isCreateForm() ? 3 : 1 ">
+                                    <td>
 
-                                        <validation-provider rules="required"  v-slot="{ errors }">
-                                            <b-form-input class="form-control"
+                                        <validation-provider rules="required" v-slot="{ errors }">
+                                            <input class="form-control"
                                                    type="text"
                                                    title="연구대상자 고유번호"
                                                    name="연구대상자 고유번호"
@@ -47,31 +49,41 @@
                                     <td>
                                         <div class="date-range">
                                             <div class="date-input-group">
-                                                <b-form-input v-model="model.age"
-                                                              :disabled="model.unknownAge"
-                                                              title="나이"
-                                                              name="나이"
-                                                              placeholder="작성하여주세요1"/>
+                                                <validation-provider rules="required" v-slot="{ errors }">
+                                                    <input class="form-control"
+                                                           type="text"
+                                                           title="나이"
+                                                           name="나이"
+                                                           placeholder="작성하여주세요"
+                                                           v-model="model.age"
+                                                           :disabled="model.unknownAge"
+                                                           maxlength="3"/>
+                                                    <span>{{ errors[0] }}</span>
+                                                </validation-provider>
+
                                             </div>
                                             <div class="date-range-dash"></div>
                                             <div class="date-input-group">
                                                 <div class="custom-checkbox">
+                                                    <input type="checkbox" id="chk-unknown-age"
+                                                           class="custom-control-input"
+                                                           v-model="model.unknownAge"
 
-                                                    <b-form-checkbox
-                                                            id="chk-unknown-age"
-                                                            v-model="model.unknownAge"
-                                                    >
+                                                    />
+                                                    <label class="custom-control-label" for="chk-unknown-age">
                                                         나이불명
-                                                    </b-form-checkbox>
-
-
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <th scope="row" class="form-group required control-label"><label>
-                                        성별
-                                    </label></th>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="form-group required control-label">
+                                        <label>
+                                            성별
+                                        </label>
+                                    </th>
                                     <td>
                                         <validation-provider rules="required" v-slot="{ errors }">
                                             <select class="form-control" placeholder="성별을 선택하세요" v-model="model.gender"
@@ -86,18 +98,23 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th scope="row" class="form-group required control-label"><label>
-                                        제3자 정보제공 동의서
-                                    </label></th>
+                                    <th scope="row" class="form-group required control-label">
+                                        <label>
+                                            제3자 정보제공 동의서
+                                        </label>
+                                    </th>
                                     <td colspan="3">
                                         <validation-provider rules="required" v-slot="{ errors }">
-
-
-                                            <b-form-radio v-model="model.agreeProvide" name="제3자 정보제공 동의서"
-                                                          value="code.code">{{code.name}}
-                                            </b-form-radio>
-
+                                            <div>
+                                                <input type="radio" v-model="model.agreeProvide" name="제3자 정보제공 동의서"
+                                                       :value="true"/>
+                                                <label>있음</label>
+                                                <input type="radio" v-model="model.agreeProvide" name="제3자 정보제공 동의서"
+                                                       :value="false"/>
+                                                <label>없음</label>
+                                            </div>
                                             <span>{{ errors[0] }}</span>
+
                                         </validation-provider>
                                     </td>
                                 </tr>
@@ -129,66 +146,76 @@
         props: ['targetInfo'],
         created() {
             this.codes = this.$store.getters.getCodes
-            this.title = (this.targetInfo === undefined ? '연구대상자 등록' : '연구대상자 수정')
+            this.title = (this.isCreateForm() ? '연구대상자 등록' : '연구대상자 수정')
             this.initData()
         },
         computed: {},
         data() {
             return {
                 title: '',
-                model: {id: ''},
+                model: {
+                    accession: '',
+                    age: '',
+                    agreeProvide: true,
+                    birthday: '',
+                    gender: '',
+                    genderName: '',
+                    id: '',
+                    registDate: 0,
+                    registUser: {},
+                    uniqueNo: '',
+                    unknownAge: false
+                },
                 codes: {}
-
             }
         },
         methods: {
             isCreateForm() {//true 면 등록 false 면 수정
+
                 return this.targetInfo === undefined
             },
             async initData() {
-                let codeList = ['GEN']
-                let dataList = {}
-                for (const item of codeList) {
 
-                    let url = '/isg-oreo/ajax/codeGroups/' + item
-                    let codeData = await axios.get(url, {})
-                    this.codes[item] = codeData.data.data.resultList
-                }
-
+                //공통코드 로드
+                let url = '/isg-oreo/ajax/codeGroups/GEN'
+                let codeData = await axios.get(url, {})
+                this.codes['GEN'] = codeData.data.data.resultList
 
                 if (!this.isCreateForm()) {
-                    let targetsData = await axios.get('/isg-oreo/api/clinic-targets/' + this.model.id, {});
+
+                    let targetsData = await axios.get('/isg-oreo/api/clinic-targets/' + this.targetInfo.id, {});
                     this.model = targetsData.data
                 }
 
             },
             async submit() {
                 //벨리데이션 체크 여부 확인
-                const success = await this.$refs.form.validate()
+                //const success = await this.$refs.form.validate()
                 //벨리데이션 문제가 없으면 저장 실행
-                if (success) {
-                    let insertData = ""
-                    if (this.isCreateForm()) { //없데이트 유무를 검사하여 진행
-                        insertData = await axios.post('/isg-oreo/api/clinic-targets', this.model)
-                    } else {
-                        insertData = await axios.put('/isg-oreo/api/clinic-targets/' + this.model.id, this.model)
-                    }
-                    this.model = insertData.data //인서트 혹은 업데이트 후 등록 변경된 내역을 조회 후 내려준다.
-                    await this.$alert(
-                        '',
-                        '저장되었습니다.',
-                        'info'
-                    );
-                    this.close()
-
+                //if (success) {
+                let insertData = ""
+                if (this.isCreateForm()) { //없데이트 유무를 검사하여 진행
+                    insertData = await axios.post('/isg-oreo/api/clinic-targets', this.model)
                 } else {
-                    await this.$alert(
-                        '출력된 경고 처리 후 진행이 가능합니다.',
-                        '입력한 내용을 확인해 주세요',
-                        'error'
-                    );
-
+                    insertData = await axios.put('/isg-oreo/api/clinic-targets/' + this.model.id, this.model)
                 }
+                this.model = insertData.data //인서트 혹은 업데이트 후 등록 변경된 내역을 조회 후 내려준다.
+                await this.$alert(
+                    '',
+                    '저장되었습니다.',
+                    'info'
+                );
+                this.close()
+
+                //} else {
+                /*  await this.$alert(
+                      '출력된 경고 처리 후 진행이 가능합니다.',
+                      '입력한 내용을 확인해 주세요',
+                      'error'
+                  );
+                  */
+                //}
+                //완료 이벤트 부모 컴포넌트에 이벤트로 전달
                 this.$emit('insertOK', 'OK')
 
             },

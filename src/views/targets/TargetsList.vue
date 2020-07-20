@@ -36,6 +36,7 @@
                 ref="selectableTable"
                 selectable
                 select-mode="multi"
+                class="data-table"
                 :items="items"
                 :fields="fields"
                 @row-selected="onRowSelected"
@@ -52,7 +53,7 @@
                 </template>
             </template>
             <template v-slot:cell(accession)="data">
-                <a :href="'target' + data.item.id" >{{data.value}}</a>
+                <a :href="'targetsDetail/' + data.item.id" >{{data.value}}</a>
             </template>
             <template v-slot:cell(agreeProvide)="data">
                 {{data.value == true ? '있음' : '없음'}}
