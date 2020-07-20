@@ -35,11 +35,18 @@
                     <span class="sr-only">삭제</span>
                 </button>
                 </span>
-                <span data-toggle="tooltip" data-placement="top" title="연구샘플 수정">
+                <!--<span data-toggle="tooltip" data-placement="top" title="연구샘플 수정">
                 <button class="btn-primary-sm" type="button" @click="onClickChangeLink()">
                     <i class="xi-pen"></i>
                     <span class="sr-only">수정</span>
                 </button>
+                </span>-->
+                <span data-toggle="tooltip" data-placement="top" title="연구샘플 수정">
+                    <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary" @click="showUpdataPage()">
+                        <i class="xi-pen"></i><span class="sr-only">수정</span>
+                    </b-button>
+                    <!--크리에이티드에 로드를 하도록 설정되어있어 v-if 로 처리 -->
+                    <SamplesMerge :target-info="model" @saveOK="updateOK" v-if="isUpdate"/>
                 </span>
             </div>
         </div>
@@ -50,7 +57,7 @@
             <tr>
                 <th>등록번호</th>
                 <td>{{ model.accession }}</td>
-                <th>연구샘플 unit no</th>
+                <th>연구샘플 고유번호</th>
                 <td>{{ model.uniqueNo }}</td>
             </tr>
             <tr>
@@ -112,15 +119,18 @@
 </template>
 <script>
     import axios from "../../utils/axios";
+    import SamplesMerge from "./SamplesMerge";
 
     export default {
         name: "SamplesDetail",
+        components: {SamplesMerge},
         async created() {
-            let id = this.$route.params.id
-            await this.initData(id)
+
+            await this.initData()
         },
         data() {
             return {
+                isUpdate: false,
                 summary: {
                     study: 0,
                     omics: 0,
@@ -164,12 +174,20 @@
             remove() {
 
             },
-            async initData(id) {
+            showUpdataPage() {
+
+            },
+            updateOK() {
+                this.initData();//수정된 내역을 다시 리로드
+                this.isUpdate = false//업데이트 팝업을 제거
+            },
+            async initData() {
+                let id = this.$route.params.id
                 let projectData = await axios.get('/isg-oreo/api/clinic-samples/' + id, {});
                 let summayrData = await axios.get('/isg-oreo/statistics/summary/samples/' + id, {});
                 this.model = projectData.data
                 this.summary = summayrData.data
-                console.log('summayrData',summayrData.data)
+                console.log('summayrData', summayrData.data)
             }
 
         },

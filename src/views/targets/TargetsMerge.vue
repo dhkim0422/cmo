@@ -14,20 +14,19 @@
                                     연구 대상자 기본정보
                                 </caption>
                                 <tbody>
-                                <tr>
+                                <tr v-if="!isCreateForm()">
                                     <th class="form-group required control-label">
-                                        <label>{{ isCreateForm() ? "연구대상자 고유정보" : "등록번호" }}</label>
+                                        <label>등록번호</label>
                                     </th>
-                                    <td v-show="!isCreateForm()">{{ model.accession }}</td>
+                                    <td >{{ model.accession }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="form-group required control-label" v-show="!isCreateForm()">
+                                    <th class="form-group required control-label" >
                                         <label>
                                             연구대상자 고유번호
                                         </label>
                                     </th>
                                     <td>
-
                                         <validation-provider rules="required" v-slot="{ errors }">
                                             <input class="form-control"
                                                    type="text"
@@ -103,7 +102,7 @@
                                             제3자 정보제공 동의서
                                         </label>
                                     </th>
-                                    <td colspan="3">
+                                    <td>
                                         <validation-provider rules="required" v-slot="{ errors }">
                                             <div>
                                                 <input type="radio" v-model="model.agreeProvide" name="제3자 정보제공 동의서"
@@ -114,7 +113,6 @@
                                                 <label>없음</label>
                                             </div>
                                             <span>{{ errors[0] }}</span>
-
                                         </validation-provider>
                                     </td>
                                 </tr>
@@ -216,7 +214,7 @@
                   */
                 //}
                 //완료 이벤트 부모 컴포넌트에 이벤트로 전달
-                this.$emit('insertOK', 'OK')
+                this.$emit('saveOK', 'OK')
 
             },
             close() {

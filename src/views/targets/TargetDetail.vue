@@ -43,7 +43,7 @@
                         <i class="xi-file-add"></i><span class="sr-only">수정</span>
                     </b-button>
                     <!--크리에이티드에 로드를 하도록 설정되어있어 v-if 로 처리 -->
-                    <targets-merge :target-info="model" @insertOK="insertOK" v-if="isUpdate"/>
+                    <targets-merge :target-info="model" @saveOK="insertOK" v-if="isUpdate"/>
                 </span>
             </div>
         </div>

@@ -14,8 +14,8 @@
 
 <script>
     export default {
-        //props: ['pageUnit'],
-        pageUnit: { type: Number, required: true },
+        props: ['pageUnit'],
+
         name: 'PageUnit',
         methods: {
             onChangePageUnit() {

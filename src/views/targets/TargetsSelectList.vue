@@ -1,41 +1,28 @@
 <template>
     <div class="container">
-
-
-        <!-- 검색폼 -->
-        <search-box :filters="filters" @searchClick="changeParams"></search-box>
-
-
         <!-- 검색 목록 -->
         <div class="filter-group">
             <div class="group-item">
                 <total-record-count :result-list="resultList"/>
             </div>
             <div class="group-item">
-                <b-button lass="btn-outline-secondary-sm" title="삭제" @click="remove">
-                    <i class="xi-trash"></i><span class="sr-only">삭제</span>
-                </b-button>
+                <input class="search-input" type="text" placeholder="검색어"
+                       v-model="params.keywokd" @keydown.enter="selectList()"/>
+                <button class="search-btn" @click="selectList()">
+                    <span class="sr-only">조회</span>
+                    <i class="xi-search"/>
+                </button>
+
                 <!-- 로우수를 넘겨주며 기본값을 10으로 설정 -->
                 <page-unit :page-unit="resultList.data.numberOfRows"
                            @onChangePageUnit="onChangePageUnit"></page-unit>
-                <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
-                    <!--등록은 id=registPopup 로연결되어 있음 -->
-                    <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary">
-                        <i class="xi-file-add"></i><span class="sr-only">등록</span>
-                    </b-button>
-                    <!--등록을 위한 페잊 컴포넌트-->
-                    <targets-merge @saveOK="selectList"/>
-                <div>
-                </div>
-                </span>
+
             </div>
         </div>
-
-
         <b-table
                 ref="selectableTable"
                 selectable
-                select-mode="multi"
+                select-mode="single"
                 class="data-table"
                 :items="items"
                 :fields="fields"
@@ -51,9 +38,6 @@
                     <span aria-hidden="true">&nbsp;</span>
                     <span class="sr-only">Not selected</span>
                 </template>
-            </template>
-            <template v-slot:cell(accession)="data">
-                <a :href="'targetsDetail/' + data.item.id" >{{data.value}}</a>
             </template>
             <template v-slot:cell(agreeProvide)="data">
                 {{data.value == true ? '있음' : '없음'}}
@@ -81,7 +65,8 @@
     import PageUnit from "../../components/PageUnit";
 
     export default {
-        name: 'TargetsList',
+        name: 'TargetsSelectList',
+        props:['selectType'],
         components: {
             PageUnit,
             TargetsMerge,
@@ -143,14 +128,15 @@
                         {id: 'age', name: '나이'}
                     ]
                 },
-                params: {},
+                params: {keyword:""},
                 selected: []
             }
 
         },
         methods: {
             onRowSelected(items) {
-                this.selected = items
+                this.$emit('targetSelect' ,items)
+
             },
             //Pagination 컴포넌트의 change emit
             changePageNo(pageNo) {
@@ -167,28 +153,22 @@
             },
             async selectList(page = 1) {
 
+
                 let url = '/isg-oreo/api/clinic-targets'
                 this.params["rowSize"] = this.resultList.data.numberOfRows;
+
+
+                for (const item of this.filters.fields) {
+                    this.params['fileld'] = ['targetNo','uniqueNo','birthday','age']
+                }
+
                 this.params["firstIndex"] = (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows;
                 this.params['currentPage'] = page
                 this.resultList = await axios.get(url, {params: this.params});
                 this.items = this.resultList.data.list
             },
-            onClickDetailLink(target) {
-                this.$router.push({path: '/targets/targetsDetail/' + target.id})
 
-            },
-            async remove() {
-                console.log("????", this.selected)
-                let url = '/isg-oreo/api/clinic-targets?action=REMOVE'
-                let response = await axios.put(url, this.selected);
 
-                console.log(response)
-                let message = response.errorList.total != 0 ? response.successList.total + '건 처리 되었습니다.' : '문제가 발생하였습니다.'
-                let icon = response.errorList.total != 0 ? 'info' : 'error'
-                this.$alert('', message, icon);
-                this.selectList()
-            }
         },
 
     };
