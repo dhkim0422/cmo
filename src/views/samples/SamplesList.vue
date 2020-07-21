@@ -21,7 +21,7 @@
                         <i class="xi-file-add"></i><span class="sr-only">등록</span>
                     </b-button>
                     <!--등록을 위한 페잊 컴포넌트-->
-                    <samples-merge @saveOK="selectList" v-if="isRegist"/>
+                    <samples-merge  :samples-info="'REG'" @saveOK="selectList" v-if="isRegist"/>
                 <div>
                 </div>
                 </span>
@@ -162,9 +162,16 @@
 
                 this.isRegist = false
                 let url = "/isg-oreo/api/clinic-samples";
-                this.params["rowSize"] = this.resultList.data.numberOfRows;
-                this.params["firstIndex"] = 1;
-                this.params['currentPage'] = page
+
+
+
+                const params = new URLSearchParams();
+                for
+                params.append('firstIndex',1)
+
+                params.append('rowSize',this.resultList.data.numberOfRows)
+                params.append('firstIndex',1)
+                params.append('currentPage',page)
                 this.resultList = await axios.get(url, {params: this.params});
                 this.items = this.resultList.data.list
             },
@@ -173,11 +180,20 @@
             },
             onClickCreateLink() {
                 this.isRegist=true
-                console.log("?????? 등록 ")
-                this.$router.push({path: "/samples/SamplesRegist"});
             },
-            remove() {
+            async remove() {
+                if (this.selected.length == 0) {
+                    this.$alert('', "선태된 내역이 없습니다.", 'error');
+                    return;
+                }
 
+                await this.$confirm('', "선태된 삭제 하시겠습니까?", 'error');
+                let url = '/isg-oreo/api/clinic-samples?action=REMOVE'
+                let response = await axios.put(url, this.selected);
+
+                this.$alert('', '삭제 처리 되었습니다', 'info');
+
+                this.selectList()
             },
 
         },

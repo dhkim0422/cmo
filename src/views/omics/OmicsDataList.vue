@@ -7,7 +7,7 @@
                         <div class="custom-checkbox" style="width: 270px">
                             <input type="checkbox" class="custom-control-input"/>
                             <label class="custom-control-label">
-                                <!--i :class="this.$store.state.symbol(item)"></i-->
+                                <i :class="symbol(item)"></i>
                                 {{ item.accession }}
                             </label>
                         </div>
@@ -15,16 +15,17 @@
                     <div class="block">
                         <a class="link-text" @click="onClickDetailLink(item)" title="상세보기">
                             {{ item.name }}
-                            <i class="xi-angle-right" v-show="isPublicScope()"></i>
                         </a>
                     </div>
-                    <div class="block" v-show="!isPublicScope()">
-				<span class="data-status"  v-show="isRegistScope()">
-					<i :class="icon(item)"></i><span>{{ label(item) }}</span>
-				</span>
-                        <span class="data-status" >
-					<span>{{ label(item) }}</span>
-				</span>
+
+                    <div class="block" v-show="!isPublicScope(item)">
+                        <span class="data-status" v-show="isRegistScope(item)">
+                            <i :class="icon(item)"></i>
+                            <span>{{ label(item) }}</span>
+                        </span>
+                        <span class="data-status">
+					        <span>{{ label(item) }}</span>
+				        </span>
                     </div>
                 </div>
             </div>
@@ -59,7 +60,11 @@
                     </tr>
                     <tr>
                         <th scope="row">파일 종류</th>
-                        <td>{{ fileTypes(item) }}</td>
+                        <td>
+                            <span v-for="file in fileTypes(item)">
+                                {{file.name}}
+                            </span>
+                        </td>
                         <th scope="row">파일 용량</th>
                         <td>{{ item.fileTotal }}</td>
                     </tr>
@@ -101,9 +106,13 @@
                     </tr>
                     <tr>
                         <th scope="row">파일 종류</th>
-                        <td>{{ fileTypes(item) }}</td>
+                        <td>
+                            <span v-for="file in fileTypes(item)">
+                                {{file.name}}
+                            </span>
+                        </td>
                         <th scope="row">파일 용량</th>
-                        <td>{{ item.fileTotal }}</td>
+                        <td>{{ item.fileTotal  }}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -143,7 +152,11 @@
                     </tr>
                     <tr>
                         <th scope="row">파일 종류</th>
-                        <td>{{ fileTypes(item) }}</td>
+                        <td>
+                            <span v-for="file in fileTypes(item)">
+                                {{file.name}}
+                            </span>
+                        </td>
                         <th scope="row">파일 용량</th>
                         <td>{{ item.fileTotal }}</td>
                     </tr>
@@ -174,7 +187,7 @@
         name: "OmicsDataList",
         created() {
         },
-        props: ['resultList','omicsType'],
+        props: ['resultList', 'omicsType'],
         data() {
             return {
                 LABEL: 1,
@@ -195,26 +208,34 @@
             ,
             fileTypes(omics) {
                 var types = [];
+                if(omics.rawdataTypes != undefined) {
+                    types = types.concat(omics.rawdataTypes.filter(function(el) {
+                        return el.selected
+                    }));
+                };
 
-                if (omics.length === 0) {
-                    return types
-                }
-                types = types.concat(omics.processedTypes.filter(function (el) {
-                    return el.selected;
-                }));
+                if(omics.processedTypes != undefined) {
+                    types = types.concat(omics.processedTypes.filter(function(el) {
+                        return el.selected
+                    }));
+                };
+
+                return types;
             },
-            isPublicScope() {
-                return ""
+            isPublicScope(omics) {
+
+                return true
             },
-            isRegistScope() {
-                return false
+            isRegistScope(omics) {
+                return true
             },
             onClickDetailLink(item) {
                 this.$router.push({path: "/omics/omicsDetail/" + item.id})
             },
 
-            isOpend(omics){
-              return true
+            isOpend(omics) {
+                if (omics.s)
+                    return true
             },
             label: function (omics) {
                 return this.isOpend(omics) ? "공개" : "비공개"
@@ -226,9 +247,9 @@
                 return this.isOpend(omics) ? "data-step-3" : "data-step-1";
             },
             symbol: function (omics) {
-                if (self.isNgs(omics)) {
+                if (this.isNgs(omics)) {
                     return "xi-chip";
-                } else if (self.isMicroarray(omics)) {
+                } else if (this.isMicroarray(omics)) {
                     return "xi-spa";
                 } else {
                     return "xi-chart-pie";

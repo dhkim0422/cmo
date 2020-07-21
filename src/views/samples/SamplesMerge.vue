@@ -154,7 +154,7 @@
             this.initData()
         },
         watch:{
-            samplesInfo(newProps){
+            samplesInfo(newz){
                 this.initData()
             }
         },

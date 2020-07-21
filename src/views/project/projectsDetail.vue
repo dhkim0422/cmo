@@ -40,24 +40,20 @@
                 </div>
                 <div class="group-item">
                 <span
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="연구과제 삭제"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="연구과제 삭제"
                 >
-                    <button
-                        class="btn-outline-secondary-sm"
-                        type="button"
-                        @click="remove()"
-                    >
-                        <i class="xi-trash"></i><span class="sr-only"> del </span>
-                    </button>
+                    <b-button lass="btn-outline-secondary-sm" title="삭제" @click="remove">
+                        <i class="xi-trash"></i><span class="sr-only">삭제</span>
+                    </b-button>
                 </span>
-                <span data-toggle="tooltip" data-placement="top" title="연구과제 수정">
-                    <b-button class="btn-primary-sm" v-b-modal.projectPopup variant="primary" >
+                    <span data-toggle="tooltip" data-placement="top" title="연구과제 수정">
+                    <b-button class="btn-primary-sm" v-b-modal.projectPopup variant="primary">
                         <i class="xi-file-add"></i><span class="sr-only">수정</span>
                     </b-button>
-                    <!--크리에이티드에 로드를 하도록 설정되어있어 v-if 로 처리 -->
-                    <project-merge :project-info="model" @saveOK="updateOK" />
+                        <!--크리에이티드에 로드를 하도록 설정되어있어 v-if 로 처리 -->
+                    <project-merge :project-info="model" @saveOK="updateOK"/>
                 </span>
                 </div>
             </div>
@@ -158,8 +154,8 @@
         data() {
             return {
                 model: {
-                    projectStatus:{},
-                    unitProgram:'',
+                    projectStatus: {},
+                    unitProgram: '',
 
                 },
                 summary: {
@@ -185,8 +181,27 @@
                 this.model = projectData.data;
                 this.summary = summayrData.data;
             },
-            updateOK(){
+            updateOK() {
                 this.initData()
+            },
+            async remove() {
+                let id = this.$route.params.id;
+                const response = await axios.delete('/isg-oreo/api/projects/' + id, {});
+                console.log(response)
+                if (response.status == 200) {
+                    await this.$alert(
+                        '',
+                        '[' + response.data.accession + ']가 삭제 되었습니다.',
+                        'info'
+                    );
+                } else {
+                    await this.$alert(
+                        '문제가 계속 발생하면 관리자에게 문의해 주세요',
+                        '다시 시도 해주세요',
+                        'error'
+                    );
+                }
+                this.$router.go(-1)
             }
         },
         computed: {},

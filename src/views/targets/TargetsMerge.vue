@@ -142,12 +142,15 @@
     export default {
         name: "TargetsMerge",
         props: ['targetInfo'],
-        created() {
-            this.codes = this.$store.getters.getCodes
-            this.title = (this.isCreateForm() ? '연구대상자 등록' : '연구대상자 수정')
-            this.initData()
+        watch:{//props 새로운 데이터가 들어오면 로드 시켜준다. 
+            targetInfo(newProps){
+                console.log("111111")
+                this.codes = this.$store.getters.getCodes
+                this.title = (this.isCreateForm() ? '연구대상자 등록' : '연구대상자 수정')
+                this.initData()
+
+            }
         },
-        computed: {},
         data() {
             return {
                 title: '',
