@@ -28,34 +28,16 @@
             </li>
         </ul>
 
-
-        <!--<div class="tab-content">
-            <div class="tab-pane fade show" ng-class="tab.top.css(1)">
-                <jsp:include page="TOreoOmicsDataExper.jsp" />
-            </div>
-
-            <div class="tab-pane fade show" ng-class="tab.top.css(2)" ng-controller="OmicsFileController" init="init();">
-                <jsp:include page="TOreoOmicsDataFileList.jsp" />
-            </div>
-        </div>-->
-        <ul class="tab-menu m-t-75">
-            <li class="menu-item active">
-                <a data-toggle="tab" class="menu-link"  href="#tab1">실험 정보</a>
-            </li>
-            <li class="menu-item">
-                <a data-toggle="tab" class="menu-link"  href="#tab2">파일 목록</a>
-            </li>
-        </ul>
-        <div class="tab-content">
-            <div id="tab1" class="tab-pane active">
+        <b-tabs content-class="mt-3">
+            <b-tab title="실험 정보" active class="menu-item">
                 <span class="sr-only">실험 정보 </span>
                 <omics-data-exper :id="this.$route.params.id"/>
-            </div>
-            <div id="tab2" class="tab-pane">
+            </b-tab>
+            <b-tab title="파일 목록"  class="menu-item">
                 <span class="sr-only">파일 목록</span>
                 <omics-data-file-list :id="this.$route.params.id"/>
-            </div>
-        </div>
+            </b-tab>
+        </b-tabs>
     </div>
 
 </template>
@@ -70,7 +52,7 @@
         components: {OmicsDataFileList, OmicsDataExper},
         created() {
             let id = this.$route.params.id;
-            console.log('log', id )
+            console.log('log', id)
             this.initData(id)
         },
         data() {
@@ -85,7 +67,7 @@
         },
         methods: {
             async initData(id) {
-                console.log('log2', id )
+                console.log('log2', id)
                 let summayrData = await axios.get(
                     "/isg-oreo/statistics/summary/omics/" + id,
                     {}

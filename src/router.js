@@ -70,7 +70,7 @@ export default new Router({
     {
       path: "/project/ProjectRegist",
       name: "projects regist",
-      component: () => import("./views/project/ProjectRegist"),
+      component: () => import("./views/project/ProjectMerge"),
     },
     {
       path: "/samples/SamplesList",
@@ -118,5 +118,16 @@ export default new Router({
       name: "storagePosition",
       component: () => import("./views/storage/StoragePosition"),
     },
+    {
+      path: "/omics/omicsReview",
+      name: "omicsReview",
+      component: () => import("./views/review/OmicsReview"),
+    },
+    {
+      path: "/omics/omicsReview/:id",
+      name: "omicsReview Detail",
+      component: () => import("./views/review/OmicsReview"),
+    },
+
   ],
 });

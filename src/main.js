@@ -94,10 +94,23 @@ Vue.filter("htmlSeqFormat", (value) => {
     return value.replace(/(\w{60})/g, "$1<br>");
 });
 
-Vue.filter("date", (value) => {
-    if (value) {
-        return moment(String(value)).format("yyyy-MM-dd");
-    }
+Vue.filter("date", (val) => {
+
+    if(undefined === val) return
+    var date = new Date(val);  //입력 파라메터로 Date 객체를 생성합니다
+
+    var yyyy=date.getFullYear().toString(); // '연도'를 뽑아내고
+    var mm = (date.getMonth()+1).toString(); // '월'을 뽑아내고
+    var dd = date.getDate().toString(); // '일'을 뽑아냅니다
+
+    var Str = '';
+
+    //스트링 배열의 앞자리가 두자리 수가 아닌 한자리 수일 경우
+    // 두자리로 표시하기 위해 0을 채웁니다(lpad 와 동일한 역할)
+    // (ex : '1' -> '01' )
+    Str += yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' +(dd[1] ? dd : '0' + dd[0]);
+
+    return Str;
 });
 
 Vue.filter("byte", (num) => {

@@ -21,20 +21,26 @@
                 <total-record-count :result-list="resultList"/>
             </div>
             <div class="group-item">
-                <span
-                        data-toggle="tooltip"
-                        data-placement="top"
-                        title=""
-                        data-original-title="연구과제 등록"
-                >
-                <button
-                        class="btn-primary-sm"
-                        type="button"
-                        @click="onClickCreateLink()"
-                >
-          <i class="xi-file-add"></i><span class="sr-only">등록</span>
-          </button>
-        </span>
+                <!-- <span
+                         data-toggle="tooltip"
+                         data-placement="top"
+                         title=""
+                         data-original-title="연구과제 등록"
+                 >
+                 <button
+                         class="btn-primary-sm"
+                         type="button"
+                         @click="onClickCreateLink()"
+                 >-->
+                <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
+                    <!--등록은 id=registPopup 로연결되어 있음 -->
+                    <b-button class="btn-primary-sm" v-b-modal.projectPopup variant="primary">
+                        <i class="xi-file-add"></i><span class="sr-only">등록</span>
+                    </b-button>
+                    <!--등록을 위한 페잊 컴포넌트-->
+                     <project-regist @saveOK="selectList"/>
+                </span>
+
             </div>
         </div>
 
@@ -92,7 +98,7 @@
                         <th scope="row">중분야</th>
                         <td>{{ result.middleRealm }}</td>
                         <th scope="row">연구상태</th>
-                        <td>{{ result.projectStatus.name }}</td>
+                        <td>{{ result.projectStatus == undefined ? "상태값 이상" : result.projectStatus.name }}</td>
                     </tr>
                     <tr>
                         <th scope="row">주관기관</th>
@@ -128,18 +134,15 @@
 </template>
 
 <script>
-    import searchBox from "../../components/SearchBox";
     import axios from "../../utils/axios";
-    import TotalRecordCount from "../../components/TotalRecordCount";
+    import ProjectRegist from "./ProjectMerge";
 
     export default {
         name: "ProjectList",
-        components: {
-            TotalRecordCount,
-            searchBox,
-        },
+        components: {ProjectRegist},
         data() {
             return {
+                isRegist: false,
                 currentPageNo: 1,
                 filter: {
                     keyword: "",
@@ -149,7 +152,7 @@
                         total: 0,
                         currentPage: 1,
                         numberOfRows: 10,
-                        list: [],
+                        list: [ ],
                     },
                 },
                 filters: {
@@ -195,6 +198,7 @@
                 this.selectList();
             },
             async selectList() {
+                this.isRegist = false
                 let url = "/isg-oreo/api/projects";
                 this.params["rowSize"] = this.resultList.data.numberOfRows;
                 this.params["firstIndex"] =
@@ -204,8 +208,8 @@
             onClickDetailLink(project) {
                 this.$router.push({path: "/project/projectsDetail/" + project.id});
             },
-            onClickCreateLink(){
-                this.$router.push({path: "/project/projectsRegist/"});
+            onClickCreateLink() {
+                this.isRegist = true
             }
         },
     };

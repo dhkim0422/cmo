@@ -1,7 +1,6 @@
 <template>
     <div class="container">
 
-
         <!-- 검색폼 -->
         <search-box :filters="filters" @searchClick="changeParams"></search-box>
 
@@ -20,13 +19,11 @@
                            @onChangePageUnit="onChangePageUnit"></page-unit>
                 <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
                     <!--등록은 id=registPopup 로연결되어 있음 -->
-                    <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary">
+                    <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary" @click="onClickRegist">
                         <i class="xi-file-add"></i><span class="sr-only">등록</span>
                     </b-button>
                     <!--등록을 위한 페잊 컴포넌트-->
-                    <targets-merge @saveOK="selectList"/>
-                <div>
-                </div>
+                    <targets-merge @saveOK="selectList" v-if="isRegist"/>
                 </span>
             </div>
         </div>
@@ -53,13 +50,13 @@
                 </template>
             </template>
             <template v-slot:cell(accession)="data">
-                <a :href="'targetsDetail/' + data.item.id" >{{data.value}}</a>
+                <a :href="'targetsDetail/' + data.item.id">{{data.value}}</a>
             </template>
             <template v-slot:cell(agreeProvide)="data">
                 {{data.value == true ? '있음' : '없음'}}
             </template>
             <template v-slot:cell(age)="data">
-                {{data.item.unknownAge  == true ? '나이불명' : data.value}}
+                {{data.item.unknownAge == true ? '나이불명' : data.value}}
             </template>
 
         </b-table>
@@ -91,6 +88,7 @@
         },
         data() {
             return {
+                isRegist:false,
                 fields: [
                     {
                         key: 'selected',
@@ -166,7 +164,7 @@
                 this.selectList()
             },
             async selectList(page = 1) {
-
+                this.isRegist=false
                 let url = '/isg-oreo/api/clinic-targets'
                 this.params["rowSize"] = this.resultList.data.numberOfRows;
                 this.params["firstIndex"] = (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows;
@@ -178,18 +176,24 @@
                 this.$router.push({path: '/targets/targetsDetail/' + target.id})
 
             },
+            onClickRegist(){
+              this.isRegist = true
+            },
             async remove() {
-                console.log("????", this.selected)
+
+                await this.$confirm('', "선태된 삭제 하시겠습니까?", 'error');
+
+                if (this.selected.length == 0) {
+                    this.$alert('', "선태된 내역이 없습니다.", 'error');
+                    return;
+                }
                 let url = '/isg-oreo/api/clinic-targets?action=REMOVE'
                 let response = await axios.put(url, this.selected);
 
-                console.log(response)
-                let message = response.errorList.total != 0 ? response.successList.total + '건 처리 되었습니다.' : '문제가 발생하였습니다.'
-                let icon = response.errorList.total != 0 ? 'info' : 'error'
-                this.$alert('', message, icon);
+                this.$alert('', '삭제 처리 되었습니다', 'info');
+
                 this.selectList()
             }
         },
-
     };
 </script>

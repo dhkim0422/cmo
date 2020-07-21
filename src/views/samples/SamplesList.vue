@@ -54,9 +54,7 @@
             <template v-slot:cell(agreeProvide)="data">
                 {{data.value == true ? '있음' : '없음'}}
             </template>
-            <template v-slot:cell(age)="data">
-                {{data.item.unknownAge == true ? '나이불명' : data.value}}
-            </template>
+
         </b-table>
         <b-pagination v-model="resultList.data.currentPage" :per-page="resultList.data.numberOfRows"
                       :total-rows="resultList.data.total" size="sm" align="center"
@@ -175,6 +173,8 @@
             },
             onClickCreateLink() {
                 this.isRegist=true
+                console.log("?????? 등록 ")
+                this.$router.push({path: "/samples/SamplesRegist"});
             },
             remove() {
 

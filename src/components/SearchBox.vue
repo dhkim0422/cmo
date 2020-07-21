@@ -2,13 +2,11 @@
     <div class="search">
         <form @submit.prevent = "searchBoxClick()">
         <div class="dropdown">
-            <button class="dropdown-toggle" type="button" data-toggle="dropdown">{{searchCallback.name}}
-            </button>
-            <ul  class="dropdown-menu">
-                <li v-for="field in filters.fields" role="button" class="dropdown-item" @click="filter_select(field)">
+            <b-dropdown id="dropdown-1" :text="searchCallback.name" class="dropdown-toggle">
+                <b-dropdown-item v-for="field in filters.fields" @click="filter_select(field)">
                     {{field.name}}
-                </li>
-            </ul>
+                </b-dropdown-item>
+            </b-dropdown>
         </div>
         <div class="search-input-group">
             <input class="search-input" type="text" placeholder="검색어" v-model="keyword"
@@ -43,13 +41,13 @@
                 let params  = {keyword:this.keyword , fileld:[]}
                 if(this.searchCallback['id'] === ''){
                     this.filters.fields.map((row,index) =>{
-                        params ['fileld'][index] = row.id
+                        params.fileld[index]=row.id;
                     })
-
+                    params.fileld.shift() //첫번째값 제거
                 }else{
                     params ['fileld'] = this.searchCallback.id
                 }
-                console.log('params',params)
+
                 this.$emit("searchClick", params) //부모에 이벤트로 값을 전달해야 문제가 안된다.
             }
         },

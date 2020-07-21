@@ -36,37 +36,29 @@
 
             <div class="filter-group" style="margin-bottom: 0px;">
                 <div class="group-item">
-                    <h2 class="h2">연구과제_정보</h2>
+                    <h2 class="h2">연구과제정보</h2>
                 </div>
                 <div class="group-item">
-              <span
-                      data-toggle="tooltip"
-                      data-placement="top"
-                      title=" 연구과제_삭제 "
-              >
-                <button
+                <span
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="연구과제 삭제"
+                >
+                    <button
                         class="btn-outline-secondary-sm"
                         type="button"
-                        ng-disabled="!removable()"
-                        ng-click="remove()"
-                        ng-confirm-click=" confirmDel "
-                >
-                  <i class="xi-trash"></i><span class="sr-only"> del </span>
-                </button>
-              </span>
-                    <span
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title=" 연구과제_수정 "
+                        @click="remove()"
                     >
-                <button
-                        class="btn-primary-sm"
-                        type="button"
-                        ng-click="onClickChangeLink()"
-                >
-                  <i class="xi-pen"></i><span class="sr-only"> edit </span>
-                </button>
-              </span>
+                        <i class="xi-trash"></i><span class="sr-only"> del </span>
+                    </button>
+                </span>
+                <span data-toggle="tooltip" data-placement="top" title="연구과제 수정">
+                    <b-button class="btn-primary-sm" v-b-modal.projectPopup variant="primary" >
+                        <i class="xi-file-add"></i><span class="sr-only">수정</span>
+                    </b-button>
+                    <!--크리에이티드에 로드를 하도록 설정되어있어 v-if 로 처리 -->
+                    <project-merge :project-info="model" @saveOK="updateOK" />
+                </span>
                 </div>
             </div>
 
@@ -78,7 +70,7 @@
                 <tr>
                     <th scope="row">등록번호</th>
                     <td>{{ model.accession }}</td>
-                    <th scope="row">KEITI_고유번호</th>
+                    <th scope="row">KEITI 고유번호</th>
                     <td>{{ model.uniqueNo }}</td>
                 </tr>
                 <tr>
@@ -93,7 +85,7 @@
                     <th scope="row">중분야</th>
                     <td>{{ model.middleRealm }}</td>
                     <th scope="row">연구상태</th>
-                    <td>{{ model.projectStatus.name }}</td>
+                    <td>{{ model.projectStatus === undefined ? '' : model.projectStatus.name }}</td>
                 </tr>
                 <tr>
                     <th scope="row">과제명</th>
@@ -108,28 +100,28 @@
                 <tr>
                     <th scope="row">참여기업</th>
                     <td>{{ model.participants }}</td>
-                    <th scope="row">총_연구기간</th>
+                    <th scope="row">총 연구기간</th>
                     <td>{{ model.begin | date }} ~ {{ model.end | date }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">연구개발_목표</th>
+                    <th scope="row">연구개발 목표</th>
                     <td colspan="3" class="pre">{{ model.purpose }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">연구개발_내용</th>
+                    <th scope="row">연구개발 내용</th>
                     <td colspan="3" class="pre">{{ model.contents }}</td>
                 </tr>
                 </tbody>
             </table>
 
-            <h2 class="h2">연구개발_결과</h2>
+            <h2 class="h2">연구개발 결과</h2>
             <table class="view-table">
                 <caption class="sr-only">
-                    연구개발_결과
+                    연구개발 결과
                 </caption>
                 <tbody>
                 <tr>
-                    <th scope="row">개발내용_및_결과</th>
+                    <th scope="row">개발내용 및 결과</th>
                     <td class="pre">{{ model.conclusion }}</td>
                 </tr>
                 <tr>
@@ -137,7 +129,7 @@
                     <td>{{ model.keywords }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">개발기술의_특징,_장점</th>
+                    <th scope="row">개발기술의 특징, 장점</th>
                     <td class="pre">{{ model.features }}</td>
                 </tr>
                 <tr>
@@ -151,41 +143,25 @@
                 </tbody>
             </table>
 
-            <ul class="nav nav-tabs">
-                <li class="active">
-                    <a data-toggle="tab" href="#tab1">연구과제_정보</a>
-                </li>
-                <li>
-                    <a data-toggle="tab" href="#tab2"></a>
-                </li>
-                <li>
-                    <a data-toggle="tab" href="#tab3"></a>
-                </li>
-            </ul>
-            <div class="tab-content">
-                <div id="tab1" class="tab-pane active">
-                </div>
-                <div id="tab2" class="tab-pane">
-                    <h3>Menu 1</h3>
-                    <p>Some content in menu 1.</p>
-                </div>
-                <div id="tab3" class="tab-pane">
-                    <h3>Menu 2</h3>
-                    <p>Some content in menu 2.</p>
-                </div>
-            </div>
+
         </form>
     </div>
 </template>
 
 <script>
     import axios from "../../utils/axios";
+    import ProjectMerge from "./ProjectMerge";
 
     export default {
         name: "ProjectsDetail",
+        components: {ProjectMerge},
         data() {
             return {
-                model: {},
+                model: {
+                    projectStatus:{},
+                    unitProgram:'',
+
+                },
                 summary: {
                     study: 0,
                     target: 0,
@@ -195,11 +171,12 @@
             };
         },
         async created() {
-            let id = this.$route.params.id;
-            await this.initData(id);
+
+            await this.initData();
         },
         methods: {
-            async initData(id) {
+            async initData() {
+                let id = this.$route.params.id;
                 let projectData = await axios.get("/isg-oreo/api/projects/" + id, {});
                 let summayrData = await axios.get(
                     "/isg-oreo/statistics/summary/projects/" + id,
@@ -208,6 +185,9 @@
                 this.model = projectData.data;
                 this.summary = summayrData.data;
             },
+            updateOK(){
+                this.initData()
+            }
         },
         computed: {},
     };

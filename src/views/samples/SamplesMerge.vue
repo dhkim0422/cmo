@@ -8,7 +8,7 @@
                 <tr v-if="model.accession != ''">
                     <th>등록번호</th>
                     <td colspan="3">
-                        {{ model.accession == '' ? '등혹 후 상세내역에서 출력됩니다.' : '2'}}
+                        {{ model.accession == '' ? '등혹 후 상세내역에서 출력됩니다.' : model.accession}}
                     </td>
                 </tr>
                 <tr>
@@ -38,7 +38,7 @@
                     <td>
                         <select class="form-control"
                                 placeholder="작성하여주세요."
-                                v-model="model.origin"
+                                v-model="model.origin.code"
                                 aria-invalid="false" style="">
                             <option label="인체유래" value="S01">인체유래</option>
                             <option label="세포주(cell line)" value="S02" selected="selected">세포주(cell line)</option>
@@ -51,7 +51,7 @@
                     <td>
                         <select class="form-control"
                                 placeholder="선택하여주세요."
-                                v-model="model.type"
+                                v-model="model.type.code"
                                 aria-invalid="false" style="">
                             <option value="" class="">해당없음</option>
                             <option label="Control" value="CONTROL">Control</option>
@@ -62,10 +62,10 @@
                     <td>
                         <input class="form-control"
                                type="text"
-                               title="샘플유래"
-                               name="샘플유래"
+                               title="질환명"
+                               name="disease"
                                placeholder="작성하여주세요"
-                               v-model="model.origin.name"
+                               v-model="model.disease"
                         />
                     </td>
                 </tr>
@@ -153,7 +153,11 @@
             this.title = (this.isCreateForm() ? '연구샘플 등록' : '연구샘플 수정')
             this.initData()
         },
-        computed: {},
+        watch:{
+            samplesInfo(newProps){
+                this.initData()
+            }
+        },
         data() {
             return {
                 title: '',
@@ -190,9 +194,7 @@
                 this.codes['GEN'] = codeData.data.data.resultList
 
                 if (!this.isCreateForm()) {
-
-                    let samplesData = await axios.get('/isg-oreo/api/clinic-samples/' + this.samplesInfo.id, {});
-                    this.model = samplesData.data
+                    this.model = this.samplesInfo
                 }
 
             },
@@ -202,6 +204,10 @@
                 //벨리데이션 문제가 없으면 저장 실행
                 //if (success) {
                 let insertData = ""
+                this.model['collectAddress'] = '1'
+                this.model['collectLocal'] = '1'
+
+
                 if (this.isCreateForm()) { //없데이트 유무를 검사하여 진행
                     insertData = await axios.post('/isg-oreo/api/clinic-samples', this.model)
                 } else {
@@ -236,7 +242,8 @@
             },
             close() {
                 this.$bvModal.hide('sampleSavePopup')
-            }
+            },
+
         }
     }
     /*

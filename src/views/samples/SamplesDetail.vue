@@ -42,11 +42,10 @@
                 </button>
                 </span>-->
                 <span data-toggle="tooltip" data-placement="top" title="연구샘플 수정">
-                    <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary" @click="showUpdataPage()">
+                    <b-button class="btn-primary-sm" v-b-modal.sampleSavePopup variant="primary" >
                         <i class="xi-pen"></i><span class="sr-only">수정</span>
                     </b-button>
-                    <!--크리에이티드에 로드를 하도록 설정되어있어 v-if 로 처리 -->
-                    <SamplesMerge :target-info="model" @saveOK="updateOK" v-if="isUpdate"/>
+                    <samples-merge :samples-info="model" @saveOK="updateOK" />
                 </span>
             </div>
         </div>
@@ -64,15 +63,16 @@
                 <th>샘플명</th>
                 <td>{{ model.name }}</td>
                 <th>샘플유래</th>
-                <td>{{ model.origin.name }}</td>
+                <td>{{ model.origin === undefined ? '' : model.origin.name }}</td>
             </tr>
             <tr>
                 <th>샘플구분</th>
-                <td>{{ model.type.name }}</td>
+                <td>{{ model.type.name}}</td>
                 <th>질환명</th>
                 <td>{{ model.disease }}</td>
             </tr>
-            <tr v-hide="model.origin.code != 'SORG_01'">
+
+            <!--tr v-hide="model.origin.code != 'SORG_01'">
                 <th>검체</th>
                 <td>{{ model.specimen }}</td>
                 <th>검체_샘플_제공자</th>
@@ -81,7 +81,7 @@
             <tr v-hide="model.origin.code != 'SORG_01'">
                 <th>검체 샘플 제공자</th>
                 <td colspan="3">{{ model.collectLocal.name }} {{ model.collectAddress }}</td>
-            </tr>
+            </tr-->
             <tr>
                 <th>샘플_설명</th>
                 <td colspan="3">{{ model.description }}</td>
@@ -139,7 +139,7 @@
                 model: {
                     accession: '',
                     collectAddress: '',
-                    collectLocal: {code: '', name: ''},
+                    collectLocal: '',
                     description: '',
                     disease: '',
                     id: '',
@@ -160,9 +160,7 @@
                         uniqueNo: '',
                         unknownAge: ''
                     },
-                    type: {
-                        code: '', name: ''
-                    },
+                    type: '',
                     uniqueNo: ''
                 }
             }
@@ -174,18 +172,17 @@
             remove() {
 
             },
-            showUpdataPage() {
-
-            },
             updateOK() {
                 this.initData();//수정된 내역을 다시 리로드
                 this.isUpdate = false//업데이트 팝업을 제거
             },
+
             async initData() {
+                this.isUpdate = false
                 let id = this.$route.params.id
-                let projectData = await axios.get('/isg-oreo/api/clinic-samples/' + id, {});
+                let modelData = await axios.get('/isg-oreo/api/clinic-samples/' + id, {});
                 let summayrData = await axios.get('/isg-oreo/statistics/summary/samples/' + id, {});
-                this.model = projectData.data
+                this.model = modelData.data
                 this.summary = summayrData.data
                 console.log('summayrData', summayrData.data)
             }

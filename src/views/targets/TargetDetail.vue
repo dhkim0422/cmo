@@ -39,11 +39,11 @@
                 </button>
                 </span>
                 <span data-toggle="tooltip" data-placement="top" title="연구대상자 수정">
-                    <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary" @click="showUpdataPage()">
+                    <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary" >
                         <i class="xi-file-add"></i><span class="sr-only">수정</span>
                     </b-button>
                     <!--크리에이티드에 로드를 하도록 설정되어있어 v-if 로 처리 -->
-                    <targets-merge :target-info="model" @saveOK="insertOK" v-if="isUpdate"/>
+                    <targets-merge :target-info="model" @saveOK="insertOK" />
                 </span>
             </div>
         </div>
@@ -114,7 +114,7 @@
                 this.summary = summayrData.data
             },
             onClickChangeLink() {
-                this.$router.push('/targets/targetsUpdate/' + id)
+
             },
             async remove() {
                 const response = await axios.delete('/isg-oreo/api/clinic-targets/' + id, {});
@@ -134,13 +134,10 @@
                 }
                 this.$router.go(-1)
             },
-            showUpdataPage(){
-                this.isUpdate = true
-            },
+
             insertOK(){
                 this.initData()
-                //false를 해주어야 다시 쇼할때 데이터를 리로딩한다.
-                this.isUpdate = false
+
             }
         },
         computed: {},

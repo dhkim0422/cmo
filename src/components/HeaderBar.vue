@@ -31,7 +31,10 @@
                 <a class="nav-link" @click="goto('/samples/samplesList')" title="샘플 목록">샘플 목록</a>
               </li>
               <li>
-                <a class="nav-link" @click="goto('/omics/omics')" title="오믹스 데이터 등록내역">오믹스 데이데</a>
+                <a class="nav-link" @click="goto('/omics/omics')" title="오믹스 데이터 등록내역">오믹스 데이터</a>
+              </li>
+              <li>
+                <a class="nav-link" @click="goto('/omics/omicsReview')" title="심의/승인">오믹스 심의</a>
               </li>
             </ul>
           </li>
@@ -98,7 +101,13 @@ export default {
           rootMenuNm: "마이페이지",
           menuNm: "오믹스 데이터 등록내역"
         },
+        {
+          path: "/omics/omicsReview",
+          rootMenuNm: "내정보",
+          menuNm: "등록의뢰 심의/승인"
+        },
         { path: "/storage/storageList", rootMenuNm: "저장고", menuNm: "저장고" }
+
       ],
       rootMenuNm: "",
       menuNm: ""
