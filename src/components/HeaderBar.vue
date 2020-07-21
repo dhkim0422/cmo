@@ -107,16 +107,23 @@ export default {
           menuNm: "등록의뢰 심의/승인"
         },
         { path: "/storage/storageList", rootMenuNm: "저장고", menuNm: "저장고" }
-
       ],
       rootMenuNm: "",
       menuNm: ""
     };
   },
-  created() {
+  async created() {
     //생성시 토큰이 존재하는지 확인 후 토큰이 있으면 로그인 된것으로 판단한다.
-    if (localStorage.getItem("x-auth-token") != null)
-      this.$store.dispatch("setIsLoginAt", true);
+    if (localStorage.getItem("x-auth-token") != null) {
+      const response = await axios.post(
+        "/isg-oreo/public/api/getTokenStatus.do"
+      );
+      if (response.data !== "TRUE") {
+        this.$store.dispatch("setIsLoginAt", false);
+      } else {
+        this.$store.dispatch("setIsLoginAt", true);
+      }
+    }
 
     //처음에 공통코드를 전부 불러온다.
     //this.$store.dispatch('setCodeArr', {})
