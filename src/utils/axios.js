@@ -29,7 +29,7 @@ axiosInstance.interceptors.response.use(
   },
   async function(error) {
     // Object.entries(error).forEach((item) => console.log(item));
-    const { config } = error;
+    // const { config } = error;
     if (error.response.status === 401) {
       localStorage.setItem("x-auth-token", "");
       store.dispatch("setIsLoginAt", false);

@@ -8,18 +8,13 @@
       <div class="group-item">
         <div class="info">
           전체
-          <span class="num">{{ this.response.data.total }}</span
-          >개, 페이지
+          <span class="num">{{ this.response.data.total }}</span>개, 페이지
           <span class="num">{{ this.response.data.currentPage }}</span> /
           <span class="num">{{ this.response.data.numberOfRows }}</span>
         </div>
       </div>
       <div class="group-item">
-        <button
-          class="btn-outline-secondary-sm"
-          type="button"
-          @click="onDelete"
-        >
+        <button class="btn-outline-secondary-sm" type="button" @click="onDelete">
           <i class="xi-trash"></i>
           <span class="sr-only">삭제</span>
         </button>
@@ -65,11 +60,7 @@
         <tr v-if="response.data.list.length == 0">
           <td colspan="8" class="text-center">데이터가 없습니다.</td>
         </tr>
-        <tr
-          v-else
-          v-for="(item, index) in response.data.list"
-          :key="`result${index}`"
-        >
+        <tr v-else v-for="(item, index) in response.data.list" :key="`result${index}`">
           <td class="custom-checkbox" style="min-width: 65px;">
             <input
               type="checkbox"
@@ -83,14 +74,10 @@
             </label>
           </td>
           <td>
-            <a class="link-more" @click="onDetail(item)">
-              {{ item.no }}
-            </a>
+            <a class="link-more" @click="onDetail(item)">{{ item.no }}</a>
           </td>
           <td class="text-left">
-            <a class="link-more" @click="onPosition(item)">
-              {{ item.type | type }}
-            </a>
+            <a class="link-more" @click="onPosition(item)">{{ item.type | type }}</a>
           </td>
           <td class="text-left">{{ item.name }}</td>
           <td>{{ item.rack }}</td>
@@ -100,14 +87,14 @@
         </tr>
       </tbody>
     </table>
-    <b-pagination v-model="resultList.data.currentPage"
-                  :per-page="resultList.data.numberOfRows"
-                  :total-rows="resultList.data.total"
-                  size="sm"
-                  align="center"
-                  @change="changePageNo"
+    <b-pagination
+      v-model="response.data.currentPage"
+      :per-page="response.data.numberOfRows"
+      :total-rows="response.data.total"
+      size="sm"
+      align="center"
+      @change="changePageNo"
     />
-
   </div>
 </template>
 
@@ -118,7 +105,7 @@ import axios from "../../utils/axios";
 export default {
   name: "StorageList",
   components: {
-    searchBox,
+    searchBox
   },
   data() {
     return {
@@ -135,24 +122,24 @@ export default {
           target: {},
           origin: {},
           collectLocal: {},
-          type: {},
-        },
+          type: {}
+        }
       },
       filters: {
         //해당 내역을 서치박스의 셀렉트 리스트가 생성됩니다.
         fields: [
           { id: "", name: "전체" },
-          { id: "name", name: "저장고명" },
+          { id: "name", name: "저장고명" }
         ],
-        params: {},
-      },
+        params: {}
+      }
     };
   },
   filters: {
     type(value) {
       if (!value) return "";
       return value === "100" ? "질소탱크" : "초저온냉동고";
-    },
+    }
   },
   created() {
     this.selectList({});
@@ -191,7 +178,7 @@ export default {
     },
     onDetail(item) {
       this.$router.push({ path: `/storage/storageDetail/${item.no}` });
-    },
-  },
+    }
+  }
 };
 </script>

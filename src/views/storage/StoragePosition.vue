@@ -11,9 +11,7 @@
       <div v-if="model.type === '100'" class="col-1"></div>
 
       <div :class="model.type === '100' ? 'col-6' : 'col-8'">
-        <div
-          style="padding-bottom: 30px; display: flex; justify-content: center;"
-        >
+        <div style="padding-bottom: 30px; display: flex; justify-content: center;">
           <template v-for="(item, index) in headerSteps">
             <div
               :class="stepActive(index + 1)"
@@ -24,11 +22,7 @@
               <div class="step">{{ index + 1 }}</div>
               <div class="label">{{ item }}</div>
             </div>
-            <hr
-              v-if="index + 1 < headerSteps.length"
-              class="divider"
-              :key="`divider${index}`"
-            />
+            <hr v-if="index + 1 < headerSteps.length" class="divider" :key="`divider${index}`" />
           </template>
         </div>
       </div>
@@ -40,19 +34,13 @@
       <div v-if="step === bodyStep.step" :key="`bodyStep${bodyIndex}`">
         <div class="row">
           <div class="col-12">
-            <div
-              style="padding-bottom: 15px; display: flex; justify-content: center;"
-            >
-              <div
-                style="text-align: center; width: 15px; margin-right: 15px;"
-              ></div>
+            <div style="padding-bottom: 15px; display: flex; justify-content: center;">
+              <div style="text-align: center; width: 15px; margin-right: 15px;"></div>
               <div
                 :class="colClass"
                 v-for="(item, index) in genericeNumber(bodyStep.x)"
                 :key="`rack1${index}`"
-              >
-                {{ numberToAlphabet(item) }}
-              </div>
+              >{{ numberToAlphabet(item) }}</div>
             </div>
           </div>
         </div>
@@ -64,61 +52,41 @@
           style="margin-bottom: 10px;"
         >
           <div class="col-12">
-            <div
-              style="display: flex; justify-content: center; align-items: center;"
-            >
-              <div style="text-align: center; width: 15px; margin-right: 15px;">
-                {{ item }}
-              </div>
+            <div style="display: flex; justify-content: center; align-items: center;">
+              <div style="text-align: center; width: 15px; margin-right: 15px;">{{ item }}</div>
               <div
                 style="display: flex; justify-content: center; align-items: center;"
                 v-for="(item, childIndex) in genericeNumber(bodyStep.x)"
-                :key="`col${bodyIndex}${index}${childIndex}`"
-                :class="selectedClass(`col${bodyIndex}${index}${childIndex}`)"
+                :key="`col-${bodyIndex}-${index}-${childIndex}`"
+                :class="selectedClass(`col-${bodyIndex}-${index}-${childIndex}`)"
                 @click="
-                  onStorageBox(`col${bodyIndex}${index}${childIndex}`, {
+                  onStorageBox(`col-${bodyIndex}-${index}-${childIndex}`, {
                     x: childIndex + 1,
                     y: index + 1,
                   })
                 "
-              >
-                {{ tubeText[`col${bodyIndex}${index}${childIndex}`] }}
-              </div>
+              >{{ tubeText[`col-${bodyIndex}-${index}-${childIndex}`] }}</div>
             </div>
           </div>
         </div>
       </div>
     </template>
 
-    <div class="row" style="margin: 10px;">
-      <div class="col-12">
-        <button
+    <div class="row m-3">
+      <div class="col-12 mt-3" style="text-align: center">
+        <b-button
+          style="margin-right: 10px;"
+          variant="secondary"
           v-if="step > 1"
-          type="button"
-          class="btn-outline-secondary"
+          @click="onStep(step-1)"
+        >이전</b-button>
+        <b-button
           style="margin-right: 10px;"
-          @click="step -= 1"
-        >
-          이전
-        </button>
-        <button
+          variant="secondary"
           v-if="step < headerSteps.length"
-          type="button"
-          class="btn-outline-secondary"
-          style="margin-right: 10px;"
-          @click="step += 1"
-        >
-          다음
-        </button>
-        <button
-          v-else
-          type="button"
-          class="btn-outline-secondary"
-          style="margin-right: 10px;"
-          @click="onSave"
-        >
-          저장
-        </button>
+          @click="onStep(step+1)"
+        >다음</b-button>
+        <b-button v-else style="margin-right: 10px;" variant="primary" @click="onSave">저장</b-button>
       </div>
     </div>
     <SampleModal @sample="onSample" />
@@ -132,52 +100,109 @@ export default {
 
   data() {
     return {
-      tubeKey: "",
-      headerSteps: [],
-      bodySteps: [],
-      step: 1,
-      selectedKey: [],
-      model: {},
-      storagePosition: {},
-      tubeText: {},
+      tubeKey: "", //tube id
+      headerSteps: [], //step별 명칭
+      bodySteps: [], //step별 좌표
+      step: 1, //현재 step
+      stateStep: [], //step별 선택 여부
+      selectedKey: [], //selected 스타일 적용
+      model: {}, //조회 데이터
+      storagePosition: {}, //step별 선택된 좌표 및 샘플 정보
+      tubeText: {} //tube의 샘플정보
     };
   },
   computed: {
+    //selected style 적용
     selectedClass() {
-      return (key) => {
+      return key => {
         return {
           "box-selected": this.selectedKey[this.step - 1] === key,
           tube: this.step === this.headerSteps.length,
-          box: this.step !== this.headerSteps.length,
+          box: this.step !== this.headerSteps.length
         };
       };
     },
+
+    //tube 및 box style
     colClass() {
       return {
         "col-tube": this.step === this.headerSteps.length,
-        "col-box": this.step !== this.headerSteps.length,
+        "col-box": this.step !== this.headerSteps.length
       };
-    },
+    }
+  },
+  watch: {
+    //마지막 step 일 경우 sample 데이터를 조회하고 출력한다.
+    step: async function(newValue, oldValue) {
+      if (newValue === this.headerSteps.length) {
+        const response = await axios.get(`/isg-oreo/api/storagePosition`, {
+          params: {
+            storageNo: this.$route.params.id,
+            rack: this.storagePosition.rack,
+            sector: this.storagePosition.sector,
+            box: this.storagePosition.box
+          }
+        });
+
+        console.log("response.data", response.data);
+
+        const tube = response.data.map(item => {
+          this.tubeText[
+            `col-${newValue - 1}-${item.tubeY - 1}-${item.tubeX - 1}`
+          ] = item.accession;
+          return {
+            sampleId: item.clincSmpleId,
+            tubeX: item.tubeX,
+            tubeY: item.tubeY
+          };
+        });
+        this.tubeText = { ...this.tubeText };
+        this.storagePosition.tube = tube;
+      }
+    }
   },
 
   created() {
-    this.editable = this.$route.params.id ? false : true;
     if (this.$route.params.id) this.initData();
   },
   methods: {
     onSample(item) {
       this.tubeText[this.tubeKey] = item.accession;
       this.tubeText = { ...this.tubeText };
+      let tube = this.storagePosition["tube"] || [];
+      tube = [
+        ...tube,
+        {
+          sampleId: item.id,
+          tubeX: this.storagePosition.tubeX,
+          tubeY: this.storagePosition.tubeY
+        }
+      ];
+      this.storagePosition.tube = tube;
     },
-    onSave() {
-      console.log("this.storagePosition", this.storagePosition);
+
+    //샘플의 위치 정보를 저장한다.
+    async onSave() {
+      const response = await axios.post("/isg-oreo/api/storagePosition", {
+        ...this.storagePosition,
+        storageNo: this.$route.params.id
+      });
+      await this.$alert("", "저장 되었습니다.", "info");
     },
     numberToAlphabet(value) {
       return (value + 9).toString(36).toUpperCase();
     },
     onStep(step) {
+      this.initTubeText(step);
       this.step = step;
     },
+
+    initTubeText(step) {
+      if (step === this.headerSteps.length) {
+        this.tubeText = {};
+      }
+    },
+
     stepActive(step) {
       return { active: this.step === step };
     },
@@ -187,24 +212,43 @@ export default {
       this.selectedKey = [...this.selectedKey];
 
       //선택한 좌표 step에 따라 설정해야 될 컬럼이 다르다.
-      if (this.step === 1) {
-        this.storagePosition["rack"] = coord.x;
-        this.storagePosition["sector"] = coord.y;
+      if (this.step === 1 && this.model.type === "100") {
+        this.storagePosition = {
+          ...this.storagePosition,
+          rack: coord.x,
+          sector: coord.y,
+          box: 1
+        };
       }
 
+      if (this.step === 1 && this.model.type === "200") {
+        this.storagePosition = {
+          ...this.storagePosition,
+          rack: coord.x,
+          sector: coord.y
+        };
+      }
+
+      //질소탱크
       if (this.step === 2 && this.model.type === "100") {
-        this.storagePosition["box"] = 1;
-        this.storagePosition["tubeX"] = coord.x;
-        this.storagePosition["tubeY"] = coord.y;
+        this.storagePosition = {
+          ...this.storagePosition,
+          tubeX: coord.x,
+          tubeY: coord.y
+        };
       }
 
+      //초저온냉동고
       if (this.step === 2 && this.model.type === "200") {
-        this.storagePosition["box"] = coord.y;
+        this.storagePosition = { ...this.storagePosition, box: coord.y };
       }
 
       if (this.step === 3) {
-        this.storagePosition["tubeX"] = coord.x;
-        this.storagePosition["tubeY"] = coord.y;
+        this.storagePosition = {
+          ...this.storagePosition,
+          tubeX: coord.x,
+          tubeY: coord.y
+        };
       }
 
       //박스를 선택
@@ -213,10 +257,12 @@ export default {
         this.$bvModal.show("sample-modal");
       }
     },
+
     genericeNumber(value) {
       return value ? parseInt(value) : 0;
     },
 
+    //초기화
     async initData() {
       const response = await axios.get(
         `/isg-oreo/api/storages/${this.$route.params.id}`
@@ -228,7 +274,7 @@ export default {
         this.headerSteps = ["랙(X축), 섹터(Y축)", "박스"];
         this.bodySteps = [
           { step: 1, x: this.model.rack, y: this.model.sector },
-          { step: 2, x: this.model.tube, y: this.model.tube },
+          { step: 2, x: this.model.tube, y: this.model.tube }
         ];
 
         //초저온냉동고
@@ -237,11 +283,11 @@ export default {
         this.bodySteps = [
           { step: 1, x: this.model.rack, y: this.model.sector },
           { step: 2, x: 1, y: this.model.box },
-          { step: 3, x: this.model.tube, y: this.model.tube },
+          { step: 3, x: this.model.tube, y: this.model.tube }
         ];
       }
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped>
