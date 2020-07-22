@@ -4,7 +4,6 @@
         <!-- 검색폼 -->
         <search-box :filters="filters" @searchClick="changeParams"></search-box>
 
-
         <!-- 검색 목록 -->
         <div class="filter-group">
             <div class="group-item">
@@ -27,8 +26,6 @@
                 </span>
             </div>
         </div>
-
-
         <b-table
                 ref="selectableTable"
                 selectable
@@ -37,7 +34,6 @@
                 :items="items"
                 :fields="fields"
                 @row-selected="onRowSelected"
-
         >
             <template v-slot:cell(selected)="{ rowSelected }">
                 <template v-if="rowSelected">
@@ -58,7 +54,6 @@
             <template v-slot:cell(age)="data">
                 {{data.item.unknownAge == true ? '나이불명' : data.value}}
             </template>
-
         </b-table>
         <b-col class="my-1">
             <b-pagination v-model="resultList.data.currentPage" :per-page="resultList.data.numberOfRows"
@@ -88,7 +83,7 @@
         },
         data() {
             return {
-                isRegist:false,
+                isRegist: false,
                 fields: [
                     {
                         key: 'selected',
@@ -164,20 +159,28 @@
                 this.selectList()
             },
             async selectList(page = 1) {
-                this.isRegist=false
+                this.isRegist = false
                 let url = '/isg-oreo/api/clinic-targets'
-                this.params["rowSize"] = this.resultList.data.numberOfRows;
-                this.params["firstIndex"] = (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows;
-                this.params['currentPage'] = page
-                this.resultList = await axios.get(url, {params: this.params});
+
+                const params = new URLSearchParams();
+                if (this.params.keyword != '') {
+                    for (const row of this.params.fields) {
+                        if (row.id !== '') params.append('fields', row.id)
+                    }
+                    params.append('keyword', this.params.keyword)
+                }
+                params.append('firstIndex', 1)
+                params.append('rowSize', this.resultList.data.numberOfRows)
+                params.append('currentPage', page)
+                this.resultList = await axios.get(url, {params: params});
                 this.items = this.resultList.data.list
             },
             onClickDetailLink(target) {
                 this.$router.push({path: '/targets/targetsDetail/' + target.id})
 
             },
-            onClickRegist(){
-              this.isRegist = true
+            onClickRegist() {
+                this.isRegist = true
             },
             async remove() {
 

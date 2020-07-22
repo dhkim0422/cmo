@@ -152,7 +152,7 @@
                         total: 0,
                         currentPage: 1,
                         numberOfRows: 10,
-                        list: [ ],
+                        list: [],
                     },
                 },
                 filters: {
@@ -181,12 +181,6 @@
                 },
             };
         },
-        started() {
-        },
-        mounted() {
-            // this.currentPageNo = 1;
-            // this.totalRecordCount = 228;
-        },
         methods: {
             //Pagination 컴포넌트의 change emit
             changePageNo(pageNo) {
@@ -197,13 +191,22 @@
                 this.params = params;
                 this.selectList();
             },
-            async selectList() {
+            async selectList(page = 1) {
                 this.isRegist = false
                 let url = "/isg-oreo/api/projects";
-                this.params["rowSize"] = this.resultList.data.numberOfRows;
-                this.params["firstIndex"] =
-                    (this.currentPageNo - 1) * this.resultList.data.numberOfRows;
-                this.resultList = await axios.get(url, {params: this.params});
+                const params = new URLSearchParams();
+                if (this.params.keyword != '') {
+                    for (const row of this.params.fields) {
+                        if (row.id !== '') params.append('fields', row.id)
+                    }
+                    params.append('keyword', this.params.keyword)
+                }
+                params.append('ownerId', 7)
+                params.append('firstIndex', 1)
+                params.append('pageSize', this.resultList.data.numberOfRows)
+                params.append('currentPage', page)
+                this.resultList = await axios.get(url, {params: params});
+
             },
             onClickDetailLink(project) {
                 this.$router.push({path: "/project/projectsDetail/" + project.id});

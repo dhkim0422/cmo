@@ -2,7 +2,7 @@
     <div class="container">
         <!-- 검색폼 -->
 
-        <search-box :filters="filters" @searchClick="changeParams"></search-box>
+        <search-box :filters="filter" @searchClick="changeParams"></search-box>
         <!-- 검색 목록 -->
         <div class="filter-group">
             <div class="group-item">
@@ -17,11 +17,12 @@
                            @onChangePageUnit="onChangePageUnit"></page-unit>
                 <span data-toggle="tooltip" data-placement="top" title="연구샘플_등록">
                     <!--등록은 id=registPopup 로연결되어 있음 -->
-                    <b-button class="btn-primary-sm" v-b-modal.sampleSavePopup variant="primary" @click="onClickCreateLink">
+                    <b-button class="btn-primary-sm" v-b-modal.sampleSavePopup variant="primary"
+                              @click="onClickCreateLink">
                         <i class="xi-file-add"></i><span class="sr-only">등록</span>
                     </b-button>
                     <!--등록을 위한 페잊 컴포넌트-->
-                    <samples-merge  :samples-info="'REG'" @saveOK="selectList" v-if="isRegist"/>
+                    <samples-merge :samples-info="'REG'" @saveOK="selectList" v-if="isRegist"/>
                 <div>
                 </div>
                 </span>
@@ -56,8 +57,11 @@
             </template>
 
         </b-table>
+
         <b-pagination v-model="resultList.data.currentPage" :per-page="resultList.data.numberOfRows"
-                      :total-rows="resultList.data.total" size="sm" align="center"
+                      :total-rows="resultList.data.total"
+                      size="sm"
+                      align="center"
                       @change="changePageNo"
         />
     </div>
@@ -112,13 +116,12 @@
                 ],
                 items: [],
                 selected: '',
-                currentPageNo: 1,
                 resultList: {
                     data: {
                         total: 0,
                         currentPage: 1,
                         numberOfRows: 10,
-                        currentPageNo: 0,
+
                         pageSize: 10,
                         list: [],
                         target: {},
@@ -127,8 +130,7 @@
                         type: {},
                     },
                 },
-                filters: {
-                    //해당 내역을 서치박스의 셀렉트 리스트가 생성됩니다.
+                filter:{
                     fields: [
                         {id: "", name: "전체"},
                         {id: "sampleNo", name: "등록번호"},
@@ -136,9 +138,9 @@
                         {id: "sampleName", name: "샘플명"},
                         {id: "target", name: "연구샘플"},
                         {id: "disease", name: "질환명"},
-                    ],
-                    params: {},
+                    ]
                 },
+                params: {},
             };
         },
         methods: {
@@ -151,35 +153,35 @@
             },
             //Pagination 컴포넌트의 change emit
             changePageNo(pageNo) {
-                this.currentPageNo = pageNo;
+                this.currentPage = pageNo;
                 this.selectList(pageNo);
             },
             changeParams(params) {
                 this.params = params;
+                console.log('??',params)
                 this.selectList()
             },
-            async selectList(page = 0) {
-
+            async selectList(page = 1) {
                 this.isRegist = false
                 let url = "/isg-oreo/api/clinic-samples";
-
-
-
                 const params = new URLSearchParams();
-                for
-                params.append('firstIndex',1)
-
-                params.append('rowSize',this.resultList.data.numberOfRows)
-                params.append('firstIndex',1)
-                params.append('currentPage',page)
-                this.resultList = await axios.get(url, {params: this.params});
+                if (this.params.keyword != '') {
+                    for (const row of this.params.fields) {
+                        if (row.id !== '') params.append('fields', row.id)
+                    }
+                    params.append('keyword',  this.params.keyword)
+                }
+                params.append('firstIndex', 1)
+                params.append('rowSize', this.resultList.data.numberOfRows)
+                params.append('currentPage', page)
+                this.resultList = await axios.get(url, {params: params});
                 this.items = this.resultList.data.list
             },
             onClickDetailLink(target) {
                 this.$router.push({path: "/samples/SamplesDetail/" + target.id});
             },
             onClickCreateLink() {
-                this.isRegist=true
+                this.isRegist = true
             },
             async remove() {
                 if (this.selected.length == 0) {
@@ -192,7 +194,6 @@
                 let response = await axios.put(url, this.selected);
 
                 this.$alert('', '삭제 처리 되었습니다', 'info');
-
                 this.selectList()
             },
 

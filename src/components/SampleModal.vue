@@ -142,7 +142,7 @@ export default {
       this.currentPageNo = pageNo;
       this.selectList(pageNo);
     },
-    async selectList(page = 0) {
+    async selectList(page = 1) {
       this.isRegist = false;
       let url = "/isg-oreo/api/clinic-samples";
       this.params["rowSize"] = this.resultList.data.numberOfRows;
