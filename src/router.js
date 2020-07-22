@@ -128,6 +128,11 @@ export default new Router({
       name: "omicsReview Detail",
       component: () => import("./views/review/OmicsReview"),
     },
+    {
+      path: "/omics/omicsWizard/:omicsType",
+      name: "omicsReview Detail",
+      component: () => import("./views/omics/OmicsWizard"),
+    },
 
   ],
 });

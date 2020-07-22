@@ -14,33 +14,39 @@
 
             <div class="group-item">
                 <div class="search-input-group">
-                    <input class="search-input" t
-                           ype="text"
+                    <input class="search-input"
+                           type="text"
                            placeholder="검색어"
                            @keydown.enter="search()"
-                           v-model="params.keyword"
-                    >
-                    <button class="search-btn" @click="search()">
-                        <span class="sr-only">조회</span><i class="xi-search"></i>
-                    </button>
+                           v-model="params.keyword">
+                    <b-button class="search-btn" @click="search()">
+                        <i class="xi-search"></i>
+                        <span class="sr-only">조회</span>
+                    </b-button>
                 </div>
-                <button class="btn-outline-secondary-sm" type="button"
-                        data-toggle="tooltip" data-placement="top" title="공개" @click="release()">
+                <b-button class="btn-outline-secondary-sm"
+                          title="공개" @click="release()">
                     <i class="xi-eye"></i><span class="sr-only">공개</span>
-                </button>
-                <button class="btn-outline-secondary-sm" type="button"
-                        data-toggle="tooltip" data-placement="top" title="삭제"
-                        @click="remove()"
-                >
+                </b-button>
+                <b-button class="btn-outline-secondary-sm"
+                          title="삭제"
+                          @click="remove()">
                     <i class="xi-trash"></i><span class="sr-only">삭제</span>
-                </button>
+                </b-button>
+
                 <page-unit :page-unit="resultList.data.numberOfRows"
                            @onChangePageUnit="onChangePageUnit"></page-unit>
-                <span data-toggle="tooltip" data-placement="top">
-            <button class="btn-primary-sm" type="button" @click="onClickCreateLink()">
-                <i class="xi-file-add"></i><span class="sr-only">등록</span>
-            </button>
-            </span>
+
+                <span>
+                    <!--<b-button class="btn-primary-sm"  @click="onClickCreateLink()">
+                    <i class="xi-file-add"></i><span class="sr-only">등록</span>
+                    </b-button>-->
+                    <b-button class="btn-primary-sm" v-b-modal.omicsMergePopup @click="onClickCreateLink">
+                        <i class="xi-file-add"></i><span class="sr-only">등록</span>
+                    </b-button>
+                    <!--등록을 위한 페잊 컴포넌트-->
+                    <omics-wizard :omicsType="this.omicsType" @saveOK="search" v-if="isRegist"/>
+                </span>
             </div>
         </div>
         <div>
@@ -55,13 +61,15 @@
     import TotalRecordCount from "../../components/TotalRecordCount";
     import axios from "../../utils/axios";
     import PageUnit from "../../components/PageUnit";
+    import OmicsWizard from "./OmicsWizard";
 
     export default {
         name: "OmicsRegistList",
-        components: {PageUnit, TotalRecordCount, OmicsDataList},
+        components: {OmicsWizard, PageUnit, TotalRecordCount, OmicsDataList},
         props: ['omicsType'],
         data() {
             return {
+                isRegist: false,
                 checkedAll: {},
                 params: {},
                 resultList: {
@@ -108,46 +116,32 @@
             async search(page = 1) {
 
                 let url = "/isg-oreo/api/omics";
-                /*
-                this.params["rowSize"] = this.resultList.data.numberOfRows;
-                this.params["firstIndex"] =
-                    (this.currentPageNo - 1) * this.resultList.data.numberOfRows;
-                this.resultList = await axios.get(url, {params: this.params});
-                 */
                 const params = new URLSearchParams();
 
-                if (!this.params.keyword=='') {
+                if (!this.params.keyword == '') {
                     for (const row of this.filters.fields) {
                         if (row.id !== '') params.append('fields', row.id)
                     }
                     params.append('keyword', this.params.keyword)
                 }
-
                 params.append('ownerId', 7)
                 params.append('omicsType', this.omicsType)
                 params.append('firstIndex', 0)
                 params.append('pageSize', this.resultList.data.numberOfRows)
                 params.append('rowSize', this.resultList.data.numberOfRows)
                 params.append('currentPage', page)
-
-
-
-
-
-
-
                 this.resultList = await axios.get(url, {params: params});
             },
             onClickCreateLink() {
-
+                this.isRegist = true
             },
-            onChangePageUnit(page){
+            onChangePageUnit(page) {
                 this.search(page)
             },
             release() {
 
             },
-            remove(){
+            remove() {
 
             }
         },
