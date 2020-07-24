@@ -130,9 +130,14 @@ export default new Router({
     },
     {
       path: "/omics/omicsWizard/:omicsType",
-      name: "omicsReview Detail",
+      name: "omicsWizard regist",
       component: () => import("./views/omics/OmicsWizard"),
     },
+    {
+      path: "/omics/omicsWizard/:omicsType/:id",
+      name: "omicsWizard update",
+      component: () => import("./views/omics/OmicsWizard"),
+    }
 
   ],
 });

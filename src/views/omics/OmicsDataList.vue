@@ -43,7 +43,7 @@
                         <td colspan="3">({{ item.study.accession }}) {{ item.study.name }}</td>
                     </tr>
                     <tr>
-                        <th scope="row">연구대상 표현형/질환</th>
+                        <th scope="row">연구대상 표현형/질환"</th>
                         <td colspan="3">(국문) {{ item.disease.koreanName }}, (영문) {{ item.disease.englishName }}</td>
                     </tr>
                     <tr>
@@ -85,7 +85,7 @@
                         <td colspan="3">({{ item.study.accession }}) {{ item.study.name }}</td>
                     </tr>
                     <tr>
-                        <th scope="row">연구대상 표현형/질환</th>
+                        <th scope="row">연구대상 표현형/질환"</th>
                         <td colspan="3">(국문) {{ item.disease.koreanName }},
                             (영문) {{ item.disease.englishName }}
                         </td>
@@ -131,7 +131,7 @@
                         <td colspan="3">({{ item.study.accession }}) {{ item.study.name }}</td>
                     </tr>
                     <tr>
-                        <th scope="row">연구대상 표현형/질환</th>
+                        <th scope="row">연구대상 표현형/질환"</th>
                         <td colspan="3">(국문) {{ item.disease.koreanName }}, (영문) {{ item.disease.englishName }}</td>
                     </tr>
                     <tr>

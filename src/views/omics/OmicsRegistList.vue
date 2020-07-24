@@ -41,11 +41,13 @@
                     <!--<b-button class="btn-primary-sm"  @click="onClickCreateLink()">
                     <i class="xi-file-add"></i><span class="sr-only">등록</span>
                     </b-button>-->
-                    <b-button class="btn-primary-sm" v-b-modal.omicsMergePopup @click="onClickCreateLink">
+                    <!--<b-button class="btn-primary-sm" @click="onClickCreateLink">
                         <i class="xi-file-add"></i><span class="sr-only">등록</span>
-                    </b-button>
-                    <!--등록을 위한 페잊 컴포넌트-->
-                    <omics-wizard :omicsType="this.omicsType" @saveOK="search" v-if="isRegist"/>
+                    </b-button>-->
+                    <a :href="'omicsWizard/' + this.omicsType" class="btn-primary-sm">
+                        <i class="xi-file-add"></i><span class="sr-only">등록</span>
+                    </a>
+
                 </span>
             </div>
         </div>
@@ -133,7 +135,7 @@
                 this.resultList = await axios.get(url, {params: params});
             },
             onClickCreateLink() {
-                this.isRegist = true
+
             },
             onChangePageUnit(page) {
                 this.search(page)

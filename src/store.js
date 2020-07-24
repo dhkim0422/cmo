@@ -4,6 +4,28 @@ import axios from './utils/axios.js'
 
 Vue.use(Vuex)
 
+var FILE_GROUP = {
+        RAWDATA: 'rawdata',
+        PROCESSED: 'processed',
+        RESULT: 'result'
+    }
+function fileType(group, type) {
+    if (isBlank(group))
+        group = 'rawdata';
+
+    return {
+        omics: null,
+        group: group,
+        name: type,
+        selected: false,
+        count: 0,	// 파일개수
+    }
+}
+
+function isBlank(value) {
+    return !value
+}
+
 export default new Vuex.Store({
     state: {
 
@@ -67,18 +89,36 @@ export default new Vuex.Store({
             Metabolome: 'Metabolome',
             Proteome: 'Proteome',
         },
-        codes:{
-            useAt : [ { code : 'Y', name : '사용' }, { code : 'N', name : '미사용' } ],
+        codes: {
+            useAt: [{code: 'Y', name: '사용'}, {code: 'N', name: '미사용'}],
             //정보제공동의서 여부
-            offerAgreeYn : [ { code : true, name : '있음' }, { code : false, name : '없음' } ],
-            readLayout : ["Single-end", "Paired-end", "Mate-pair" ], 	// NGS Read Layout
-            replicateType : ["None", "Biological replicate", "Experimental replicate" ],  // 반복실험 유형
-            analyzer : ["Magnetic sector", "Double-focusing", "Quadrupole", "TOF(time of flight)"],	// 대사체 Analyzer
-            spectrometry : ["Gas chromatography/Mass chromatography", "Liquid chromatography/Mass chromatography", "etc" ],	// 대사체 질방분석 유형
+            offerAgreeYn: [{code: true, name: '있음'}, {code: false, name: '없음'}],
+            platform: ["Illuina-hiseq", "Illumina-miseq", "Illumina-nextseq", "Packbio", "Packbio-ISOseq", "Ion Torrent(proton)", "454(Roche)", "Oxford Nanopore", "Sanger", "Other"],
+            readLayout: ["Single-end", "Paired-end", "Mate-pair"], 	// NGS Read Layout
+            replicateType: ["None", "Biological replicate", "Experimental replicate"],  // 반복실험 유형
+            analyzer: ["Magnetic sector", "Double-focusing", "Quadrupole", "TOF(time of flight)"],	// 대사체 Analyzer
+            spectrometry: ["Gas chromatography/Mass chromatography", "Liquid chromatography/Mass chromatography", "etc"],	// 대사체 질방분석 유형
+
+        },
+
+        fileTypeMap: {
+            NGS: {
+                rawdata: [fileType(FILE_GROUP.RAWDATA, 'fasta'), fileType(FILE_GROUP.RAWDATA, 'fastq'), fileType(FILE_GROUP.RAWDATA, 'BAM')],
+                processed: [fileType(FILE_GROUP.PROCESSED, 'VCF'), fileType(FILE_GROUP.PROCESSED, 'BED'), fileType(FILE_GROUP.PROCESSED, 'Others')]
+            },
+            Microarray: {
+                rawdata: [fileType(FILE_GROUP.RAWDATA, 'CEL'), fileType(FILE_GROUP.RAWDATA, 'IDAT'), fileType(FILE_GROUP.RAWDATA, 'TXT')],
+                processed: [fileType(FILE_GROUP.PROCESSED, 'Plink binary'), fileType(FILE_GROUP.PROCESSED, 'CVS/Excel')]
+            },
+            Metabolome: {
+                rawdata: [fileType(FILE_GROUP.RAWDATA, 'mzXML'), fileType(FILE_GROUP.RAWDATA, 'mzData'), fileType(FILE_GROUP.RAWDATA, 'mzML')],
+                processed: [fileType(FILE_GROUP.PROCESSED, 'Identifications'), fileType(FILE_GROUP.PROCESSED, 'Quantification')]
+            }
         }
+
     },
     getters: {
-        getCodes(state){
+        getCodes(state) {
             return state.codes
         },
         geteCodeArr(state) {
@@ -126,6 +166,8 @@ export default new Vuex.Store({
         }
     },
     mutations: {
+
+
         updatePaginationAndList(state, data) {
             // console.log('updatePaginationAndList', data)
             state.resultList = data.resultList
@@ -253,7 +295,6 @@ export default new Vuex.Store({
             })
         },
         getFormData(json) {
-
 
 
             json.map(unindexed_array, function (n, i) {
