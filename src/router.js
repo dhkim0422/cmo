@@ -139,5 +139,6 @@ export default new Router({
       component: () => import("./views/omics/OmicsWizard"),
     }
 
+
   ],
 });

@@ -1,5 +1,7 @@
 <template>
     <div class="container" id="content">
+
+
         <div class="wizard-header" id="omicsMergePopup">
             <ol class="wizard-nav">
                 <li class="nav-item active" :class="cssStep(1)" @click="scrollTo(1)" tabindex="0">
@@ -20,8 +22,8 @@
                 </li>
             </ol>
             <div class="wizard-content">
-                <omics-data-step1 :omics-type="omicsType" v-if="currentStep==1"/>
-                <omics-data-step2 v-if="currentStep==2"/>
+                <omics-data-step1 :omics="omics" :omics-type="omicsType" v-if="currentStep==1"/>
+                <omics-data-step2 :omics="omics" v-if="currentStep==2"/>
                 <omics-data-step3 v-if="currentStep==3"/>
                 <omics-data-step4 v-if="currentStep==4"/>
             </div>
@@ -40,18 +42,80 @@
     import OmicsDataStep2 from "./step/OmicsDataStep2";
     import OmicsDataStep3 from "./step/OmicsDataStep3";
     import OmicsDataStep4 from "./step/OmicsDataStep4";
+    import DatePicker from "../../components/datePicker/datePicker";
+    import axios from "../../utils/axios";
+
 
     export default {
         name: "OmicsWizard",
-        components: {OmicsDataStep4, OmicsDataStep3, OmicsDataStep2, OmicsDataStep1},
+        components: {DatePicker, OmicsDataStep4, OmicsDataStep3, OmicsDataStep2, OmicsDataStep1},
+        beforeCreate() {
+
+        },
         data() {
             return {
                 currentStep: 1,
                 LAST_STEP: 4,
-                omicsType: this.$route.params.omicsType
+                omics: {
+                    accession: (this.$route.params.id == undefined ? '' : this.$route.params.id),
+                    name: '',
+                    design: '',
+                    omicsType: this.$route.params.omicsType,
+                    experType: 'OEXPER_N01',
+                    rawdataTypes: this.$store.state.fileTypeMap[this.$route.params.omicsType].rawdata,
+                    processedTypes: this.$store.state.fileTypeMap[this.$route.params.omicsType].processed,
+                    attributes: {
+                        sequencingOrgan: '',
+                        readLength: '',
+                        insertSize: '',
+                        replicateType: '',
+                        instrument: '',
+                        ionization: '',
+                        hybridization: '',
+                        library: '',
+                        adapterSequence: '',
+                        qcVersion: '',
+                        manufacturer: '',
+                        labeling: '',
+                        marker: '',
+                        baseCallingProgram: '',
+                        platform: 'Illuina-hiseq',
+                        replicate: 'None',
+                        readLayout: 'Single-end'
+                    },
+                    study: {
+                        irbConfirmStep: {},
+                        materials: {},
+                        name: '',
+                        accession: '',
+                        largeClass: {},
+                        smallClass: {},
+                        purpose: '',
+                        inclusionCriteria: '',
+                        exclusionCriteria: '',
+                        measures: '',
+                        disease: {
+                            koreanName: '',
+                            englishName: '',
+                            disease: {},
+                        }
+                    },
+                    submitState: {status: "READY", step: 1, date: null, worker: null, comment: ""},
+                    verifyState: {status: "READY", step: 1, date: null, worker: null, comment: ""},
+                    writingState: {status: "READY", step: 2, date: null, worker: null, comment: ""},
+                    project: null,
+                    publicYn: "N",
+                    registUser: null,
+                    reviewList: []
+
+                },
+
             }
         },
         computed: {
+            isCreateForm() {
+                return this.$route.params.id == undefined ? true : false
+            },
             prevEnabled() {
                 return this.currentStep != 1
             },
@@ -67,7 +131,9 @@
                 this.currentStep -= 1
             },
             next() {
-                this.currentStep  += 1
+
+                //실험정보를 부모로 가져도오도록 설정
+                this.currentStep += 1
             },
             submit() {
                 //제출 이후엔 정보를 변경할 수 없습니다. 제출하시겠습니까?
@@ -82,6 +148,10 @@
             },
             scrollTo(no) {
                 this.currentStep = no
+            },
+            async save() {
+
+
             }
 
         }

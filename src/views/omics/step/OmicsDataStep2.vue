@@ -5,11 +5,11 @@
         <div class="btn-toolbar-right">
             <span data-toggle="tooltip" data-placement="top" title="연구과제 검색">
                     <!--등록은 id=registPopup 로연결되어 있음 -->
-                    <b-button class="btn-primary-sm" v-b-modal.projectSearchPopup variant="primary" @click="onClickRegist">
+                    <b-button class="btn-primary-sm" v-b-modal.ClinicSudiesSearchPopup variant="primary">
                         <i class="xi-search"></i><span class="sr-only">검색></span>
                     </b-button>
                 <!--등록을 위한 페잊 컴포넌트-->
-                    <clinic-studies-popup @saveOK="selectList" v-if="isRegist"/>
+                    <clinic-sudies-search-popup @onClinicSudiesSelected="select"/>
             </span>
         </div>
 
@@ -18,48 +18,49 @@
             <tbody>
             <tr>
                 <th>등록번호</th>
-                <td>{{ study.accession }}</td>
+                <td>{{ omics.study.accession }}</td>
                 <th>임상연구 고유번호</th>
-                <td>{{ study.uniqueNo }}</td>
+                <td>{{ omics.study.uniqueNo }}</td>
             </tr>
             <tr>
                 <th>연구제목</th>
-                <td colspan="3">{{ study.name }}</td>
+                <td colspan="3">{{ omics.study.name }}</td>
             </tr>
             <tr>
                 <th>연구목적</th>
-                <td colspan="3" class="pre">{{ study.purpose }}</td>
+                <td colspan="3" class="pre">{{ omics.study.purpose }}</td>
             </tr>
             <tr>
                 <th>연구대상 표현형/질환</th>
-                <td colspan="3">(국문) {{ study.disease.koreanName }}, (영문) {{ study.disease.englishName }}</td>
+                <td colspan="3">(국문) {{ omics.study.disease.koreanName }}, (영문) {{ omics.study.disease.englishName }}
+                </td>
             </tr>
             <tr>
                 <th>연구유형</th>
-                <td colspan="3">{{ study.largeClass.name }} ({{ study.smallClass.name }})</td>
+                <td colspan="3">{{ omics.study.largeClass.name }} ({{ omics.study.smallClass.name }})</td>
                 <!-- <th>임상시험단계</th>
-                <td>{{ study.phase.name }}</td> -->
+                <td>{{ omics.study.phase.name }}</td> -->
             </tr>
             <tr>
                 <th>실험설계및방법</th>
-                <td colspan="3" class="pre">{{ study.design }}</td>
+                <td colspan="3" class="pre">{{ omics.study.design }}</td>
             </tr>
             <tr>
                 <th>연구결과</th>
-                <td colspan="3" class="pre">{{ study.result }}</td>
+                <td colspan="3" class="pre">{{ omics.study.result }}</td>
             </tr>
             <tr>
                 <th>연구대상자 선정기준</th>
-                <td colspan="3" class="pre">{{ study.inclusionCriteria }}</td>
+                <td colspan="3" class="pre">{{ omics.study.inclusionCriteria }}</td>
             </tr>
             <tr>
                 <th>연구대상자 제외기준</th>
-                <td colspan="3" class="pre">{{ study.exclusionCriteria }}</td>
+                <td colspan="3" class="pre">{{ omics.study.exclusionCriteria }}</td>
             </tr>
             <tr>
                 <th>영문검사항목</th>
-                <!--<td colspan="3">{{ study.measures | models }}</td>-->
-                <td colspan="3">{{ study.measures }}</td>
+                <!--<td colspan="3">{{ omics.study.measures | models }}</td>-->
+                <td colspan="3">{{ omics.study.measures }}</td>
             </tr>
             </tbody>
         </table>
@@ -69,18 +70,17 @@
             <caption class="sr-only">노출정보 목록</caption>
             <thead>
             <tr>
-                <th style="width: 80px;">순번</th>
+
                 <th style="width: 30%;">노출물질</th>
                 <th style="width: 30%;">노출경로</th>
                 <th>노출량</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-show="!study.materials.length > 0">
+            <tr v-show="!omics.study.materials.length > 0">
                 <td colspan="4">노출정보가</td>
             </tr>
-            <tr v-for="item in study.materials">
-                <td>{{$index+1}}</td>
+            <tr v-for="item in omics.study.materials">
                 <td>{{ item.material.name }}</td>
                 <td>{{ item.route.name }}</td>
                 <td>{{ item.quantity }}</td>
@@ -94,13 +94,13 @@
             <tbody>
             <tr>
                 <th scope="row">승인단계</th>
-                <td>{{ study.irbConfirmStep.name }}</td>
+                <td>{{ omics.study.irbConfirmStep.name }}</td>
                 <th scope="row">승인번호</th>
-                <td>{{ study.irbConfirmNo }}</td>
+                <td>{{ omics.study.irbConfirmNo }}</td>
             </tr>
             <tr>
                 <th scope="row">승인날짜</th>
-                <td colspan="3">{{ study.irbConfirmDate | date }}</td>
+                <td colspan="3">{{ omics.study.irbConfirmDate | date }}</td>
             </tr>
             </tbody>
         </table>
@@ -108,49 +108,29 @@
 </template>
 
 <script>
-    import ClinicStudiesPopup from "../../project/projectSearchPopup";
+    import ProjectSearchPopup from "../../project/ProjectSearchPopup";
+    import ClinicSudiesSearchPopup from "../../clinicStudies/clinicSudiesSearchPopup";
+    import axios from "../../../utils/axios";
+
     export default {
         name: "OmicsDataStep2",
-        components: {ClinicStudiesPopup},
-        data() {
-            return {
-                study: {
-                    irbConfirmStep:{},
-                    materials:{},
-                    name:'',
-                    accession: '',
-                    largeClass: {},
-                    smallClass:{},
-
-                    disease: {
-                        koreanName:'',
-                        englishName:'',
-
-                        disease: {},
-
-                    }
-                }
-
-            }
-        },
+        props: ['omics'],
+        components: {ClinicSudiesSearchPopup, ProjectSearchPopup},
         methods: {
             isCreateForm() {
                 return true
             },
-            isNgs(omics) {
-                return (omics.omicsType == 'NGS');
-            },
+            async select(param) {
 
-            isMicroarray(omics) {
-                return (omics.omicsType == 'Microarray');
-            },
-
-            isMetabolome(omics) {
-                return (omics.omicsType == 'Metabolmoe');
-            },
-            openStudySearchPopup(){
-
+                this.omics.study = param[0]
+                let url = '/isg-oreo/api/omics'
+                if(this.isCreateForm()){
+                    this.resultList = await axios.post(url, this.omics); //insert는 post 으로 정의 되어있음
+                }else{
+                    this.resultList = await axios.put(url, this.omics);  //update는  put 으로 정의 되어있음
+                }
             }
+
         }
     }
 </script>

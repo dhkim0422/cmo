@@ -166,8 +166,13 @@
                 this.params['currentPage'] = page
                 this.resultList = await axios.get(url, {params: this.params});
                 this.items = this.resultList.data.list
-            },
 
+
+            },
+            close() {
+                this.$emit('projectSelected', this.selected);
+                this.$bvModal.hide('registPopup')
+            }
 
         },
 
