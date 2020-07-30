@@ -83,6 +83,7 @@
 <script>
     export default {
         name: "OmicsDataStep4",
+        props:['omics'],
         methods: {
             isCreateForm() {
                 return true

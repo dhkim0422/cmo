@@ -7,11 +7,15 @@ import Default from "./layout/Default.vue";
 import upperFirst from "lodash/upperFirst";
 import camelCase from "lodash/camelCase";
 
+
+const VueUploadComponent = require('vue-upload-component')
+Vue.component('file-upload', VueUploadComponent)
+
 var eventBus = new Vue();
 /*
 부트스트랩
 */
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import {BootstrapVue, BootstrapVueIcons} from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
@@ -21,14 +25,14 @@ Vue.use(BootstrapVueIcons)
 alert 셋팅
 */
 import VueSimpleAlert from "vue-simple-alert";
-Vue.use(VueSimpleAlert);
 
+Vue.use(VueSimpleAlert);
 
 
 /*
 vee-validate 3.3 설정
  */
-import { ValidationObserver, ValidationProvider, extend, localize } from 'vee-validate'; //
+import {ValidationObserver, ValidationProvider, extend, localize} from 'vee-validate'; //
 import ko from 'vee-validate/dist/locale/ko.json';
 import * as rules from 'vee-validate/dist/rules';
 
@@ -97,11 +101,14 @@ Vue.filter("htmlSeqFormat", (value) => {
 
 Vue.filter("date", (val) => {
 
-    if(undefined === val) return
+    if (undefined === val ||  '' == val) return
+
+    console.log('11',val)
+
     var date = new Date(val);  //입력 파라메터로 Date 객체를 생성합니다
 
-    var yyyy=date.getFullYear().toString(); // '연도'를 뽑아내고
-    var mm = (date.getMonth()+1).toString(); // '월'을 뽑아내고
+    var yyyy = date.getFullYear().toString(); // '연도'를 뽑아내고
+    var mm = (date.getMonth() + 1).toString(); // '월'을 뽑아내고
     var dd = date.getDate().toString(); // '일'을 뽑아냅니다
 
     var Str = '';
@@ -109,7 +116,7 @@ Vue.filter("date", (val) => {
     //스트링 배열의 앞자리가 두자리 수가 아닌 한자리 수일 경우
     // 두자리로 표시하기 위해 0을 채웁니다(lpad 와 동일한 역할)
     // (ex : '1' -> '01' )
-    Str += yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' +(dd[1] ? dd : '0' + dd[0]);
+    Str += yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' + (dd[1] ? dd : '0' + dd[0]);
 
     return Str;
 });
@@ -155,19 +162,19 @@ Vue.filter('groupNm', function (data, group) {
 
     if (data.omicsType == '') { // 오믹스 파일인 경우
         return "";
-    }else if (data.omicsType == 'NGS') { // 오믹스 파일인 경우
+    } else if (data.omicsType == 'NGS') { // 오믹스 파일인 경우
         omicsType = data.omicsType;
         fileGroup = group;
-    }else if (data.omicsType == 'Metabolome') { // 오믹스 파일인 경우
+    } else if (data.omicsType == 'Metabolome') { // 오믹스 파일인 경우
         omicsType = data.omicsType;
         fileGroup = group;
-    }else if (data.omicsType == 'Microarray') { // 오믹스 파일인 경우
+    } else if (data.omicsType == 'Microarray') { // 오믹스 파일인 경우
         omicsType = data.omicsType;
         fileGroup = group;
-    }else if (data.omicsType == 'Proteome') { // 오믹스 파일인 경우
+    } else if (data.omicsType == 'Proteome') { // 오믹스 파일인 경우
         omicsType = data.omicsType;
         fileGroup = group;
-    }else{
+    } else {
         omicsType = data.omics.omicsType;
         fileGroup = data.group;
     }

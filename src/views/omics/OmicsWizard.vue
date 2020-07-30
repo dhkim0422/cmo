@@ -22,10 +22,10 @@
                 </li>
             </ol>
             <div class="wizard-content">
-                <omics-data-step1 :omics="omics" :omics-type="omicsType" v-if="currentStep==1"/>
-                <omics-data-step2 :omics="omics" v-if="currentStep==2"/>
-                <omics-data-step3 v-if="currentStep==3"/>
-                <omics-data-step4 v-if="currentStep==4"/>
+                <omics-data-step1 :omics="omics" v-if="currentStep==1"/>
+                <omics-data-step2 :omics="omics" @onSaveOmicsData="onSaveOmicsData" v-if="currentStep==2"/>
+                <omics-data-step3 :omics="omics" v-if="currentStep==3"/>
+                <omics-data-step4 :omics="omics" v-if="currentStep==4"/>
             </div>
         </div>
         <!-- Wizard-footer -->
@@ -57,11 +57,12 @@
                 currentStep: 1,
                 LAST_STEP: 4,
                 omics: {
-                    accession: (this.$route.params.id == undefined ? '' : this.$route.params.id),
+                    id: (this.$route.params.id == undefined ? '' : this.$route.params.id),
+                    accession: '',
                     name: '',
                     design: '',
                     omicsType: this.$route.params.omicsType,
-                    experType: 'OEXPER_N01',
+                    experType: {code:'OEXPER_N01'},
                     rawdataTypes: this.$store.state.fileTypeMap[this.$route.params.omicsType].rawdata,
                     processedTypes: this.$store.state.fileTypeMap[this.$route.params.omicsType].processed,
                     attributes: {
@@ -82,39 +83,67 @@
                         platform: 'Illuina-hiseq',
                         replicate: 'None',
                         readLayout: 'Single-end'
+
                     },
                     study: {
                         irbConfirmStep: {},
                         materials: {},
                         name: '',
                         accession: '',
-                        largeClass: {},
-                        smallClass: {},
+                        largeClass: {name: ''},
+                        smallClass: {name: ''},
                         purpose: '',
                         inclusionCriteria: '',
                         exclusionCriteria: '',
                         measures: '',
+                        irbConfirmDate: '',
+                        id: '',
+                        irbConfirmNo: '',
+                        uniqueNo: '',
                         disease: {
+                            code: '',
+                            searchCondition: '',
+                            searchKeyword: '',
+                            searchUseYn: '',
+                            pageIndex: 1,
+                            pageUnit: 10,
+                            pageSize: 10,
+                            firstIndex: 1,
+                            lastIndex: 1,
+                            recordCountPerPage: 10,
+                            page: 1,
+                            rows: 10,
+                            sDate: '',
+                            startDate: '',
+                            eDate: '',
+                            endDate: '',
+                            id: "1",
                             koreanName: '',
-                            englishName: '',
-                            disease: {},
-                        }
+                            englishName: ''
+                        },
                     },
-                    submitState: {status: "READY", step: 1, date: null, worker: null, comment: ""},
-                    verifyState: {status: "READY", step: 1, date: null, worker: null, comment: ""},
-                    writingState: {status: "READY", step: 2, date: null, worker: null, comment: ""},
-                    project: null,
-                    publicYn: "N",
-                    registUser: null,
-                    reviewList: []
 
+                    submitState: {status: "READY", step: 1, date: null, worker: null, comment: ''},
+                    verifyState: {status: "READY", step: 1, date: null, worker: null, comment: ''},
+                    writingState: {status: "READY", step: 2, date: null, worker: null, comment: ''},
+                    project: {},
+                    publicYn: "N",
+                    registUser: {},
+                    reviewList: [],
+                    registDate: '',
+
+                    reviewState: {status: "READY", comment: ''},
+                    confirmState: {status: "READY", comment: ''},
+                    registStatus: "READY",
                 },
+
 
             }
         },
-        computed: {
+        computed: {},
+        methods: {
             isCreateForm() {
-                return this.$route.params.id == undefined ? true : false
+                return this.omics.id == '' ? true : false
             },
             prevEnabled() {
                 return this.currentStep != 1
@@ -125,15 +154,36 @@
             submitEnabled() {
                 return this.currentStep == this.LAST_STEP
             },
-        },
-        methods: {
             prev() {
-                this.currentStep -= 1
-            },
-            next() {
+                if(this.currentStep >= 1){
+                    this.currentStep = 1
+                }else{
+                    this.currentStep -= 1
+                }
 
-                //실험정보를 부모로 가져도오도록 설정
-                this.currentStep += 1
+            },
+            async next() {
+                if(this.currentStep == 1){
+                    if(this.omics.id != ''){
+                        const response = this.resultList = await axios.post('/isg-oreo/api/omics', this.omics);
+                        this.omics.id = response.data.id
+                        this.omics.accession = response.data.accession
+
+                        console.log("response.data",response.data)
+                        await this.$alert(
+                            '',
+                            '저장 되었습니다.',
+                            'info'
+                        );
+                    }
+                }
+
+                if(this.currentStep >= this.LAST_STEP){
+                    this.currentStep = this.LAST_STEP
+                }else{
+                    this.currentStep += 1
+                }
+
             },
             submit() {
                 //제출 이후엔 정보를 변경할 수 없습니다. 제출하시겠습니까?
@@ -142,18 +192,55 @@
                 if (tapNo == this.currentStep) {
                     return "active"
                 } else if (this.currentStep < tapNo) {
-                    return ""
+                    return ''
                 }
                 return "on pointer"
             },
             scrollTo(no) {
+
                 this.currentStep = no
             },
             async save() {
 
 
+            },
+            async onSaveOmicsData(param) {
+                this.omics.study = param
+
+
+                let response = {}
+
+                if (this.isCreateForm()) {
+                    //insert는 post 으로 정의 되어있음
+                    response =  await axios.post('/isg-oreo/api/omics', this.omics);
+                } else {
+                    //update는  put 으로 정의 되어있음
+                    response =  await axios.put('/isg-oreo/api/omics/' + this.omics.id, this.omics);
+                }
+
+
+                if (response.status == 200) {
+                    this.omics.id = response.data.id
+                    this.omics.accession = response.data.accession
+
+                    await this.$alert(
+                        '',
+                        '저장 되었습니다.',
+                        'info'
+                    );
+
+                } else {
+                    await this.$alert(
+                        '계속 문제 발생시 관리자에게 문의 하세요',
+                        '문제가 발생했습니다. ',
+                        'info'
+                    );
+                }
+
+                console.log('omiscsave', this.omics)
             }
 
         }
     }
+
 </script>

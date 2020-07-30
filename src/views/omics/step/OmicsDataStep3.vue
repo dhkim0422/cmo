@@ -5,50 +5,73 @@
 
         <!-- 탭 -->
         <ul class="tab-menu nav-justified">
-            <li class="menu-item"><a class="menu-link" ng-class="display.head(1)" ng-click="display.tab(1)">원천데이터</a></li>
-            <li class="menu-item"><a class="menu-link" ng-class="display.head(2)" ng-click="display.tab(2)">{{ omics | groupNm }}</a></li>
+            <li class="menu-item"><a class="menu-link" :class="head(1)" @click="scrollTo(1)">원천데이터</a></li>
+            <li class="menu-item"><a class="menu-link" :class="head(2)" @click="scrollTo(2)">{{ omics | groupNm}}</a>
+            </li>
         </ul>
-
         <!-- 탭내용 -->
         <div class="tab-content">
-            <div class="tab-pane fade show" ng-class="display.body(1)">
+            <div class="tab-content" v-if="currentStep==1">
                 <span class="sr-only">원천데이터</span>
 
-                <div ng-repeat="type in omics.rawdataTypes">
-                    <h2 class="h2">{{ type.name | uppercase }} 파일</h2>
-                    <!--jsp:include page="TOreoOmicsFileList.jsp"/-->
+                <div v-for="type in this.omics.rawdataTypes" v-if="type.selected">
+                    <h2 class="h2">{{ type.name }} 파일</h2>
+                    <file-upload-temp :omics="omics" :type="type" :dataType="'rawdata'"></file-upload-temp>
                 </div>
-                <table class="data-table" ng-hide="omics.rawdataTypes.length > 0">
-                    <tbody>
-                    <tr><td class="text-center">선택된 파일 유형이 없습니다.</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- ###### 탭내용 2-2 ########## -->
-            <div class="tab-pane fade show" ng-class="display.body(2)">
-                <span class="sr-only">{{ omics | groupNm }}</span>
-
-                <div ng-repeat="type in omics.processedTypes">
-                    <h2 class="h2">{{ type.name | uppercase }} 파일</h2>
-                    <!--jsp:include page="TOreoOmicsFileList.jsp"/-->
-                </div>
-                <table class="data-table" ng-hide="omics.processedTypes.length > 0">
-                    <tbody>
-                    <tr><td class="text-center">선택된 파일 유형이 없습니다.</td></tr>
-                    </tbody>
-                </table>
 
             </div>
+            <table class="data-table" v-show="!omics.rawdataTypes.length > 0">
+                <tbody>
+                <tr>
+                    <td class="text-center">선택된 파일 유형이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
+        <!-- ###### 탭내용 2-2 ########## -->
+        <div class="tab-content" v-if="currentStep == 2">
+            <span class="sr-only">{{ omics | groupNm }}</span>
+
+            <div v-for="type in this.omics.processedTypes" v-if="type.selected">
+                <h2 class="h2">{{ type.name | uppercase }} 파일</h2>
+                <file-upload-temp :omics="omics" :type="type" :dataType="'processed'"/>
+            </div>
         </div>
     </div>
+
 
 </template>
 
 <script>
+    import OmicsFileList from "./OmicsFileList/OmicsFileList";
+    import FileUploadTemp from "./OmicsFileList/FileUpload";
+
+    function isBlank(value) {
+        return !value
+    }
+
+    function getId(obj) {
+        if (isObject(obj)) {
+            return getId(obj['id']);
+        } else if (isString(obj)) {
+            if (!isBlank(obj))
+                return parseInt(obj);
+        } else if (isNumber(obj)) {
+            return obj;
+        }
+    }
+
     export default {
         name: "OmicsDataStep3",
+        components: {FileUploadTemp, OmicsFileList},
+        props: ['omics'],
+        data() {
+            return {
+                currentStep: 1,
+
+            }
+        },
         methods: {
             isCreateForm() {
                 return true
@@ -64,6 +87,23 @@
             isMetabolome(omics) {
                 return (omics.omicsType == 'Metabolmoe');
             },
+            scrollTo(no) {
+                this.currentStep = no
+            },
+            head: function (no) {
+                return (no == this.currentTab) ? 'active' : '';
+            },
+            body: function (no) {
+                return (no == this.currentTab) ? 'show active' : 'hide';
+            },
+            chkId: function (type, model) {
+                var id = "chk";
+                if (isObject(type))
+                    id = type.group + type.name;
+
+                return (id += isBlank(id) ? "All" : getId(model));
+            }
+
         }
     }
 </script>

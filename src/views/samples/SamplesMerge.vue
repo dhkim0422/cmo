@@ -14,7 +14,7 @@
                 <tr>
                     <th>연구샘플 고유번호</th>
                     <td colspan="3">
-                        <input class="form-control"
+                        <b-input class="form-control"
                                type="text"
                                title="연구샘플 고유번호"
                                name="연구샘플 고유번호"
@@ -26,7 +26,7 @@
                 <tr>
                     <th>샘플명</th>
                     <td>
-                        <input class="form-control"
+                        <b-input class="form-control"
                                type="text"
                                title="샘플명"
                                name="샘플명"
@@ -36,31 +36,31 @@
                     </td>
                     <th>샘플유래</th>
                     <td>
-                        <select class="form-control"
+                        <b-select class="form-control"
                                 placeholder="작성하여주세요."
                                 v-model="model.origin.code"
                                 aria-invalid="false" style="">
                             <option label="인체유래" value="S01">인체유래</option>
                             <option label="세포주(cell line)" value="S02" selected="selected">세포주(cell line)</option>
-                        </select>
+                        </b-select>
                     </td>
 
                 </tr>
                 <tr>
                     <th>샘플구분</th>
                     <td>
-                        <select class="form-control"
+                        <b-select class="form-control"
                                 placeholder="선택하여주세요."
                                 v-model="model.type.code"
                                 aria-invalid="false" style="">
-                            <option value="" class="">해당없음</option>
-                            <option label="Control" value="CONTROL">Control</option>
-                            <option label="Patient" value="PATIENT" selected="selected">Patient</option>
-                        </select>
+                            <b-select-option value="" class="">해당없음</b-select-option>
+                            <b-select-option label="Control" value="CONTROL">Control</b-select-option>
+                            <b-select-option label="Patient" value="PATIENT">Patient</b-select-option>
+                        </b-select>
                     </td>
                     <th>질환명</th>
                     <td>
-                        <input class="form-control"
+                        <b-input class="form-control"
                                type="text"
                                title="질환명"
                                name="disease"
@@ -82,11 +82,11 @@
                 <tr>
                     <th>샘플_설명</th>
                     <td colspan="3">
-                        <textarea class="form-control" cols="30" rows="3"
+                        <b-textarea class="form-control" cols="30" rows="3"
                                   title="샘플 설명" placeholder="작성하여주세요."
                                   v-model="model.description"
                                   aria-invalid="false">
-                        </textarea>
+                        </b-textarea>
                     </td>
                 </tr>
                 </tbody>
@@ -153,32 +153,17 @@
             this.title = (this.isCreateForm() ? '연구샘플 등록' : '연구샘플 수정')
             this.initData()
         },
-        watch:{
-            samplesInfo(newz){
-                this.initData()
-            }
-        },
         data() {
             return {
                 title: '',
-                model: {
-                    accession: '',
-                    collectAddress: '',
-                    collectLocal: '',
-                    description: '',
-                    disease: '',
-                    id: '',
-                    name: '',
-                    origin: '',
-                    provider: "",
-                    registDate: null,
-                    registUser: null,
-                    specimen: '',
-                    target: {id: '', accession: '',},
-                    type: '',
-                    uniqueNo: ''
-                },
+
                 codes: {}
+            }
+        },
+        computed:{
+            ...mapGetters['samplesInfo'],
+            gender(){
+                return this.initData()
             }
         },
         methods: {
@@ -187,15 +172,10 @@
                 return this.samplesInfo == undefined
             },
             async initData() {
-
                 //공통코드 로드
                 let url = '/isg-oreo/ajax/codeGroups/GEN'
                 let codeData = await axios.get(url, {})
-                this.codes['GEN'] = codeData.data.data.resultList
-
-                if (!this.isCreateForm()) {
-                    this.model = this.samplesInfo
-                }
+                return  codeData.data.data.resultList
 
             },
             async submit() {

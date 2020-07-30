@@ -5,10 +5,26 @@ import axios from './utils/axios.js'
 Vue.use(Vuex)
 
 var FILE_GROUP = {
-        RAWDATA: 'rawdata',
-        PROCESSED: 'processed',
-        RESULT: 'result'
-    }
+    RAWDATA: 'rawdata',
+    PROCESSED: 'processed',
+    RESULT: 'result'
+}
+
+
+function dateFormat(val){
+    if(undefined === val) return
+    var date = new Date(val);  //입력 파라메터로 Date 객체를 생성합니다
+    var yyyy=date.getFullYear().toString(); // '연도'를 뽑아내고
+    var mm = (date.getMonth()+1).toString(); // '월'을 뽑아내고
+    var dd = date.getDate().toString(); // '일'을 뽑아냅니다
+
+    var Str = '';
+
+
+    Str += yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' +(dd[1] ? dd : '0' + dd[0]);
+
+    return Str;
+}
 function fileType(group, type) {
     if (isBlank(group))
         group = 'rawdata';
@@ -21,6 +37,7 @@ function fileType(group, type) {
         count: 0,	// 파일개수
     }
 }
+
 
 function isBlank(value) {
     return !value

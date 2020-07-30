@@ -142,13 +142,16 @@
     export default {
         name: "TargetsMerge",
         props: ['targetInfo'],
-        watch:{//props 새로운 데이터가 들어오면 로드 시켜준다. 
-            targetInfo(newProps){
-                console.log("111111")
-                this.codes = this.$store.getters.getCodes
-                this.title = (this.isCreateForm() ? '연구대상자 등록' : '연구대상자 수정')
-                this.initData()
+        async created() {
 
+            this.codes = this.$store.getters.getCodes
+            this.title = (this.isCreateForm() ? '연구대상자 등록' : '연구대상자 수정')
+            this.initCode()
+        },
+        watch:{
+            async targetInfo(newProps){
+                console.log("새로운 데이터 확인 ",newProps)
+                this.initData()
             }
         },
         data() {
@@ -167,27 +170,26 @@
                     uniqueNo: '',
                     unknownAge: false
                 },
-                codes: {}
+                codes: {GEN:{}}
             }
         },
         methods: {
             isCreateForm() {//true 면 등록 false 면 수정
-
                 return this.targetInfo === undefined
             },
-            async initData() {
-
+            async initCode(){
                 //공통코드 로드
+                console.log("111111")
                 let url = '/isg-oreo/ajax/codeGroups/GEN'
+                console.log("11111w")
                 let codeData = await axios.get(url, {})
+                console.log("11111e")
                 this.codes['GEN'] = codeData.data.data.resultList
-
-                if (!this.isCreateForm()) {
-
-                    let targetsData = await axios.get('/isg-oreo/api/clinic-targets/' + this.targetInfo.id, {});
-                    this.model = targetsData.data
-                }
-
+                console.log("11111r",this.codes['GEN'])
+            },
+            async initData() {
+                let targetsData = await axios.get('/isg-oreo/api/clinic-targets/' + this.targetInfo.id, {});
+                this.model = targetsData.data
             },
             async submit() {
                 //벨리데이션 체크 여부 확인

@@ -25,6 +25,7 @@
     "filepond-plugin-image-preview": "^4.1.1",
     "jquery": "^3.4.0",
     "material-design-icons-iconfont": "^5.0.1",
+    "ng-file-upload": "^12.2.13",
     "popper.js": "^1.15.0",
     "vee-validate": "^3.3.7",
     "vue": "^2.6.10",
@@ -36,6 +37,7 @@
     "vue-router": "^3.0.3",
     "vue-select": "^3.1.0",
     "vue-simple-alert": "^1.1.1",
+    "vue-upload-component": "^2.8.20",
     "vuelidate": "^0.7.5",
     "vuetify": "^2.3.3",
     "vuex": "^3.0.1"
@@ -43,7 +45,6 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.7.0",
     "@vue/cli-service": "^3.7.0",
-
     "css-loader": "^2.1.1",
     "deepmerge": "^4.2.2",
     "electron": "^9.0.0",

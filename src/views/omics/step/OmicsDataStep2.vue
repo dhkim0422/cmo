@@ -8,7 +8,6 @@
                     <b-button class="btn-primary-sm" v-b-modal.ClinicSudiesSearchPopup variant="primary">
                         <i class="xi-search"></i><span class="sr-only">검색></span>
                     </b-button>
-                <!--등록을 위한 페잊 컴포넌트-->
                     <clinic-sudies-search-popup @onClinicSudiesSelected="select"/>
             </span>
         </div>
@@ -110,7 +109,6 @@
 <script>
     import ProjectSearchPopup from "../../project/ProjectSearchPopup";
     import ClinicSudiesSearchPopup from "../../clinicStudies/clinicSudiesSearchPopup";
-    import axios from "../../../utils/axios";
 
     export default {
         name: "OmicsDataStep2",
@@ -118,17 +116,10 @@
         components: {ClinicSudiesSearchPopup, ProjectSearchPopup},
         methods: {
             isCreateForm() {
-                return true
+                return this.omics.id == '' ? true : false
             },
             async select(param) {
-
-                this.omics.study = param[0]
-                let url = '/isg-oreo/api/omics'
-                if(this.isCreateForm()){
-                    this.resultList = await axios.post(url, this.omics); //insert는 post 으로 정의 되어있음
-                }else{
-                    this.resultList = await axios.put(url, this.omics);  //update는  put 으로 정의 되어있음
-                }
+                this.$emit('onSaveOmicsData',param[0])
             }
 
         }

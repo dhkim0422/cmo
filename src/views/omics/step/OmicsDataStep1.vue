@@ -1,7 +1,7 @@
 <template>
     <!-- Step 1 -->
     <div class="wizard-step">
-        <h2 class="h2" ng-show="isNgs(omics)">{{this.omicsType}} 실험정보</h2>
+        <h2 class="h2" ng-show="isNgs(omics)">{{this.omics.omicsType}} 실험정보</h2>
         <form name="step1Form">
             <table class="view-table" v-if="isNgs(omics)">
                 <caption class="sr-only">NGS 실험정보</caption>
@@ -11,8 +11,8 @@
                     <td>{{ isCreateForm() ? '등록번호는 자동으로 할당됩니다.' : omics.accession }}</td>
                     <th scope="row" class="form-group required control-label"><label>데이터 유형</label></th>
                     <td>
-                        <select class="form-control" v-model="omics.experType">
-                            <option label="RNA-Seq" value="OEXPER_N01" selected="selected">RNA-Seq</option>
+                        <select class="form-control" v-model="omics.experType.code">
+                            <option label="RNA-Seq" value="OEXPER_N01">RNA-Seq</option>
                             <option label="ChIP-Seq(active)" value="OEXPER_N02">ChIP-Seq(active)</option>
                             <option label="ChIP-Seq(repression)" value="OEXPER_N03">ChIP-Seq(repression)</option>
                             <option label="SNP-Seq" value="OEXPER_N04">SNP-Seq</option>
@@ -224,7 +224,7 @@
                     <th scope="row" class="form-group required control-label"><label>등록번호</label></th>
                     <td>{{ isCreateForm() ? '등록번호는 자동으로 할당됩니다.' : omics.accession }}</td>
                     <th scope="row">오믹스 유형</th>
-                    <td>{{ omicsType }}</td>
+                    <td>{{ omics.omicsType }}</td>
                 </tr>
                 <tr>
                     <th scope="row" class="form-group required control-label"><label>실험제목</label></th>
@@ -358,12 +358,37 @@
         name: "OmicsDataStep1",
         //부모로 데이터를 전달하기 위해 props 를 이용하여 부모 omics 데이터와 동기화 하였다
         //입력된 내역은 부모로 전달되어 자동으로 저장된다.
-        props: ['omicsType', 'omics'],
+        props: ['omics'],
         data() {
             return {
                 item: {},
                 codes: this.$store.state.codes
             }
+        },
+        watch: {
+            omics(newData) {
+
+                var date = new Date(newData.publicDate);  //입력 파라메터로 Date 객체를 생성합니다
+
+                var yyyy = date.getFullYear().toString(); // '연도'를 뽑아내고
+                var mm = (date.getMonth() + 1).toString(); // '월'을 뽑아내고
+                var dd = date.getDate().toString(); // '일'을 뽑아냅니다
+
+                var Str = '';
+
+                //스트링 배열의 앞자리가 두자리 수가 아닌 한자리 수일 경우
+                // 두자리로 표시하기 위해 0을 채웁니다(lpad 와 동일한 역할)
+                // (ex : '1' -> '01' )
+                Str += yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' + (dd[1] ? dd : '0' + dd[0]);
+
+
+
+                this.omics.publicDate = str
+            }
+        },
+        computed: {
+
+
         },
         methods: {
             isCreateForm() {

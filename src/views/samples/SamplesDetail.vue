@@ -66,8 +66,10 @@
                 <td>{{ model.origin === undefined ? '' : model.origin.name }}</td>
             </tr>
             <tr>
-                <th>샘플구분</th>
-                <td>{{ model.type.name}}</td>
+                <th>샘플구분
+
+                </th>
+                <td>{{ model.type == undefined ? '': model.type.name}}</td>
                 <th>질환명</th>
                 <td>{{ model.disease }}</td>
             </tr>
@@ -144,7 +146,7 @@
                     disease: '',
                     id: '',
                     name: '',
-                    origin: {code: '', name: ''},
+                    origin: {code: 'S01', name: ''},
                     provider: '',
                     registDate: '',
                     registUser: {id: '', name: '', username: '', roles: []},
@@ -160,7 +162,7 @@
                         uniqueNo: '',
                         unknownAge: ''
                     },
-                    type: '',
+                    type: {name:''},
                     uniqueNo: ''
                 }
             }
