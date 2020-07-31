@@ -62,7 +62,7 @@
                         <th scope="row">파일 종류</th>
                         <td>
                             <span v-for="file in fileTypes(item)">
-                                {{file.name}}
+                                <!--{{file.name}}-->
                             </span>
                         </td>
                         <th scope="row">파일 용량</th>

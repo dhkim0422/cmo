@@ -1,5 +1,6 @@
 <template>
     <div>
+
         <div class="filter-group">
             <div class="group-item">
                 <div class="custom-checkbox custom-checkbox-all">
@@ -69,6 +70,11 @@
         name: "OmicsRegistList",
         components: {OmicsWizard, PageUnit, TotalRecordCount, OmicsDataList},
         props: ['omicsType'],
+        watch:{
+          omicsType(newProps){
+              this.search()
+          }
+        },
         data() {
             return {
                 isRegist: false,
@@ -132,6 +138,7 @@
                 params.append('pageSize', this.resultList.data.numberOfRows)
                 params.append('rowSize', this.resultList.data.numberOfRows)
                 params.append('currentPage', page)
+
                 this.resultList = await axios.get(url, {params: params});
             },
             onClickCreateLink() {

@@ -1,7 +1,7 @@
 <template>
     <!-- Step 1 -->
     <div class="wizard-step">
-        <h2 class="h2" ng-show="isNgs(omics)">{{this.omics.omicsType}} 실험정보</h2>
+        <h2 class="h2" v-show="isNgs(omics)">{{this.omics.omicsType}} 실험정보</h2>
         <form name="step1Form">
             <table class="view-table" v-if="isNgs(omics)">
                 <caption class="sr-only">NGS 실험정보</caption>
@@ -27,7 +27,7 @@
                     <th scope="row" class="form-group required control-label"><label>실험제목</label></th>
                     <td colspan="3">
                         <input class="form-control" type="text" title="실험제목" placeholder="작성하여주세요." name="experName"
-                               v-model="omics.name" ng-required="true" ng-minlength="3" ng-maxlength="512"/>
+                               v-model="omics.name" />
 
                     </td>
                 </tr>
@@ -155,7 +155,7 @@
                     <th scope="row" class="form-group required control-label"><label>실험제목</label></th>
                     <td colspan="3">
                         <input class="form-control" type="text" title="실험제목" placeholder="작성하여주세요." name="experName"
-                               v-model="omics.name" ng-required="true" ng-minlength="3" ng-maxlength="512"/>
+                               v-model="omics.name" />
 
                     </td>
                 </tr>
@@ -175,7 +175,7 @@
                     </td>
                     <th scope="row">제작사</th>
                     <td>
-                        <input class="form-control" type="text" title="제작사" placeholder="플랫폼 제작사를 작성해 주세요.작성하여주세요."
+                        <input class="form-control" type="text" title="제작사" placeholder="작성하여주세요."
                                v-model="omics.attributes.manufacturer" maxlength="2000"/>
                     </td>
                 </tr>
@@ -230,7 +230,7 @@
                     <th scope="row" class="form-group required control-label"><label>실험제목</label></th>
                     <td colspan="3">
                         <b-input class="form-control" type="text" title="실험제목" placeholder="작성하여주세요." name="experName"
-                                 v-model="omics.name" ng-required="true" ng-minlength="3" ng-maxlength="512"/>
+                                 v-model="omics.name" />
                     </td>
                 </tr>
                 <tr>
@@ -258,9 +258,10 @@
                 <tr>
                     <th scope="row">Type</th>
                     <td colspan="3">
-                        <select class="form-control" v-model="omics.attributes.spectrometry"
+                        <b-form-select v-model="omics.attributes.spectrometry" :options="omics.attributes.spectrometry"></b-form-select>
+                        <!--<select class="form-control" v-model="omics.attributes.spectrometry"
                                 ng-options="code for code in codes.spectrometry" required>
-                        </select>
+                        </select>-->
                     </td>
                 </tr>
                 <tr>
@@ -380,9 +381,6 @@
                 // 두자리로 표시하기 위해 0을 채웁니다(lpad 와 동일한 역할)
                 // (ex : '1' -> '01' )
                 Str += yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' + (dd[1] ? dd : '0' + dd[0]);
-
-
-
                 this.omics.publicDate = str
             }
         },

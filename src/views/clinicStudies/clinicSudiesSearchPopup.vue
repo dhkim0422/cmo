@@ -23,11 +23,11 @@
                     </div>
                 </div>
                 <div>
-                    <b-table
+                    <b-table class=""
                             ref="selectableTable"
                             selectable
                             select-mode="single"
-                            class="data-table"
+                            class="data-table table-responsive"
                             :items="items"
                             :fields="fields"
                             @row-selected="onRowSelected"

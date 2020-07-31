@@ -20,7 +20,6 @@
                 >
                     <i class="xi-file-upload"></i><span class="sr-only">업로드</span>
                 </file-upload>
-
                 <button class="btn-outline-secondary-sm" title="샘플연결">
                     <i class="xi-link"></i><span class="sr-only">샘플연결</span>
                 </button>
@@ -40,7 +39,7 @@
                     <i class="fa fa-stop" aria-hidden="true"></i>
                     Stop Upload
                 </button>-->
-                <page-unit :page-unit="resultList.data.numberOfRows"/>
+                <!--<page-unit :page-unit="resultList.data.numberOfRows"/>-->
             </div>
         </div>
 
@@ -68,23 +67,15 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-show="!(fileList[type.name] > 0 || resultList.data.list.length > 0)">
+            <tr v-show="computedFiles.length == 0">
                 <td colspan="7" class="text-center">
                     검색된 항목이 없습니다.
                 </td>
             </tr>
-            <tr v-for="item in resultList.data.list">
-                <td class="custom-checkbox">
-                    <input type="checkbox"  class="custom-control-input"
-                           checklist-model="modelHandler.selectedIdList" checklist-value="item.id"
-                           ng-change="modelHandler.select()"/>
-                    <label class="custom-control-label" >
-                        <span class="sr-only">선택 </span>
-                    </label>
-                </td>
-
-                <td>{{ item.accession && '' }}</td>
-                <td>{{ item.sample.accession && '' }}</td>
+            <tr v-for="item in computedFiles">
+                <td></td>
+                <td>{{ item.accession}}</td>
+                <td>{{ item.sample && item.sample.accession }}</td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.size | byte }}</td>
                 <td>{{ item.checksum }}</td>
@@ -100,17 +91,16 @@
                 <td>-</td>
             </tr>
 
-            <tr v-if="files[type.name] == 0">
+            <!--<tr v-if="files[type.name] == 0">
                 <td colspan="6">
-
+                     업로드 해 주세요
                 </td>
-            </tr>
+            </tr>-->
             </tbody>
         </table>
         <div>
             <div v-for="err in this.errors"> {{err}}</div>
         </div>
-
     </div>
 </template>
 <style>
@@ -133,18 +123,25 @@
             TotalRecordCount,
             FileUpload,
         },
+        created() {
+            this.selectFile()
+        },
         props: ['omics', 'type', 'dataType'],
+        computed: {
+            computedFiles() {
+                return this.fileList.data.list;
+            }
+        },
         data() {
             return {
                 selected: [],
-                items: [],
                 fileList: {
-                    fasta: [],
-                    fastaq: [],
-                    BAM: [],
-                    VCF: [],
-                    BED: [],
-                    Others: []
+                    data: {
+                        total: 0,
+                        currentPage: 1,
+                        numberOfRows: 10,
+                        list: []
+                    }
                 },
                 files: {
                     fasta: [],
@@ -155,14 +152,6 @@
                     Others: []
                 },
                 errors: [],
-                resultList:{
-                    data: {
-                        total: 0,
-                        currentPage: 1,
-                        numberOfRows: 10,
-                        list: []
-                    }
-                }
             }
         },
         methods: {
@@ -185,9 +174,9 @@
             inputFile(newFile, oldFile) {
                 if (newFile && !oldFile) {
                     // add
-                    console.log('add', newFile)
                     //등록과 동시에 업로드 시작
                     this.$refs[this.type.name].active = true
+                    this.errors = []
                 }
                 /*
                 if (newFile && oldFile) {
@@ -202,15 +191,11 @@
             updatetValue(value) {
                 if (this.$refs[this.type.name] && this.$refs[this.type.name].uploaded) {
                     for (let item of value) {
-                        let response = {}
+                        item.response.type = this.type.name
+                        item.response.status = "complete"
+                        item.response.distbStatus = "READY"
+                        item.response.group = this.dataType
 
-                        let itemData = item
-                        itemData['response']['omics'] = this.omics
-                        item['response']['type'] = this.type.name
-                        item['response']['status'] = "complete"
-                        item['response']['distbStatus'] = "READY"
-                        item['response']['group'] = this.dataType
-                        console.log('itemSSSSS',item)
                         try {
                             const url = '/isg-oreo/api/omics/' + this.omics.id + '/files'
 
@@ -219,47 +204,46 @@
                                     // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
 
                                     this.errors.push(error.response.data)
-
+                                    /*
                                     console.log(error.response.status);
                                     console.log(error.response.headers);
-                                }
-                                else if (error.request) {
+                                    */
+                                } else if (error.request) {
                                     // 요청이 이루어 졌으나 응답을 받지 못했습니다.
                                     // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
                                     // Node.js의 http.ClientRequest 인스턴스입니다.
                                     console.log(error.request);
-                                }
-                                else {
+                                } else {
                                     // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
                                     console.log('Error', error.message);
                                 }
-                                console.log(error.config);
-                            }).then(()=>{
+                                //console.log(error.config);
+                            }).then(() => {
+
                                 this.selectFile();
                             });
 
                         } catch (e) {
-                            this.errors.push(response.response.data)
+                            this.errors.push(e)
                         }
                     }
 
                 }
             },
-            async selectFile(page = 1){
-
-                let url = '/isg-oreo/api/omics/'+this.omics.id+'/files'
+            async selectFile(page = 1) {
+                this.files = []
+                let url = '/isg-oreo/api/omics/' + this.omics.id + '/files'
                 const params = new URLSearchParams();
-
-                params.append('firstIndex', 1)
                 params.append('type', this.type.name)
                 params.append('group', this.dataType)
                 params.append('omicsId', this.omics.id)
-                params.append('firstIndex', 1)
-                params.append('rowSize', this.resultList.data.numberOfRows)
+                params.append('firstIndex', 0)
+                params.append('rowSize', this.fileList.data.numberOfRows)
                 params.append('currentPage', page)
+                const resultList = await axios.get(url, {params: params});
+                console.log("resultList",resultList)
+                this.fileList.data = resultList.data
 
-                this.resultList = await axios.get(url, {params: params});
-                this.items = this.resultList.data.list
             }
 
 

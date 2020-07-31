@@ -193,7 +193,23 @@
                 let url = '/isg-oreo/api/clinic-samples?action=REMOVE'
                 let response = await axios.put(url, this.selected);
 
-                this.$alert('', '삭제 처리 되었습니다', 'info');
+                let msg = "";
+                if(response.data.errorList.total != 0 ){
+                    this.$alert('다시 시도해 주세요.', '문제가 발생했습니다.', 'error');
+                    return
+                }
+                if(response.data.failList.total != 0 ){
+
+                    let aceession = new Array()
+                    for (const row of response.data.failList.list){
+                        aceession.push(row.accession)
+                    }
+
+                    this.$alert(aceession, '이미 참조된 내역이 있습니다.', 'info');
+                }else{
+                    this.$alert('', response.data.successList.total +'건 삭제 처리 되었습니다', 'info');
+                }
+
                 this.selectList()
             },
 

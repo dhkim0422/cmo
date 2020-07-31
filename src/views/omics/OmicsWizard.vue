@@ -34,6 +34,7 @@
             <b-button class="btn-primary" v-if="nextEnabled" @click="next()">다음으로</b-button>
             <b-button class="btn-primary" v-if="submitEnabled" @click="submit()">저장하기</b-button>
         </div>
+        {{this.omics.id}}
     </div>
 </template>
 

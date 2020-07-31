@@ -59,7 +59,11 @@
             <tr>
                 <th>영문검사항목</th>
                 <!--<td colspan="3">{{ omics.study.measures | models }}</td>-->
-                <td colspan="3">{{ omics.study.measures }}</td>
+                <td colspan="3">
+                    <span v-for=" item in omics.study.measures" :key="item.id">
+                        {{item.name}}
+                    </span>
+                </td>
             </tr>
             </tbody>
         </table>

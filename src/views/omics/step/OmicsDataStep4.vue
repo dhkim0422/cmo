@@ -23,27 +23,26 @@
             <tr>
                 <th scope="row">등록 동의서</th>
                 <td>
-                    <div ng-show="hasDepositFile()">
+                    <div v-show="hasDepositFile()">
                         <input class="btn-link" type="button" style="margin-top: 7px;"
 
-                               ng-click="download(depositFile)" />
+                               @click="download(depositFile)"/>
                         <!--value="{{ depositFile.name }} ({{ depositFile.size | bytes }})"-->
                         <button class="btn-outline-secondary" style="float: right;"
                                 data-toggle="tooltip" data-placement="top" title="삭제"
-                        ng-click="remove(depositFile)">
-                        <i class="xi-trash"></i><span class="sr-only">삭제</span>
+                                @click="remove(depositFile)">
+                            <i class="xi-trash"></i><span class="sr-only">삭제</span>
                         </button>
                     </div>
-                    <div class="custom-file" ng-hide="hasDepositFile()">
+                    <div class="custom-file" v-show="!hasDepositFile()">
                         <label class="custom-file-label" data-toggle="tooltip" data-placement="top" title="업로드">
-                        <div style="width: 90%" ng-repeat="file in depositUploader.fileList">
-                            <!--uib-progressbar class="progress-striped active" value="file.progress">{{ file.progress }} %</uib-progressbar-->
-                            <b-progress class="progress-striped" :value="file.progress" :max="max" show-progress animated>{{ file.progress }} </b-progress>
+                            <div style="width: 90%" v-for="file in fileList">
+                                <b-progress class="progress-striped" :value="file.progress" :max="max" show-progress animated>{{ file.progress }}
+                                </b-progress>
 
-                        </div>
-                        <span ng-hide="depositUploader.fileList.length > 0" style="color: gray;">파일을 선택해 주세요</span>
-                        <input type="file" ng-hide="true" ng-model="depositUploader.files"
-                               ng-change="depositUploader.upload()" ngf-multiple="false" ngf-select />
+                            </div>
+                            <span v-show="!fileList.length > 0" style="color: gray;">파일을 선택해 주세요</span>
+                            <input type="file" v-show="!true"  @change="upload"/>
                         </label>
                     </div>
                 </td>
@@ -51,26 +50,27 @@
             <tr>
                 <th scope="row">제3자 정보제공 동의서</th>
                 <td>
-                    <div ng-show="hasProvideFile()">
+                    <div v-show="this.hasProvideFile">
                         <input class="btn-link" type="button" style="margin-top: 7px;"
-
-                               ng-click="download(provideFile)"/>
+                               @click="download(provideFile)"/>
                         <!--VALUE="{{ PROVIDEFILE.NAME }} ({{ PROVIDEFILE.SIZE | BYTES }})"-->
                         <button class="btn-outline-secondary" style="float: right;"
                                 data-toggle="tooltip" data-placement="top" title="삭제"
-                        ng-click="remove(provideFile)">
-                        <i class="xi-trash"></i><span class="sr-only">삭제</span>
+                                @click="remove(provideFile)">
+                            <i class="xi-trash"></i><span class="sr-only">삭제</span>
                         </button>
                     </div>
-                    <div class="custom-file" ng-hide="hasProvideFile()">
+                    <div class="custom-file" v-show="!hasProvideFile()">
                         <label class="custom-file-label" data-toggle="tooltip" data-placement="top" title="업로드">
-                        <div style="width: 90%" ng-repeat="file in provideUploader.fileList">
-                            <!--uib-progressbar class="progress-striped active" value="file.progress">{{ file.progress }} %</uib-progressbar-->
-                            <b-progress class="progress-striped" :value="file.progress" :max="max" show-progress animated>{{ file.progress }} </b-progress>
-                        </div>
-                        <span ng-hide="provideUploader.fileList.length > 0" style="color: gray;">파일을 선택해 주세요</span>
-                        <input type="file" ng-hide="true" ng-model="provideUploader.files"
-                               ng-change="provideUploader.upload()" ngf-multiple="false" ngf-select />
+                            <div style="width: 90%" v-for="file in fileList">
+                                <!--uib-progressbar class="progress-striped active" value="file.progress">{{ file.progress }} %</uib-progressbar-->
+                                <b-progress class="progress-striped" :value="file.progress" :max="max" show-progress
+                                            animated>{{ file.progress }}
+                                </b-progress>
+                            </div>
+                            <span v-show="!fileList.length > 0" style="color: gray;">파일을 선택해 주세요</span>
+                            <input type="file" v-show="!true"
+                                   @change="upload()" ngf-multiple="false" ngf-select/>
                         </label>
                     </div>
                 </td>
@@ -83,8 +83,29 @@
 <script>
     export default {
         name: "OmicsDataStep4",
-        props:['omics'],
+        props: ['omics'],
+        data() {
+            return {
+                fileList: [],
+                files:[]
+            }
+        },
         methods: {
+            hasProvideFile(){
+
+            },
+            hasDepositFile() {
+                return false
+            },
+            upload() {
+
+            },
+            remove() {
+
+            },
+            download() {
+
+            },
             isCreateForm() {
                 return true
             },

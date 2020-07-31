@@ -39,11 +39,11 @@
                 </button>
                 </span>
                 <span data-toggle="tooltip" data-placement="top" title="연구대상자 수정">
-                    <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary" >
+                    <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary">
                         <i class="xi-file-add"></i><span class="sr-only">수정</span>
                     </b-button>
                     <!--크리에이티드에 로드를 하도록 설정되어있어 v-if 로 처리 -->
-                    <targets-merge :target-info="model" @saveOK="insertOK" />
+                    <targets-merge :target-info="model" @saveOK="insertOK"/>
                 </span>
             </div>
         </div>
@@ -117,25 +117,21 @@
 
             },
             async remove() {
-                const response = await axios.delete('/isg-oreo/api/clinic-targets/' + id, {});
-                console.log(response)
-                if (response.status == 200) {
-                    await this.$alert(
-                        '',
-                        response.data.accession + '가 삭제 되었습니다.',
-                        'info'
-                    );
-                } else {
-                    await this.$alert(
-                        '문제가 계속 발생하면 관리자에게 문의해 주세요',
-                        '다시 시도 해주세요',
-                        'error'
-                    );
-                }
-                this.$router.go(-1)
+                await this.$confirm('', "현 내역을 삭제 하시겠습니까?", 'error');
+                let id = this.$route.params.id
+                axios.delete('/isg-oreo/api/clinic-targets/' + id, {}).catch((error) => {
+                    if (error.response) {
+                        // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
+                        this.$alert('', error.response.data, 'error');
+                        return;
+                    }
+                }).then((response) => {
+                    this.$alert('', response.data.accession + '가 삭제 되었습니다.', 'info');
+                    this.$router.go(-1)
+                })
             },
 
-            insertOK(){
+            insertOK() {
                 this.initData()
 
             }

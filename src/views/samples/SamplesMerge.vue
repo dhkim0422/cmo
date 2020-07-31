@@ -49,14 +49,14 @@
                 <tr>
                     <th>샘플구분</th>
                     <td>
-                        <b-select class="form-control"
+                        <select class="form-control"
                                 placeholder="선택하여주세요."
                                 v-model="model.type.code"
                                 aria-invalid="false" style="">
-                            <b-select-option value="" class="">해당없음</b-select-option>
-                            <b-select-option label="Control" value="CONTROL">Control</b-select-option>
-                            <b-select-option label="Patient" value="PATIENT">Patient</b-select-option>
-                        </b-select>
+                            <option value="" class="">해당없음</option>
+                            <option label="Control" value="CONTROL">Control</option>
+                            <option label="Patient" value="PATIENT">Patient</option>
+                        </select>
                     </td>
                     <th>질환명</th>
                     <td>
@@ -153,17 +153,32 @@
             this.title = (this.isCreateForm() ? '연구샘플 등록' : '연구샘플 수정')
             this.initData()
         },
+        watch:{
+            samplesInfo(newProps){
+                this.initData()
+            }
+        },
         data() {
             return {
                 title: '',
-
+                model: {
+                    accession: '',
+                    collectAddress: '',
+                    collectLocal: '',
+                    description: '',
+                    disease: '',
+                    id: '',
+                    name: '',
+                    origin: '',
+                    provider: "",
+                    registDate: null,
+                    registUser: null,
+                    specimen: '',
+                    target: {id: '', accession: '',},
+                    type: {name:'',code:''},
+                    uniqueNo: ''
+                },
                 codes: {}
-            }
-        },
-        computed:{
-            ...mapGetters['samplesInfo'],
-            gender(){
-                return this.initData()
             }
         },
         methods: {
@@ -172,10 +187,15 @@
                 return this.samplesInfo == undefined
             },
             async initData() {
+
                 //공통코드 로드
                 let url = '/isg-oreo/ajax/codeGroups/GEN'
                 let codeData = await axios.get(url, {})
-                return  codeData.data.data.resultList
+                this.codes['GEN'] = codeData.data.data.resultList
+
+                if (!this.isCreateForm()) {
+                    this.model = this.samplesInfo
+                }
 
             },
             async submit() {

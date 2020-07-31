@@ -28,16 +28,22 @@
             </li>
         </ul>
 
-        <b-tabs content-class="mt-3">
-            <b-tab title="실험 정보" active class="menu-item">
+
+        <ul class="tab-menu">
+            <li class="menu-item"><a class="menu-link" :class="css(1)" @click="click(1)">실험정보</a></li>
+            <li class="menu-item"><a class="menu-link" :class="css(2)" @click="click(2)">파일 목록</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div title="실험 정보"  v-show="currentTab == 1">
                 <span class="sr-only">실험 정보 </span>
                 <omics-data-exper :id="this.$route.params.id"/>
-            </b-tab>
-            <b-tab title="파일 목록"  class="menu-item">
+            </div>
+            <div title="파일 목록"  v-show="currentTab == 2">
                 <span class="sr-only">파일 목록</span>
                 <omics-data-file-list :id="this.$route.params.id"/>
-            </b-tab>
-        </b-tabs>
+            </div>
+        </div>
     </div>
 
 </template>
@@ -57,6 +63,7 @@
         },
         data() {
             return {
+                currentTab: 1,
                 summary: {
                     target: 0,
                     sample: 0,
@@ -74,6 +81,18 @@
                 );
                 this.summary = summayrData.data;
             },
+            css(tapNo) {
+                if (tapNo == this.currentTab) {
+                    return "active"
+                } else {
+                    return ''
+                }
+            },
+
+            click(tabNo) {
+                this.currentTab = tabNo
+            }
+
 
         }
     }
