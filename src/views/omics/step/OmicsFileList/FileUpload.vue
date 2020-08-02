@@ -143,13 +143,20 @@
                         list: []
                     }
                 },
+
                 files: {
                     fasta: [],
                     fastaq: [],
                     BAM: [],
                     VCF: [],
                     BED: [],
-                    Others: []
+                    Others: [],
+                    CEL: [],
+                    IDAT: [],
+                    TXT: [],
+                    mzXML: [],
+                    mzData: [],
+                    mzML: [],
                 },
                 errors: [],
             }
