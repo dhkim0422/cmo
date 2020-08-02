@@ -125,11 +125,11 @@ $responsive: true;
 // ---------------------------------------------------------
 
 @for $i from 0 through 9 {
-  .z-#{$i} { z-index: ($i * 1000) !important; }
+  .z-#{$i} { z-index: ($i * 100) !important; }
 
   @if ($responsive == true) {
     @include generateResponsive() {
-      .z-#{$i}\@#{$breakpointAlias} { z-index: ($i * 1000) !important; }
+      .z-#{$i}\@#{$breakpointAlias} { z-index: ($i * 10) !important; }
     }
   }
 }
