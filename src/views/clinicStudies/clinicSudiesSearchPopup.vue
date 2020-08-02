@@ -24,13 +24,14 @@
                 </div>
                 <div>
                     <b-table class=""
-                            ref="selectableTable"
-                            selectable
-                            select-mode="single"
-                            class="data-table table-responsive"
-                            :items="items"
-                            :fields="fields"
-                            @row-selected="onRowSelected"
+                             ref="selectableTable"
+                             selectable
+                             select-mode="single"
+                             responsive
+                             class="data-table"
+                             :items="items"
+                             :fields="fields"
+                             @row-selected="onRowSelected"
                     >
                         <template v-slot:cell(selected)="{ rowSelected }">
                             <template v-if="rowSelected">
