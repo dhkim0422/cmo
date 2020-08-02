@@ -21,7 +21,7 @@
             <caption class="sr-only">오믹스 데이터 등록 절차</caption>
             <tbody>
             <tr>
-                <th scope="row">등록 동의서1</th>
+                <th scope="row">등록 동의서</th>
                 <td>
                     <div v-show="hasDepositFile()" aria-hidden="false" class="" style="">
                         <input class="btn-link"
@@ -74,7 +74,6 @@
                 <th scope="row">제3자 정보제공 동의서</th>
                 <td>
                     <div v-show="hasProvideFile()" aria-hidden="false" class="" style="">
-                        {{provideFile}}
                         <input class="btn-link"
                                type="button"
                                style="margin-top: 7px;"
@@ -123,10 +122,12 @@
             </tr>
             </tbody>
         </table>
+        <!--
         <div>1111 {{depositFile}} </div>
         <div>1111 {{provideFile}} </div>
         <div>등록동의서 : {{hasDepositFile()}} </div>
         <div>3자 정보제공 동의서 : {{hasProvideFile()}} </div>
+        -->
     </div>
 </template>
 
@@ -279,7 +280,7 @@
                     console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                     for (let item of valueArr) {
                         try {
-                            this.fileUloaAfter('provide')
+                            this.fileUloaAfter('provide',item)
                         } catch (e) {
                             //    this.errors.push(e)
                         }
@@ -293,7 +294,12 @@
                         this.$alert('', error.response, 'error');
                     }
                 }).then((response)=>{
-                    this.selectFile()
+                    console.log('123',response.data.id)
+                    if(response.data.id == this.depositFile.id){
+                        this.depositFile = {}
+                    }else if(response.data.id == this.provideFile.id){
+                        this.provideFile = {}
+                    }
                 })
             },
             download(id) {
@@ -303,21 +309,7 @@
                         this.$alert('', error.response, 'error');
                     }
                 })
-            },
-            isCreateForm() {
-                return true
-            },
-            isNgs(omics) {
-                return (omics.omicsType == 'NGS');
-            },
-
-            isMicroarray(omics) {
-                return (omics.omicsType == 'Microarray');
-            },
-
-            isMetabolome(omics) {
-                return (omics.omicsType == 'Metabolmoe');
-            },
+            }
         }
     }
 </script>
