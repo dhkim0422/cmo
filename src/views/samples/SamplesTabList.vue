@@ -153,7 +153,7 @@ export default {
     async selectList() {
       let url = '/isg-oreo/api/clinic-targets'
       this.params["rowSize"] = this.resultList.data.numberOfRows;
-      this.params["firstIndex"] = (this.currentPageNo - 1) * this.resultList.data.numberOfRows;
+      this.params["firstIndex"] = (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows;
       console.log('DDDD2',this.params)
       this.resultList = await axios.get(url, { params: this.params });
       console.log('data ' , this.resultList)

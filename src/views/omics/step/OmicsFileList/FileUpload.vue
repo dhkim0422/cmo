@@ -244,7 +244,7 @@
                 params.append('type', this.type.name)
                 params.append('group', this.dataType)
                 params.append('omicsId', this.omics.id)
-                params.append('firstIndex', 0)
+                params.append('firstIndex', (this.fileList.data.currentPage - 1) * this.fileList.data.numberOfRows)
                 params.append('rowSize', this.fileList.data.numberOfRows)
                 params.append('currentPage', page)
                 const resultList = await axios.get(url, {params: params});

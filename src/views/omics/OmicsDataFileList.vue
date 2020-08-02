@@ -148,7 +148,7 @@
 
                 let param = {
                     currentPage: pageNo,
-                    firstIndex: 0,
+                    firstIndex: (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows,
                     omicsId: this.id,
                     pageSize: 10,
                     rowSize: this.resultList.data.numberOfRows

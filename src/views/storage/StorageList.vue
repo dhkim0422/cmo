@@ -154,10 +154,10 @@ export default {
       let url = "/isg-oreo/api/storages";
       let params = param;
 
-      params["currentPage"] = this.currentPageNo;
+      params["currentPage"] = this.response.data.currentPage;
       params["rowSize"] = this.response.data.numberOfRows;
       params["firstIndex"] =
-        (this.currentPageNo - 1) * this.response.data.numberOfRows;
+        (this.response.data.currentPage - 1) * this.response.data.numberOfRows;
 
       this.response = await axios.get(url, { params });
     },

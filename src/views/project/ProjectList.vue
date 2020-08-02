@@ -1,147 +1,163 @@
 <template>
     <div class="container">
         <!-- 검색폼 -->
+
         <search-box :filters="filters" @searchClick="changeParams"></search-box>
         <!-- 검색 목록 -->
+
         <div class="filter-group">
             <div class="group-item">
-                <div class="custom-checkbox custom-checkbox-all">
-                    <input
-                            type="checkbox"
-                            id="chkPrjAll"
-                            class="custom-control-input"
-                            ng-model="modelHandler.checkedAll"
-                            ng-change="modelHandler.selectAll(modelHandler.checkedAll)"
-                            aria-invalid="false"
-                    />
-                    <label class="custom-control-label" for="chkPrjAll"
-                    ><span class="sr-only">전체선택</span></label
+                <div>
+
+                    <b-form-checkbox
+                            v-model="allSelected"
+                            :indeterminate="indeterminate"
+                            @change="toggleAll"
                     >
+                        <label for="chkPrjAll">
+                            <span class="sr-only">전체선택</span>
+                        </label>
+                    </b-form-checkbox>
+
                 </div>
                 <total-record-count :result-list="resultList"/>
             </div>
             <div class="group-item">
-                <!-- <span
-                         data-toggle="tooltip"
-                         data-placement="top"
-                         title=""
-                         data-original-title="연구과제 등록"
-                 >
-                 <button
-                         class="btn-primary-sm"
-                         type="button"
-                         @click="onClickCreateLink()"
-                 >-->
+                <b-button class="btn-primary-sm"
+                          title="삭제"
+                          :disabled="selected.length == 0 "
+                          @click="remove()">
+                    <i class="xi-trash"></i><span class="sr-only">삭제</span>
+                </b-button>
                 <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
                     <!--등록은 id=registPopup 로연결되어 있음 -->
                     <b-button class="btn-primary-sm" v-b-modal.projectPopup variant="primary">
                         <i class="xi-file-add"></i><span class="sr-only">등록</span>
                     </b-button>
                     <!--등록을 위한 페잊 컴포넌트-->
-                     <project-regist @saveOK="selectList"/>
+                    <project-regist @saveOK="selectList"/>
+
+
                 </span>
 
+                <page-unit :page-unit="resultList.data.numberOfRows" @onChangePageUnit="onChangePageUnit"></page-unit>
             </div>
         </div>
 
-        <div
-                v-for="(result, index) in resultList.data.list"
-                class="data-card"
-                :key="`result-${index}`"
-        >
-            <div class="card-header">
-                <div class="block-group">
-                    <div class="block">
-                        <div class="custom-checkbox" style="width: 270px">
-                            <input
-                                    type="checkbox"
-                                    name="chkPrj"
-                                    class="custom-control-input"
-                                    aria-invalid="false"
-                            />
-                            <label class="custom-control-label" for="chkPrj2">
-                                <i class="xi-receipt"></i>
-                                {{ result.accession }}
-                            </label>
+        <b-form-checkbox-group id="checkbox-group" v-model="selected" name="itemId">
+            <div
+                    v-for="(result, index) in resultList.data.list"
+                    class="data-card"
+                    :key="`result-${index}`"
+            >
+                <div class="card-header">
+                    <div class="block-group">
+                        <div class="block">
+                            <div style="width: 270px">
+
+                                <b-form-checkbox :value="result" size="lg">
+                                    <i class="xi-receipt"></i>
+                                    {{ result.accession }}
+                                </b-form-checkbox>
+
+                            </div>
+                        </div>
+                        <div class="block" style="width: 800px; margin-left: 55px">
+                            <a
+                                    role="button"
+                                    class="link-text ng-binding"
+                                    @click="onClickDetailLink(result)"
+                                    title="상세보기"
+                            >
+                                {{ result.program }}
+                                <i class="xi-angle-right"></i>
+                            </a>
                         </div>
                     </div>
-                    <div class="block" style="width: 800px; margin-left: 55px">
-                        <a
-                                role="button"
-                                class="link-text ng-binding"
-                                @click="onClickDetailLink(result)"
-                                title="상세보기"
-                        >
-                            {{ result.program }}
-                            <i class="xi-angle-right"></i>
-                        </a>
-                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="view-table">
+                        <caption class="sr-only">
+                            상세정보
+                        </caption>
+                        <tbody>
+                        <tr>
+                            <th scope="row">단위사업</th>
+                            <td>{{ result.unitProgram }}</td>
+                            <th scope="row">KEITI 고유번호</th>
+                            <td>{{ result.uniqueNo }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">과제명</th>
+                            <td colspan="3">{{ result.name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">중분야</th>
+                            <td>{{ result.middleRealm }}</td>
+                            <th scope="row">연구상태</th>
+                            <td>{{ result.projectStatus == undefined ? "상태값 이상" : result.projectStatus.name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">주관기관</th>
+                            <td>{{ result.institute }}</td>
+                            <th scope="row">주관책임자</th>
+                            <td>{{ result.charger }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="card-body">
-                <table class="view-table">
-                    <caption class="sr-only">
-                        상세정보
-                    </caption>
-                    <tbody>
-                    <tr>
-                        <th scope="row">단위사업</th>
-                        <td>{{ result.unitProgram }}</td>
-                        <th scope="row">KEITI 고유번호</th>
-                        <td>{{ result.uniqueNo }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">과제명</th>
-                        <td colspan="3">{{ result.name }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">중분야</th>
-                        <td>{{ result.middleRealm }}</td>
-                        <th scope="row">연구상태</th>
-                        <td>{{ result.projectStatus == undefined ? "상태값 이상" : result.projectStatus.name }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">주관기관</th>
-                        <td>{{ result.institute }}</td>
-                        <th scope="row">주관책임자</th>
-                        <td>{{ result.charger }}</td>
-                    </tr>
-                    </tbody>
-                </table>
+            <div v-show="resultList.data.list.length !== 0" class="text-center"></div>
+            <div></div>
+
+            <div
+                    v-show="resultList.data.list.length === 0"
+                    class="data-card"
+                    aria-hidden="true"
+                    style
+            >
+                <div class="card-body text-center">검색 결과가 없습니다</div>
             </div>
-        </div>
-        <div v-show="resultList.data.list.length !== 0" class="text-center"></div>
-        <div></div>
 
-        <div
-                v-show="resultList.data.list.length === 0"
-                class="data-card"
-                aria-hidden="true"
-                style
-        >
-            <div class="card-body text-center">검색 결과가 없습니다</div>
-        </div>
-
-        <b-pagination v-model="resultList.data.currentPage"
-                      :per-page="resultList.data.numberOfRows"
-                      :total-rows="resultList.data.total"
-                      size="sm"
-                      align="center"
-                      @change="changePageNo"
-        />
-
+            <b-pagination v-model="resultList.data.currentPage"
+                          :per-page="resultList.data.numberOfRows"
+                          :total-rows="resultList.data.total"
+                          size="sm"
+                          align="center"
+                          @change="changePageNo"
+            />
+        </b-form-checkbox-group>
     </div>
 </template>
 
 <script>
     import axios from "../../utils/axios";
     import ProjectRegist from "./ProjectMerge";
+    import PageUnit from "../../components/PageUnit";
 
     export default {
         name: "ProjectList",
-        components: {ProjectRegist},
+        components: {PageUnit, ProjectRegist},
+        watch: {
+            selected(newVal, oldVal) {
+                // Handle changes in individual flavour checkboxes
+                if (newVal.length === 0) {
+                    this.indeterminate = false
+                    this.allSelected = false
+                } else if (newVal.length === this.resultList.data.list.length) {
+                    this.indeterminate = false
+                    this.allSelected = true
+                } else {
+                    this.indeterminate = true
+                    this.allSelected = false
+                }
+            }
+        },
         data() {
             return {
+                selected: [],
+                allSelected: false,
+                indeterminate: false,
                 isRegist: false,
                 currentPageNo: 1,
                 filter: {
@@ -182,6 +198,13 @@
             };
         },
         methods: {
+            onChangePageUnit(pageUnit){
+                this.resultList.data.numberOfRows = pageUnit
+                this.selectList()
+            },
+            toggleAll(checked) {
+                this.selected = checked ? this.resultList.data.list.slice() : []
+            },
             //Pagination 컴포넌트의 change emit
             changePageNo(pageNo) {
                 this.currentPageNo = pageNo;
@@ -202,8 +225,8 @@
                     params.append('keyword', this.params.keyword)
                 }
                 params.append('ownerId', 7)
-                params.append('firstIndex', 1)
-                params.append('pageSize', this.resultList.data.numberOfRows)
+                params.append('firstIndex', (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows)
+                params.append('rowSize', this.resultList.data.numberOfRows)
                 params.append('currentPage', page)
                 this.resultList = await axios.get(url, {params: params});
 
@@ -213,7 +236,27 @@
             },
             onClickCreateLink() {
                 this.isRegist = true
+            },
+            async remove() {
+
+                await this.$confirm('삭제된 데이터는 복구가 불가 합니다.', '삭제 하시겠습니까?', 'question')
+
+                const removeData = await axios.put('/isg-oreo/api/projects?action=REMOVE', this.selected);
+                if (removeData.data.errorList.total == 0) {
+                    this.$alert(
+                        removeData.data.successList.total + '건 삭제\n'
+                        , '요청이 완료 되었습니다.', 'info')
+                } else {
+                    this.$alert(
+                        removeData.data.successList.total + '건 삭제\n' +
+                        removeData.data.errorList.total + '건 에러\n'
+
+                        , '요청이 완료 되었습니다.', 'info')
+                }
+                this.selected = []
+                this.selectList()
             }
+
         },
     };
 </script>

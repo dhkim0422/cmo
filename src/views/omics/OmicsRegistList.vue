@@ -1,14 +1,23 @@
 <template>
     <div>
-
         <div class="filter-group">
             <div class="group-item">
                 <div class="custom-checkbox custom-checkbox-all">
-                    <input type="checkbox" class="custom-control-input"
+                    <!--input type="checkbox" class="custom-control-input"
                            v-model="this.checkedAll" @change="selectAll()"/>
                     <label class="custom-control-label">
                         <span class="sr-only">전체선택</span>
-                    </label>
+                    </label-->
+                    <!--<b-form-checkbox
+                            v-model="allSelected"
+                            :indeterminate="indeterminate"
+                            aria-describedby="flavours"
+                            aria-controls="flavours"
+                            @change="toggleAll"
+                    >
+                        {{ allSelected ? 'Un-select All' : 'Select All' }}
+                    </b-form-checkbox>-->
+
                 </div>
                 <total-record-count :result-list="resultList"/>
             </div>
@@ -26,11 +35,14 @@
                     </b-button>
                 </div>
                 <b-button class="btn-outline-secondary-sm"
-                          title="공개" @click="release()">
+                          title="공개"
+                          :disabled="selected.length == 0"
+                          @click="release()">
                     <i class="xi-eye"></i><span class="sr-only">공개</span>
                 </b-button>
                 <b-button class="btn-outline-secondary-sm"
                           title="삭제"
+                          :disabled="selected.length == 0 "
                           @click="remove()">
                     <i class="xi-trash"></i><span class="sr-only">삭제</span>
                 </b-button>
@@ -53,7 +65,11 @@
             </div>
         </div>
         <div>
-            <omics-data-list :result-list="resultList" omics-type="omicsType"></omics-data-list>
+            <omics-data-list :result-list="resultList"
+                             :omics-type="omicsType"
+                             :selected="selected"
+                             @checkSelected="checkSelected"
+                             @currentPageNo="search"></omics-data-list>
         </div>
 
     </div>
@@ -70,13 +86,16 @@
         name: "OmicsRegistList",
         components: {OmicsWizard, PageUnit, TotalRecordCount, OmicsDataList},
         props: ['omicsType'],
-        watch:{
-          omicsType(newProps){
-              this.search()
-          }
+        watch: {
+            omicsType(newProps) {
+                this.search()
+            }
         },
         data() {
             return {
+                allSelected: false,
+                indeterminate: false,
+                selected: [],
                 isRegist: false,
                 checkedAll: {},
                 params: {},
@@ -118,8 +137,12 @@
             this.search()
         },
         methods: {
-            selectAll() {
-
+            toggleAll(checked) {
+                this.selected = checked ? this.flavours.slice() : []
+            },
+            checkSelected(newVal) {
+                console.log("??????????????????????????????")
+                this.selected = newVal
             },
             async search(page = 1) {
 
@@ -134,24 +157,42 @@
                 }
                 params.append('ownerId', 7)
                 params.append('omicsType', this.omicsType)
-                params.append('firstIndex', 0)
+                params.append('firstIndex', (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows)
                 params.append('pageSize', this.resultList.data.numberOfRows)
                 params.append('rowSize', this.resultList.data.numberOfRows)
                 params.append('currentPage', page)
 
                 this.resultList = await axios.get(url, {params: params});
+                console.log('this.resultList' + this.omicsType, this.resultList)
             },
             onClickCreateLink() {
 
             },
             onChangePageUnit(page) {
-                this.search(page)
+                this.resultList.data.numberOfRows = page
+                this.search()
             },
             release() {
 
             },
-            remove() {
+            async remove() {
 
+                await this.$confirm('삭제된 데이터는 복구가 불가 합니다.','삭제 하시겠습니까?','question')
+
+                const removeData = await axios.put('/isg-oreo/api/omics?action=REMOVE', this.selected);
+                if (removeData.data.errorList.total == 0) {
+                    this.$alert(
+                        removeData.data.processedList.total + '건 삭제\n'
+                        , '요청이 완료 되었습니다.', 'info')
+                } else {
+                    this.$alert(
+                        removeData.data.processedList.total + '건 삭제\n'+
+                        removeData.data.errorList.total + '건 에러\n'
+
+                        , '요청이 완료 되었습니다.', 'info')
+                }
+                this.selected = {}
+                this.search()
             }
         },
     }

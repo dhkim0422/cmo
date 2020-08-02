@@ -171,7 +171,7 @@
 
                 params.append('ownerId', 7)
                 params.append('omicsType', this.omicsType)
-                params.append('firstIndex', 0)
+                params.append('firstIndex', (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows)
                 params.append('pageSize', this.resultList.data.numberOfRows)
                 params.append('rowSize', this.resultList.data.numberOfRows)
                 params.append('currentPage', page)

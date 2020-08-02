@@ -123,9 +123,10 @@
             </tbody>
         </table>
         <!--
-        <div>1111 {{depositFile}} </div>
-        <div>1111 {{provideFile}} </div>
+        로그 분석용
+        <div>등록동의서 {{depositFile}} </div>
         <div>등록동의서 : {{hasDepositFile()}} </div>
+        <div>3자 정보제공 동의서 {{provideFile}} </div>
         <div>3자 정보제공 동의서 : {{hasProvideFile()}} </div>
         -->
     </div>

@@ -146,7 +146,7 @@ export default {
       this.isRegist = false;
       let url = "/isg-oreo/api/clinic-samples";
       this.params["rowSize"] = this.resultList.data.numberOfRows;
-      this.params["firstIndex"] = 1;
+      this.params["firstIndex"] = (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows
       this.params["currentPage"] = page;
       this.resultList = await axios.get(url, { params: this.params });
       this.items = this.resultList.data.list;
