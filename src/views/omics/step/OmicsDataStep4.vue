@@ -1,6 +1,6 @@
 <template>
     <!-- Step 4 -->
-    <div class="wizard-step" ng-class="css.body(4)" ng-controller="OmicsWizardStep4">
+    <div class="wizard-step">
 
         <h2 class="h2">오믹스 데이터 등록 절차</h2>
         <div class="form-card">
@@ -21,28 +21,51 @@
             <caption class="sr-only">오믹스 데이터 등록 절차</caption>
             <tbody>
             <tr>
-                <th scope="row">등록 동의서</th>
+                <th scope="row">등록 동의서1</th>
                 <td>
-                    <div v-show="hasDepositFile()">
-                        <input class="btn-link" type="button" style="margin-top: 7px;"
-
-                               @click="download(depositFile)"/>
-                        <!--value="{{ depositFile.name }} ({{ depositFile.size | bytes }})"-->
-                        <button class="btn-outline-secondary" style="float: right;"
-                                data-toggle="tooltip" data-placement="top" title="삭제"
-                                @click="remove(depositFile)">
-                            <i class="xi-trash"></i><span class="sr-only">삭제</span>
+                    <div v-show="hasDepositFile()" aria-hidden="false" class="" style="">
+                        <input class="btn-link"
+                               type="button"
+                               style="margin-top: 7px;"
+                               :value = "depositFile.name + '(' + depositFile.size + ')'"
+                               @click="download(depositFile.id)"
+                        >
+                        <button class="btn-outline-secondary"
+                                style="float: right;"
+                                data-placement="top"
+                                title=""
+                                @click="remove(depositFile.id)"
+                                data-original-title="삭제"
+                        >
+                            <i class="xi-trash"></i>
+                            <span class="sr-only">삭제</span>
                         </button>
                     </div>
-                    <div class="custom-file" v-show="!hasDepositFile()">
-                        <label class="custom-file-label" data-toggle="tooltip" data-placement="top" title="업로드">
-                            <div style="width: 90%" v-for="file in fileList">
-                                <b-progress class="progress-striped" :value="file.progress" :max="max" show-progress animated>{{ file.progress }}
-                                </b-progress>
+                    <div class="custom-file ng-hide"
+                         v-show="!hasDepositFile()"
+                         aria-hidden="true" style=""
+                    >
+                        <label class="custom-file-label"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               title=""
+                               data-original-title="업로드"
+                        >
 
-                            </div>
-                            <span v-show="!fileList.length > 0" style="color: gray;">파일을 선택해 주세요</span>
-                            <input type="file" v-show="!true"  @change="upload"/>
+                            <!-- upload -->
+                            <file-upload
+                                    class=""
+                                    input-id='updatetValueDeposit'
+                                    post-action="/isg-oreo/temporary/files"
+                                    v-model="files['deposit']"
+                                    ref="updatetValueDeposit"
+                                    @input-file="inputFileDeposit"
+                                    @input-filter="inputFilter"
+                                    @input="updatetValueDeposit"
+                            >
+                                <i class="xi-file-upload"></i><span class="sr-only">업로드</span>
+                            </file-upload>
+
                         </label>
                     </div>
                 </td>
@@ -50,61 +73,236 @@
             <tr>
                 <th scope="row">제3자 정보제공 동의서</th>
                 <td>
-                    <div v-show="this.hasProvideFile">
-                        <input class="btn-link" type="button" style="margin-top: 7px;"
-                               @click="download(provideFile)"/>
-                        <!--VALUE="{{ PROVIDEFILE.NAME }} ({{ PROVIDEFILE.SIZE | BYTES }})"-->
-                        <button class="btn-outline-secondary" style="float: right;"
-                                data-toggle="tooltip" data-placement="top" title="삭제"
-                                @click="remove(provideFile)">
-                            <i class="xi-trash"></i><span class="sr-only">삭제</span>
+                    <div v-show="hasProvideFile()" aria-hidden="false" class="" style="">
+                        {{provideFile}}
+                        <input class="btn-link"
+                               type="button"
+                               style="margin-top: 7px;"
+                               :value = "provideFile.name + '(' + provideFile.size + ')'"
+                               @click="download(provideFile.id)"
+                        >
+                        <button class="btn-outline-secondary"
+                                style="float: right;"
+                                data-placement="top"
+                                title=""
+                                @click="remove(provideFile.id)"
+                                data-original-title="삭제"
+                        >
+                            <i class="xi-trash"></i>
+                            <span class="sr-only">삭제</span>
                         </button>
                     </div>
-                    <div class="custom-file" v-show="!hasProvideFile()">
-                        <label class="custom-file-label" data-toggle="tooltip" data-placement="top" title="업로드">
-                            <div style="width: 90%" v-for="file in fileList">
-                                <!--uib-progressbar class="progress-striped active" value="file.progress">{{ file.progress }} %</uib-progressbar-->
-                                <b-progress class="progress-striped" :value="file.progress" :max="max" show-progress
-                                            animated>{{ file.progress }}
-                                </b-progress>
-                            </div>
-                            <span v-show="!fileList.length > 0" style="color: gray;">파일을 선택해 주세요</span>
-                            <input type="file" v-show="!true"
-                                   @change="upload()" ngf-multiple="false" ngf-select/>
+                    <div class="custom-file ng-hide"
+                         v-show="!hasProvideFile()"
+                         aria-hidden="true" style=""
+                    >
+                        <label class="custom-file-label"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               title=""
+                               data-original-title="업로드"
+                        >
+                            <!-- ngRepeat: file in depositUploader.fileList -->
+
+                            <!-- upload -->
+                            <file-upload
+                                    input-id='updatetValueProvide'
+                                    post-action="/isg-oreo/temporary/files"
+                                    v-model="files['provide']"
+                                    ref="updatetValueProvide"
+                                    @input-file="inputFileProvide"
+                                    @input-filter="inputFilter"
+                                    @input="updatetValueProvide"
+                            >
+                                <i class="xi-file-upload"></i><span class="sr-only">업로드</span>
+                            </file-upload>
+
                         </label>
                     </div>
                 </td>
             </tr>
             </tbody>
         </table>
+        <div>1111 {{depositFile}} </div>
+        <div>1111 {{provideFile}} </div>
+        <div>등록동의서 : {{hasDepositFile()}} </div>
+        <div>3자 정보제공 동의서 : {{hasProvideFile()}} </div>
     </div>
 </template>
 
 <script>
+    import axios from "../../../utils/axios";
+    import FileUpload from 'vue-upload-component'
+
     export default {
         name: "OmicsDataStep4",
         props: ['omics'],
+        components: {FileUpload},
+        computed: {},
+        created() {
+            this.selectFile()
+        },
         data() {
             return {
-                fileList: [],
-                files:[]
+                depositFile:{},
+                provideFile:{},
+                fileList: {
+                    total: 2,
+                    currentPage: 1,
+                    numberOfRows: 2,
+                    list:
+                        [
+
+                        ]
+                },
+                files: {
+                    deposit:{},
+                    provide:{}
+                }
             }
         },
         methods: {
-            hasProvideFile(){
+            hasProvideFile() {
+                return this.provideFile.id != undefined ? true : false
 
             },
             hasDepositFile() {
-                return false
+                return this.depositFile.id != undefined ? true : false
             },
-            upload() {
+            async selectFile(page = 1) {
+                this.files = []
+                let url = '/isg-oreo/api/attachments'
+                const params = new URLSearchParams();
+                params.append('omicsId', this.omics.id)
+                const resultList = await axios.get(url, {params: params});
+                console.log("resultList", resultList)
+                this.fileList = resultList.data
 
+                const deposit = this.fileList.list.filter((v)=>{
+                    return v.type == 'deposit'
+                })
+                const provide = this.fileList.list.filter((v)=>{
+                    return v.type == 'provide'
+                })
+
+                console.log('deposit',deposit)
+                console.log('provide',provide)
+
+                if(deposit.length != 0){
+                    this.depositFile = deposit[0]
+                }
+
+                if(provide.length != 0){
+                    this.provideFile = provide[0]
+                }
             },
-            remove() {
-
+            inputFilter(newFile, oldFile, prevent) {
+                if (newFile && !oldFile) {
+                    // Before adding a file
+                    // Filter system files or hide files
+                    if (/(\/|^)(Thumbs\.db|desktop\.ini|\..+)$/.test(newFile.name)) {
+                        return prevent()
+                    }
+                    // Filter php html js file
+                    if (/\.(php5?|html?|jsx?)$/i.test(newFile.name)) {
+                        return prevent()
+                    }
+                }
             },
-            download() {
+            inputFileDeposit(newFile, oldFile) {
+                if (newFile && !oldFile) {
+                    // add
+                    //등록과 동시에 업로드 시작
+                    console.log("add1")
+                    this.$refs.updatetValueDeposit.active = true
+                    this.$refs[this.type.name].active = true
+                    //this.errors = []
+                }
+            },
+            inputFileProvide(newFile, oldFile) {
+                if (newFile && !oldFile) {
+                    console.log("add2")
+                    //등록과 동시에 업로드 시작
+                    this.$refs.updatetValueProvide.active = true
+                    //this.errors = []
+                }
+            },
 
+            fileUloaAfter(type,item) {
+                console.log(type)
+                const url = '/isg-oreo/api/attachments?omicsId=' + this.omics.id + '&type=' + type
+                item.response['type'] = type
+                item.response['omicsId'] = this.omics.id
+
+                this.$axios.post(url, item.response).catch((error) => {
+                    if (error.response) {
+                        // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
+                        //          this.errors.push(error.response.data)
+                        /*
+                        console.log(error.response.status);
+                        console.log(error.response.headers);
+                        */
+                    } else if (error.request) {
+                        // 요청이 이루어 졌으나 응답을 받지 못했습니다.
+                        // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
+                        // Node.js의 http.ClientRequest 인스턴스입니다.
+                        console.log(error.request);
+                    } else {
+                        // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
+                        console.log('Error', error.message);
+                    }
+                    //console.log(error.config);
+                }).then(() => {
+                    //문제가 없으면 화면을 갱신
+                    this.selectFile();
+                });
+            },
+            updatetValueDeposit(valueArr) {
+
+                if (this.$refs['updatetValueDeposit'] && this.$refs['updatetValueDeposit'].uploaded) {
+                    console.log("???????????????????????????")
+                    for (let item of valueArr) {
+
+                        try {
+                            this.fileUloaAfter('deposit',item)
+
+                        } catch (e) {
+                            //    this.errors.push(e)
+                        }
+                    }
+
+                }
+            },
+            updatetValueProvide(valueArr) {
+
+                if (this.$refs['updatetValueProvide'] && this.$refs['updatetValueProvide'].uploaded) {
+                    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    for (let item of valueArr) {
+                        try {
+                            this.fileUloaAfter('provide')
+                        } catch (e) {
+                            //    this.errors.push(e)
+                        }
+                    }
+                }
+            },
+            remove(id) {
+                const url = '/isg-oreo/api/attachments/' + id
+                this.$axios.delete(url, {}).catch((error) => {
+                    if (error.response) {
+                        this.$alert('', error.response, 'error');
+                    }
+                }).then((response)=>{
+                    this.selectFile()
+                })
+            },
+            download(id) {
+                const url = '/isg-oreo/api/attachments/' + id
+                this.$axios.get(url, {}).catch((error) => {
+                    if (error.response) {
+                        this.$alert('', error.response, 'error');
+                    }
+                })
             },
             isCreateForm() {
                 return true
