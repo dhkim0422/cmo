@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_CONTEXT,
   timeout: 30000,
   headers: {
-    "Content-Type": "application/json",
+    "Content-Type": "application/json; charset=UTF-8",
   },
 });
 
