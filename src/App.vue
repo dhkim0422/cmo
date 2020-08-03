@@ -1,4 +1,5 @@
 <template>
+
   <div id="app" :class="$route.name">
     <component :is="layout">
       <router-view />
