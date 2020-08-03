@@ -24,12 +24,14 @@
                 <th scope="row">등록 동의서</th>
                 <td>
                     <div v-show="hasDepositFile()" aria-hidden="false" class="" style="">
-                        <input class="btn-link"
-                               type="button"
-                               style="margin-top: 7px;"
-                               :value = "depositFile.name + '(' + depositFile.size + ')'"
-                               @click="download(depositFile.id)"
+                        <a class="btn-link"
+                           type="button"
+                           style="margin-top: 7px;"
+                           @click="download(depositFile.id)"
                         >
+                            {{depositFile.name }} ({{ (depositFile.size == undefined ? 0 : depositFile.size) | byte }})
+
+                        </a>
                         <button class="btn-outline-secondary"
                                 style="float: right;"
                                 data-placement="top"
@@ -74,12 +76,14 @@
                 <th scope="row">제3자 정보제공 동의서</th>
                 <td>
                     <div v-show="hasProvideFile()" aria-hidden="false" class="" style="">
-                        <input class="btn-link"
-                               type="button"
-                               style="margin-top: 7px;"
-                               :value = "provideFile.name + '(' + provideFile.size + ')'"
-                               @click="download(provideFile.id)"
+                        <a class="btn-link"
+                           type="button"
+                           style="margin-top: 7px;"
+                           @click="download(provideFile.id)"
                         >
+                            {{provideFile.name }} ({{ (provideFile.size == undefined ? 0 : provideFile.size) | byte }})
+                        </a>
+
                         <button class="btn-outline-secondary"
                                 style="float: right;"
                                 data-placement="top"
@@ -143,23 +147,22 @@
         computed: {},
         created() {
             this.selectFile()
+            document.charset = 'utf-8'
         },
         data() {
             return {
-                depositFile:{},
-                provideFile:{},
+                depositFile: {},
+                provideFile: {},
                 fileList: {
                     total: 2,
                     currentPage: 1,
                     numberOfRows: 2,
                     list:
-                        [
-
-                        ]
+                        []
                 },
                 files: {
-                    deposit:{},
-                    provide:{}
+                    deposit: {},
+                    provide: {}
                 }
             }
         },
@@ -180,21 +183,21 @@
                 console.log("resultList", resultList)
                 this.fileList = resultList.data
 
-                const deposit = this.fileList.list.filter((v)=>{
+                const deposit = this.fileList.list.filter((v) => {
                     return v.type == 'deposit'
                 })
-                const provide = this.fileList.list.filter((v)=>{
+                const provide = this.fileList.list.filter((v) => {
                     return v.type == 'provide'
                 })
 
-                console.log('deposit',deposit)
-                console.log('provide',provide)
+                console.log('deposit', deposit)
+                console.log('provide', provide)
 
-                if(deposit.length != 0){
+                if (deposit.length != 0) {
                     this.depositFile = deposit[0]
                 }
 
-                if(provide.length != 0){
+                if (provide.length != 0) {
                     this.provideFile = provide[0]
                 }
             },
@@ -230,7 +233,7 @@
                 }
             },
 
-            fileUloaAfter(type,item) {
+            fileUloaAfter(type, item) {
                 console.log(type)
                 const url = '/isg-oreo/api/attachments?omicsId=' + this.omics.id + '&type=' + type
                 item.response['type'] = type
@@ -266,7 +269,7 @@
                     for (let item of valueArr) {
 
                         try {
-                            this.fileUloaAfter('deposit',item)
+                            this.fileUloaAfter('deposit', item)
 
                         } catch (e) {
                             //    this.errors.push(e)
@@ -281,7 +284,7 @@
                     console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                     for (let item of valueArr) {
                         try {
-                            this.fileUloaAfter('provide',item)
+                            this.fileUloaAfter('provide', item)
                         } catch (e) {
                             //    this.errors.push(e)
                         }
@@ -294,22 +297,29 @@
                     if (error.response) {
                         this.$alert('', error.response, 'error');
                     }
-                }).then((response)=>{
-                    console.log('123',response.data.id)
-                    if(response.data.id == this.depositFile.id){
+                }).then((response) => {
+                    console.log('123', response.data.id)
+                    if (response.data.id == this.depositFile.id) {
                         this.depositFile = {}
-                    }else if(response.data.id == this.provideFile.id){
+                    } else if (response.data.id == this.provideFile.id) {
                         this.provideFile = {}
                     }
                 })
             },
             download(id) {
                 const url = '/isg-oreo/api/attachments/' + id
-                this.$axios.get(url, {}).catch((error) => {
-                    if (error.response) {
-                        this.$alert('', error.response, 'error');
-                    }
-                })
+
+
+                this.$axios.get(url, {
+                    // include your additional POSTed data here
+                    responseType: "application/octet-stream"
+                }).then((response) => {
+                    let blob = new Blob([response.data], {type: "application/octet-stream"}),
+                        url = window.URL.createObjectURL(blob);
+                    window.open(url, "_self");
+                }).catch((error) => {
+                    console.log(error)
+                });
             }
         }
     }

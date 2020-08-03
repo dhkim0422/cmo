@@ -74,16 +74,6 @@
                 <td>{{ model.disease }}</td>
             </tr>
 
-            <!--tr v-hide="model.origin.code != 'SORG_01'">
-                <th>검체</th>
-                <td>{{ model.specimen }}</td>
-                <th>검체_샘플_제공자</th>
-                <td>{{ model.provider }}</td>
-            </tr>
-            <tr v-hide="model.origin.code != 'SORG_01'">
-                <th>검체 샘플 제공자</th>
-                <td colspan="3">{{ model.collectLocal.name }} {{ model.collectAddress }}</td>
-            </tr-->
             <tr>
                 <th>샘플_설명</th>
                 <td colspan="3">{{ model.description }}</td>

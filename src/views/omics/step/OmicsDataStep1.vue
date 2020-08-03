@@ -27,7 +27,7 @@
                     <th scope="row" class="form-group required control-label"><label>실험제목</label></th>
                     <td colspan="3">
                         <input class="form-control" type="text" title="실험제목" placeholder="작성하여주세요." name="experName"
-                               v-model="omics.name" />
+                               v-model="omics.name"/>
 
                     </td>
                 </tr>
@@ -155,7 +155,7 @@
                     <th scope="row" class="form-group required control-label"><label>실험제목</label></th>
                     <td colspan="3">
                         <input class="form-control" type="text" title="실험제목" placeholder="작성하여주세요." name="experName"
-                               v-model="omics.name" />
+                               v-model="omics.name"/>
 
                     </td>
                 </tr>
@@ -175,7 +175,7 @@
                     </td>
                     <th scope="row">제작사</th>
                     <td>
-                        <input class="form-control" type="text" title="제작사" placeholder="작성하여주세요."
+                        <input class="form-control" type="text" title="제작사" placeholder="플랫폼 제작사를 작성해 주세요.작성하여주세요."
                                v-model="omics.attributes.manufacturer" maxlength="2000"/>
                     </td>
                 </tr>
@@ -230,7 +230,7 @@
                     <th scope="row" class="form-group required control-label"><label>실험제목</label></th>
                     <td colspan="3">
                         <b-input class="form-control" type="text" title="실험제목" placeholder="작성하여주세요." name="experName"
-                                 v-model="omics.name" />
+                                 v-model="omics.name"/>
                     </td>
                 </tr>
                 <tr>
@@ -257,12 +257,22 @@
                 <tbody>
                 <tr>
                     <th scope="row">Type</th>
-                    <td colspan="3">
-                        <b-form-select v-model="omics.attributes.spectrometry" :options="omics.attributes.spectrometry"></b-form-select>
-                        <!--<select class="form-control" v-model="omics.attributes.spectrometry"
-                                ng-options="code for code in codes.spectrometry" required>
-                        </select>-->
-                    </td>
+                    <select class="form-control"
+                            v-model="omics.attributes.spectrometry"
+                            required=""
+                            aria-invalid="false"
+                            style="">
+                        <option label="Gas chromatography/Mass chromatography"
+                                value="string:Gas chromatography/Mass chromatography"
+                                selected="selected">
+                            Gas chromatography/Mass chromatography
+                        </option>
+                        <option label="Liquid chromatography/Mass chromatography"
+                                value="string:Liquid chromatography/Mass chromatography">
+                            Liquid chromatography/Mass chromatography
+                        </option>
+                        <option label="etc" value="string:etc">etc</option>
+                    </select>
                 </tr>
                 <tr>
                     <th scope="row">Instrument model</th>
@@ -288,8 +298,24 @@
                     </td>
                     <th scope="row">Analyzer</th>
                     <td>
-                        <select class="form-control" v-model="omics.attributes.analyzer"
-                                ng-options="code for code in codes.analyzer" required maxlength="2000">
+                        <select class="form-control ng-valid-maxlength"
+                                v-model="omics.attributes.analyzer"
+                                required=""
+                                maxlength="2000"
+                                aria-invalid="false"
+                                style="">
+                            <option label="Magnetic sector" value="string:Magnetic sector" selected="selected">
+                                Magnetic sector
+                            </option>
+                            <option label="Double-focusing" value="string:Double-focusing">
+                                Double-focusing
+                            </option>
+                            <option label="Quadrupole" value="string:Quadrupole">
+                                Quadrupole
+                            </option>
+                            <option label="TOF(time of flight)" value="string:TOF(time of flight)">
+                                TOF(time of flight)
+                            </option>
                         </select>
                     </td>
                 </tr>
@@ -368,15 +394,11 @@
         },
         watch: {
             omics(newData) {
-
                 var date = new Date(newData.publicDate);  //입력 파라메터로 Date 객체를 생성합니다
-
                 var yyyy = date.getFullYear().toString(); // '연도'를 뽑아내고
                 var mm = (date.getMonth() + 1).toString(); // '월'을 뽑아내고
                 var dd = date.getDate().toString(); // '일'을 뽑아냅니다
-
                 var Str = '';
-
                 //스트링 배열의 앞자리가 두자리 수가 아닌 한자리 수일 경우
                 // 두자리로 표시하기 위해 0을 채웁니다(lpad 와 동일한 역할)
                 // (ex : '1' -> '01' )
@@ -384,10 +406,7 @@
                 this.omics.publicDate = str
             }
         },
-        computed: {
-
-
-        },
+        computed: {},
         methods: {
             isCreateForm() {
                 return this.omics.accession == ""
@@ -401,7 +420,7 @@
             },
 
             isMetabolome(omics) {
-                return (omics.omicsType == 'Metabolmoe');
+                return (omics.omicsType == 'Metabolome');
             }
         }
     }

@@ -20,10 +20,18 @@
                 >
                     <i class="xi-file-upload"></i><span class="sr-only">업로드</span>
                 </file-upload>
-                <button class="btn-outline-secondary-sm" title="샘플연결">
-                    <i class="xi-link"></i><span class="sr-only">샘플연결</span>
-                </button>
-                <button class="btn-outline-secondary-sm" type="button"
+
+
+                <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
+                    <!--등록은 id=registPopup 로연결되어 있음 -->
+                    <button class="btn-outline-secondary-sm" v-b-modal.sample-modal >
+                        <i class="xi-link"></i><span class="sr-only">샘플연결</span>
+                    </button>
+                    <!--등록을 위한 페잊 컴포넌트-->
+                    <sample-modal @sample="onSampleSelect" />
+                </span>
+
+                <button class="btn-outline-secondary-sm" type="button" @click="remove"
                         data-toggle="tooltip" data-placement="top" title="삭제">
                     <i class="xi-trash"></i>
                     <span class="sr-only">삭제</span>
@@ -42,7 +50,7 @@
                 <!--<page-unit :page-unit="resultList.data.numberOfRows"/>-->
             </div>
         </div>
-
+        <b-form-checkbox-group id="checkbox-group" v-model="selectedFile" name="fileSelect">
         <table class="data-table">
             <thead>
             <tr>
@@ -72,8 +80,12 @@
                     검색된 항목이 없습니다.
                 </td>
             </tr>
+
+
             <tr v-for="item in computedFiles">
-                <td></td>
+                <td>
+                    <b-form-checkbox :value="item"/>
+                </td>
                 <td>{{ item.accession}}</td>
                 <td>{{ item.sample && item.sample.accession }}</td>
                 <td>{{ item.name }}</td>
@@ -98,6 +110,7 @@
             </tr>-->
             </tbody>
         </table>
+        </b-form-checkbox-group>
         <div>
             <div v-for="err in this.errors"> {{err}}</div>
         </div>
@@ -115,10 +128,14 @@
     import TotalRecordCount from "../../../../components/TotalRecordCount";
     import PageUnit from "../../../../components/PageUnit";
     import axios from "../../../../utils/axios";
+    import SamplesPopupList from "../../../samples/SamplesPopupList";
+    import SampleModal from "../../../../components/SampleModal";
 
     export default {
         name: 'FileUploadTemp',
         components: {
+            SampleModal,
+            SamplesPopupList,
             PageUnit,
             TotalRecordCount,
             FileUpload,
@@ -129,12 +146,12 @@
         props: ['omics', 'type', 'dataType'],
         computed: {
             computedFiles() {
-                return this.fileList.data.list;
+                return this.fileList.data && this.fileList.data.list;
             }
         },
         data() {
             return {
-                selected: [],
+                selectedFile: [],
                 fileList: {
                     data: {
                         total: 0,
@@ -162,8 +179,20 @@
             }
         },
         methods: {
-            onRowSelected(data) {
-                this.selected = data
+            async onSampleSelect(item){
+                await this.$confirm( this.selectedFile.length+'개의 파일에 샘플을 지정합니다.','샘플정보를 변경하시겠습니까?','question')
+
+                let arr = []
+                for(const row of this.selectedFile){
+                    row['sample'] = item
+                    arr.push(row)
+                }
+
+                const  url = '/isg-oreo/api/omics/'+this.omics.id+'/files?action=CHANGE'
+                this.$axios.put(url,arr).then((response)=>{
+                    this.$alert('샘플정보 변경 완료','작업알림','info')
+                    this.selectFile()
+                })
             },
             inputFilter(newFile, oldFile, prevent) {
                 if (newFile && !oldFile) {
@@ -248,9 +277,17 @@
                 params.append('rowSize', this.fileList.data.numberOfRows)
                 params.append('currentPage', page)
                 const resultList = await axios.get(url, {params: params});
-                console.log("resultList",resultList)
+                console.log("resultList", resultList)
                 this.fileList.data = resultList.data
 
+            },
+            async remove(){
+
+                console.log(this.selectedFile)
+                let url = '/isg-oreo/api/omics/' + this.omics.id + '/files?action=REMOVE'
+                console.log(url)
+                const resultList = await axios.put(url, this.selectedFile);
+                this.$alert(resultList.data.list.length + '건 삭제 되었습니다','처리 완료 되었습니다.','info')
             }
 
 

@@ -152,6 +152,7 @@ export default {
       this.items = this.resultList.data.list;
     },
     onAccession(item) {
+      console.log('item',item)
       this.$emit("sample", item);
       this.$bvModal.hide("sample-modal");
     }

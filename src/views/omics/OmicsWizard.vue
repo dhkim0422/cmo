@@ -63,7 +63,7 @@
                     name: '',
                     design: '',
                     omicsType: this.$route.params.omicsType,
-                    experType: {code:'OEXPER_N01'},
+                    experType: {code: 'OEXPER_N01'},
                     rawdataTypes: this.$store.state.fileTypeMap[this.$route.params.omicsType].rawdata,
                     processedTypes: this.$store.state.fileTypeMap[this.$route.params.omicsType].processed,
                     attributes: {
@@ -137,8 +137,28 @@
                     confirmState: {status: "READY", comment: ''},
                     registStatus: "READY",
                 },
+            }
+        },
+        watch:{
+            async currentStep(newValue,oldValue){
+                console.log(newValue +  '/' + oldValue)
+                if(oldValue == 1){ //1스텝에서 Omics id 가 있는경우  저장필요
+                    console.log(oldValue)
+                    if (this.omics.id != '') {
+                        await this.$confirm('변경하신 내역이 있으시면 꼭 저장을 해주세요.','저장하시겠습니까?','')
+                        axios.post('/isg-oreo/api/omics', this.omics).then((response) => {
+                            this.omics.id = response.data.id
+                            this.omics.accession = response.data.accession
+                            this.$alert(
+                                '',
+                                '저장 되었습니다.',
+                                'info'
+                            );
 
+                        })
 
+                    }
+                }
             }
         },
         computed: {},
@@ -156,32 +176,19 @@
                 return this.currentStep == this.LAST_STEP
             },
             prev() {
-                if(this.currentStep >= 1){
+                if (this.currentStep >= 1) {
                     this.currentStep = 1
-                }else{
+                } else {
                     this.currentStep -= 1
                 }
 
             },
             async next() {
-                if(this.currentStep == 1){
-                    if(this.omics.id != ''){
-                        const response = this.resultList = await axios.post('/isg-oreo/api/omics', this.omics);
-                        this.omics.id = response.data.id
-                        this.omics.accession = response.data.accession
 
-                        console.log("response.data",response.data)
-                        await this.$alert(
-                            '',
-                            '저장 되었습니다.',
-                            'info'
-                        );
-                    }
-                }
 
-                if(this.currentStep >= this.LAST_STEP){
+                if (this.currentStep >= this.LAST_STEP) {
                     this.currentStep = this.LAST_STEP
-                }else{
+                } else {
                     this.currentStep += 1
                 }
 
@@ -213,30 +220,61 @@
 
                 if (this.isCreateForm()) {
                     //insert는 post 으로 정의 되어있음
-                    response =  await axios.post('/isg-oreo/api/omics', this.omics);
+                    await axios.post('/isg-oreo/api/omics', this.omics).catch(function (error) {
+                        if (error.response) {
+                            this.$alert(
+                                error.response.data,
+                                '문제가 발생했습니다. ',
+                                'error'
+                            );
+                        } else if (error.request) {
+                            console.log(error.request);
+                        } else {
+                            console.log('Error', error.message);
+                        }
+                        console.log(error.config);
+
+                    }).then((response) => {
+                        this.omics.id = response.data.id
+                        this.omics.accession = response.data.accession
+
+                        this.$alert(
+                            '',
+                            '저장 되었습니다.',
+                            'info'
+                        );
+
+                    })
+
                 } else {
                     //update는  put 으로 정의 되어있음
-                    response =  await axios.put('/isg-oreo/api/omics/' + this.omics.id, this.omics);
+                    response = await axios.put('/isg-oreo/api/omics/' + this.omics.id, this.omics).catch(function (error) {
+                        if (error.response) {
+                            this.$alert(
+                                error.response.data,
+                                '문제가 발생했습니다. ',
+                                'error'
+                            );
+                        } else if (error.request) {
+                            console.log(error.request);
+                        } else {
+                            console.log('Error', error.message);
+                        }
+                        console.log(error.config);
+
+                    }).then((response) => {
+                        this.omics.id = response.data.id
+                        this.omics.accession = response.data.accession
+
+                        this.$alert(
+                            '',
+                            '저장 되었습니다.',
+                            'info'
+                        );
+
+                    })
                 }
 
-
-                if (response.status == 200) {
-                    this.omics.id = response.data.id
-                    this.omics.accession = response.data.accession
-
-                    await this.$alert(
-                        '',
-                        '저장 되었습니다.',
-                        'info'
-                    );
-
-                } else {
-                    await this.$alert(
-                        '계속 문제 발생시 관리자에게 문의 하세요',
-                        '문제가 발생했습니다. ',
-                        'info'
-                    );
-                }
 
                 console.log('omiscsave', this.omics)
             }

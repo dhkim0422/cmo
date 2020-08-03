@@ -46,7 +46,7 @@
                             <td colspan="3">({{ item.study.accession }}) {{ item.study.name }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">연구대상 표현형/질환"</th>
+                            <th scope="row">연구대상 표현형/질환</th>
                             <td colspan="3">(국문) {{ item.disease.koreanName }}, (영문) {{ item.disease.englishName }}</td>
                         </tr>
                         <tr>
@@ -84,7 +84,6 @@
                         <tr>
                             <th scope="row">과제정보</th>
                             <td colspan="3">
-                                {{item.project}}
                                 ({{ item.project && item.project.accession }})
                                 {{ item.project && item.project.name }}
                             </td>
@@ -94,7 +93,7 @@
                             <td colspan="3">({{ item.study.accession }}) {{ item.study.name }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">연구대상 표현형/질환"</th>
+                            <th scope="row">연구대상 표현형/질환</th>
                             <td colspan="3">
                                 (국문) {{ item.disease.koreanName }},
                                 (영문) {{ item.disease.englishName }}
@@ -140,12 +139,12 @@
                         </tr>
                         <tr>
                             <th scope="row">환경 유해성 연구</th>
-                            <td colspan="3">({{ item.study && item.study.accession }}) {{ item.study && item.study.name
-                                }}
+                            <td colspan="3">({{ item.study && item.study.accession }}) {{ item.study &&
+                                item.study.name}}
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">연구대상 표현형/질환"</th>
+                            <th scope="row">연구대상 표현형/질환</th>
                             <td colspan="3">(국문) {{ item.disease && item.disease.koreanName }}, (영문) {{ item.disease &&
                                 item.disease.englishName }}
                             </td>
@@ -188,13 +187,16 @@
 
             </div>
         </b-form-checkbox-group>
-        <b-pagination v-model="resultList.data.currentPage"
-                      :per-page="resultList.data.numberOfRows"
-                      :total-rows="resultList.data.total"
-                      size="sm"
-                      align="center"
-                      @change="changePageNo"
-        />
+        <br/>
+        <div>
+            <b-pagination v-model="resultList.data.currentPage"
+                          :per-page="resultList.data.numberOfRows"
+                          :total-rows="resultList.data.total"
+                          size="sm"
+                          align="center"
+                          @change="changePageNo"
+            />
+        </div>
     </div>
 </template>
 <script>
@@ -286,7 +288,7 @@
             },
 
             isMetabolome(omics) {
-                return (omics.omicsType == 'Metabolmoe');
+                return (omics.omicsType == 'Metabolome');
             },
 
 

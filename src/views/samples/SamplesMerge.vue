@@ -36,9 +36,10 @@
                     </td>
                     <th>샘플유래</th>
                     <td>
+                        {{model.origin}}
                         <b-select class="form-control"
                                 placeholder="작성하여주세요."
-                                v-model="model.origin.code"
+                                v-model="model.origin && model.origin.code"
                                 aria-invalid="false" style="">
                             <option label="인체유래" value="S01">인체유래</option>
                             <option label="세포주(cell line)" value="S02" selected="selected">세포주(cell line)</option>
@@ -51,7 +52,7 @@
                     <td>
                         <select class="form-control"
                                 placeholder="선택하여주세요."
-                                v-model="model.type.code"
+                                v-model="model.type && model.type.code"
                                 aria-invalid="false" style="">
                             <option value="" class="">해당없음</option>
                             <option label="Control" value="CONTROL">Control</option>
@@ -69,16 +70,7 @@
                         />
                     </td>
                 </tr>
-                <!--<tr v-hide="model.origin.code != 'SORG_01'">
-                    <th>검체</th>
-                    <td>{{ model.specimen }}</td>
-                    <th>검체_샘플_제공자</th>
-                    <td>{{ model.provider }}</td>
-                </tr>
-                <tr v-hide="model.origin.code != 'SORG_01'">
-                    <th>검체 샘플 제공자</th>
-                    <td colspan="3">{{ model.collectLocal.name }} {{ model.collectAddress }}</td>
-                </tr>-->
+
                 <tr>
                     <th>샘플_설명</th>
                     <td colspan="3">
@@ -92,7 +84,7 @@
                 </tbody>
             </table>
 
-
+            model.target.id: {{model.target.id}}
             <div v-if="model.target.id != ''">
                 <h2 class="h2">연구대상자_정보
 
@@ -106,24 +98,24 @@
                     <tbody>
                     <tr>
                         <th>등록번호</th>
-                        <td>{{ model.target.accession }}</td>
+                        <td>{{ model.target && model.target.accession }}</td>
                         <th>연구대상자고유번호</th>
-                        <td>{{ model.target.uniqueNo }}</td>
+                        <td>{{ model.target && model.target.uniqueNo }}</td>
                     </tr>
                     <tr>
                         <th scope="row">나이</th>
-                        <td>{{ (model.target.unknownAge) ? '나이불명' : model.target.age }}</td>
+                        <td>{{ (model.target && model.target.unknownAge) ? '나이불명' : model.target && model.target.age }}</td>
                         <th scope="row">상별</th>
-                        <td>{{ model.target.genderName}}</td>
+                        <td>{{ model.target && model.target.genderName}}</td>
                     </tr>
                     <tr>
                         <th scope="row">연구대상자 제공 동의서</th>
-                        <td colspan="3">{{ model.target.agreeProvide? "제공" : "없음" }}</td>
+                        <td colspan="3">{{ model.target && model.target.agreeProvide? "제공" : "없음" }}</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-            <div v-if="model.target.id == ''">
+            <div v-if="model.target && model.target.id == ''">
                 <targets-select-list :selectType="'single'" @targetSelect="targetSelect"/>
             </div>
 
@@ -136,6 +128,7 @@
                     저장하기
                 </b-button>
             </div>
+            {{samplesInfo}} / {{isCreateForm()}}
         </div>
     </b-modal>
 </template>
@@ -151,11 +144,17 @@
         props: ['samplesInfo'],
         created() {
             this.title = (this.isCreateForm() ? '연구샘플 등록' : '연구샘플 수정')
-            this.initData()
         },
         watch:{
             samplesInfo(newProps){
-                this.initData()
+                if(newProps == 'REG') {
+                    console.log('등록')
+
+
+                }else{
+                    this.model = this.samplesInfo
+                    console.log('수정',this.model)
+                }
             }
         },
         data() {
@@ -169,7 +168,7 @@
                     disease: '',
                     id: '',
                     name: '',
-                    origin: '',
+                    origin: {},
                     provider: "",
                     registDate: null,
                     registUser: null,
@@ -183,19 +182,11 @@
         },
         methods: {
             isCreateForm() {//true 면 등록 false 면 수정
-                console.log('samplesInfo', this.samplesInfo == undefined)
-                return this.samplesInfo == undefined
+                return this.samplesInfo == 'REG'
             },
             async initData() {
 
-                //공통코드 로드
-                let url = '/isg-oreo/ajax/codeGroups/GEN'
-                let codeData = await axios.get(url, {})
-                this.codes['GEN'] = codeData.data.data.resultList
 
-                if (!this.isCreateForm()) {
-                    this.model = this.samplesInfo
-                }
 
             },
             async submit() {
@@ -246,107 +237,5 @@
 
         }
     }
-    /*
-    {
-        "id"
-    :
-        -2, "accession"
-    :
-        "", "uniqueNo"
-    :
-        "123", "target"
-    :
-        {
-            "id"
-        :
-            79, "accession"
-        :
-            "IH00079", "registUser"
-        :
-            {
-                "id"
-            :
-                7, "name"
-            :
-                "김동훈", "username"
-            :
-                "dh0422", "roles"
-            :
-                []
-            }
-        ,
-            "registDate"
-        :
-            1595189426000, "uniqueNo"
-        :
-            "", "age"
-        :
-            "", "unknownAge"
-        :
-            false, "gender"
-        :
-            "M", "genderName"
-        :
-            "남", "agreeProvide"
-        :
-            true
-        }
-    ,
-        "name"
-    :
-        "123123", "origin"
-    :
-        {
-            "code"
-        :
-            "S01", "group"
-        :
-            "SOR", "name"
-        :
-            "인체유래", "description"
-        :
-            "샘플유래", "sortNo"
-        :
-            "1", "useAt"
-        :
-            "Y"
-        }
-    ,
-        "type"
-    :
-        {
-            "code"
-        :
-            "CONTROL", "group"
-        :
-            "SSE", "name"
-        :
-            "Control", "description"
-        :
-            "샘플구분", "sortNo"
-        :
-            "1", "useAt"
-        :
-            "Y"
-        }
-    ,
-        "disease"
-    :
-        "12312", "specimen"
-    :
-        "", "provider"
-    :
-        "", "collectLocal"
-    :
-        null, "collectAddress"
-    :
-        "", "description"
-    :
-        "123123", "registDate"
-    :
-        null, "registUser"
-    :
-        null
-    }*/
 </script>
 

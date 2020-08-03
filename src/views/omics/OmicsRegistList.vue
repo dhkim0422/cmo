@@ -71,7 +71,6 @@
                              @checkSelected="checkSelected"
                              @currentPageNo="search"></omics-data-list>
         </div>
-
     </div>
 </template>
 
