@@ -28,7 +28,7 @@
                 <a class="nav-link" @click="goto('/project/projectList')" title="과제 목록">과제 목록</a>
               </li>
               <li>
-                <a class="nav-link" @click="goto('/targets/targetList')" title="연구대상자 목록">연구대상자 목록</a>
+                <a class="nav-link" @click="goto('/targets/targetList')" title="객체 목록">객체 목록</a>
               </li>
               <li>
                 <a class="nav-link" @click="goto('/samples/samplesList')" title="샘플 목록">샘플 목록</a>
@@ -36,9 +36,9 @@
               <li>
                 <a class="nav-link" @click="goto('/omics/omics')" title="오믹스 데이터 등록내역">오믹스 데이터</a>
               </li>
-              <li>
+              <!--<li>
                 <a class="nav-link" @click="goto('/omics/omicsReview')" title="심의/승인">오믹스 심의</a>
-              </li>
+              </li>-->
             </ul>
           </li>
           <li class="nav-item">
@@ -63,17 +63,7 @@
         </ul>
       </div>
     </nav>
-    <div class="bg-container bg-sm ng-scope">
-      <div class="container">
-        <!-- 제목 -->
-        <ol class="path">
-          <li class="path-item">{{ rootMenuNm }}</li>
-          <li class="path-item">
-            <h1 class="h1">{{ menuNm }}</h1>
-          </li>
-        </ol>
-      </div>
-    </div>
+
   </header>
 </template>
 
@@ -95,8 +85,8 @@ export default {
         { path: "/project/projectList", rootMenuNm: "과제", menuNm: "과제" },
         {
           path: "/targets/targetList",
-          rootMenuNm: "연구대상자",
-          menuNm: "연구대상자"
+          rootMenuNm: "객체",
+          menuNm: "객체"
         },
         { path: "/samples/samplesList", rootMenuNm: "샘플", menuNm: "샘플" },
         {
@@ -159,11 +149,12 @@ export default {
       this.$router.push({ path: path }).catch(() => {});
 
       //메뉴명 설정
-      const { rootMenuNm, menuNm } = this.menuList.find(
+      /*const { rootMenuNm, menuNm } = this.menuList.find(
         item => item.path === path
       );
       this.rootMenuNm = rootMenuNm;
-      this.menuNm = menuNm;
+      this.menuNm = menuNm;*/
+
     },
     getRootMenuNm() {
       return this.menuList.find(item => item.path === this.$route.path);

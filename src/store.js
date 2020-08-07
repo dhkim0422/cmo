@@ -11,20 +11,21 @@ var FILE_GROUP = {
 }
 
 
-function dateFormat(val){
-    if(undefined === val) return
+function dateFormat(val) {
+    if (undefined === val) return
     var date = new Date(val);  //입력 파라메터로 Date 객체를 생성합니다
-    var yyyy=date.getFullYear().toString(); // '연도'를 뽑아내고
-    var mm = (date.getMonth()+1).toString(); // '월'을 뽑아내고
+    var yyyy = date.getFullYear().toString(); // '연도'를 뽑아내고
+    var mm = (date.getMonth() + 1).toString(); // '월'을 뽑아내고
     var dd = date.getDate().toString(); // '일'을 뽑아냅니다
 
     var Str = '';
 
 
-    Str += yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' +(dd[1] ? dd : '0' + dd[0]);
+    Str += yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' + (dd[1] ? dd : '0' + dd[0]);
 
     return Str;
 }
+
 function fileType(group, type) {
     if (isBlank(group))
         group = 'rawdata';
@@ -131,10 +132,25 @@ export default new Vuex.Store({
                 rawdata: [fileType(FILE_GROUP.RAWDATA, 'mzXML'), fileType(FILE_GROUP.RAWDATA, 'mzData'), fileType(FILE_GROUP.RAWDATA, 'mzML')],
                 processed: [fileType(FILE_GROUP.PROCESSED, 'Identifications'), fileType(FILE_GROUP.PROCESSED, 'Quantification')]
             }
-        }
-
+        },
+        project_type: [
+            {value: 'PT01', text: '고유연구사업', upper_value: ''},
+            {value: 'PT01_1', text: '기본과제', upper_value: 'PT01'},
+            {value: 'PT01_2', text: '축산시험연구', upper_value: 'PT01'},
+            {value: 'PT01_3', text: '기타', upper_value: 'PT01'},
+            {value: 'PT02', text: '공동연구사업', upper_value: ''},
+            {value: 'PT02_1', text: '바이오그린', upper_value: 'PT02'},
+            {value: 'PT02_2', text: '차세대바이오그린', upper_value: 'PT02'},
+            {value: 'PT02_3', text: '골든씨드프로젝트', upper_value: 'PT02'},
+            {value: 'PT02_4', text: '포스트게놈다부처유전체 사업', upper_value: 'PT02'},
+            {value: 'PT02_5', text: '기타', upper_value: 'PT02'},
+            {value: 'PT03', text: '기타사업', upper_value: ''},
+            {value: 'PT03_1', text: '기타', upper_value: 'PT03'},
+        ]
     },
+
     getters: {
+
         getCodes(state) {
             return state.codes
         },
@@ -144,33 +160,6 @@ export default new Vuex.Store({
         resultList(state) {
             console.log('getters.resultList', state.resultList)
             return state.resultList
-        },
-        paginationInfo(state) {
-            console.log('getters.paginationInfo', state.paginationInfo)
-            return state.paginationInfo
-        },
-        totalRecordCount(state) {
-            console.log('getters.paginationInfo.totalRecordCount', state.paginationInfo.totalRecordCount)
-            return state.paginationInfo.totalRecordCount
-        },
-        params(state) {
-            console.log('getters.params', state.params)
-            return state.params
-        },
-        loading(state) {
-            console.log('getters.loading', state.loading)
-            return state.loading
-        },
-        result(state) {
-            console.log('getters.result', state.result)
-            return state.result
-        },
-        genericList(state) {
-            console.log('getters.genericList', state.genericList)
-            return state.genericList
-        },
-        checkIdList(state) {
-            return state.checkIdList
         },
         menuList(state) {
             return state.menuList

@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <page-head-info :root-menu-nm="'저장소'" :menu-nm="'저장소 목록'"/>
     <!-- 검색폼 -->
     <search-box :filters="filters" @searchClick="selectList"></search-box>
 

@@ -58,6 +58,16 @@ const requireComponent = require.context(
     /\w+\.(vue|js)$/
 );
 
+
+function getProjectType(type) {
+    let arr = []
+    this.$store.state.project_type.map((value, index) => {
+        if (value.upper_code == type) {
+            arr.push(value)
+        }
+    })
+    return arr
+}
 requireComponent.keys().forEach((fileName) => {
     // 컴포넌트 설정 가져오기
     const componentConfig = requireComponent(fileName);
@@ -87,6 +97,16 @@ Vue.component("default-layout", Default);
 
 //전역 필터 정의
 //3자리 콤마
+
+Vue.filter("projectType", (value) => {
+
+    console.log('projectType',value)
+    const returnVal = store.state.project_type.filter((v)=>{
+        return v.value == value
+    })
+    console.log('23', returnVal.text)
+    return returnVal[0].text
+});
 Vue.filter("money", (value) => {
     if (!value) return value;
 

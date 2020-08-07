@@ -82,14 +82,14 @@
         </table>
 
         <div v-show="model.target != null">
-            <h2 class="h2">연구대상자_정보</h2>
+            <h2 class="h2">객체 정보</h2>
             <table class="view-table">
-                <caption class="sr-only">연구대상자 기본정보</caption>
+                <caption class="sr-only">객체 기본정보</caption>
                 <tbody>
                 <tr>
                     <th>등록번호</th>
                     <td>{{ model.target.accession }}</td>
-                    <th>연구대상자고유번호</th>
+                    <th>객체고유번호</th>
                     <td>{{ model.target.uniqueNo }}</td>
                 </tr>
                 <tr>
@@ -99,10 +99,10 @@
                     <th scope="row">상별</th>
                     <td>{{ model.target.genderName}}</td>
                 </tr>
-                <tr>
-                    <th scope="row">연구대상자 제공 동의서</th>
+                <!--<tr>
+                    <th scope="row">객체 제공 동의서</th>
                     <td colspan="3">{{ model.target.agreeProvide? "제공" : "없음" }}</td>
-                </tr>
+                </tr>-->
                 </tbody>
             </table>
         </div>

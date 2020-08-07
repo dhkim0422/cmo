@@ -1,33 +1,33 @@
 <template>
     <div>
-
         <h2 class="h2">
-            환경 유해성 연구
+            연구과제 정보
         </h2>
         <table class="view-table">
             <caption class="sr-only">상세</caption>
             <tbody>
             <tr>
                 <th scope="row">등록번호</th>
-                <td>{{ study.accession }}</td>
-                <th scope="row">임상연구 고유번호</th>
-                <td>{{ study.uniqueNo }}</td>
+
+                <td>{{ omics.project && omics.project.accession }}</td>
+                <th scope="row">ATIS 고유번호</th>
+                <td>{{ omics.project && omics.project.rsrchPrjctInnb }}</td>
             </tr>
             <tr>
-                <th scope="row">연구제목</th>
-                <td colspan="3">{{ study.name }}</td>
+                <th scope="row">연구과제 명</th>
+                <td colspan="3">{{ omics.project && omics.project.name }}</td>
             </tr>
-            <tr>
+            <!--<tr>
                 <th scope="row">연구목적</th>
                 <td class="pre" colspan="3">{{ study.purpose }}</td>
-            </tr>
-            <tr>
+            </tr>-->
+            <!--<tr>
                 <th scope="row">연구대상 표현형/질환</th>
                 <td colspan="3">
                     (국문) {{ study.disease.koreanName }},
                     (영문) {{ study.disease.englishName }}
                 </td>
-            </tr>
+            </tr>-->
             <!--<tr>
                 <th scope="row">노출정보</th>
                 <td colspan="3">{{ study.materials}}</td>
@@ -206,7 +206,7 @@
             </tbody>
         </table>
 
-        <h2 class="h2">데이터 파일 유형</h2>
+        <!--h2 class="h2">데이터 파일 유형</h2>
         <table class="view-table">
             <caption class="sr-only">데이터 파일 유형</caption>
             <tbody>
@@ -219,7 +219,7 @@
                 <td>{{ omics.processedTypes | fileType }}</td>
             </tr>
             </tbody>
-        </table>
+        </table-->
 
         <h2 class="h2">데이터 공개</h2>
         <table class="view-table">
@@ -499,31 +499,30 @@
                 return (omics.omicsType == 'Metabolmoe');
             },
             async initData(id) {
-                console.log('log2', id)
-
-
                 let omicsData = await axios.get(
                     "/isg-oreo/api/omics/" + id,
                     {}
                 );
-                console.log('omicsData', omicsData)
+              console.log('omicsData', omicsData)
+                /*
                 let studyData = await axios.get(
                     "/isg-oreo/api/clinic-studies/" + omicsData.data.study.id,
                     {}
-                );
+                );*/
 
-                console.log('studyData', studyData)
+                /*console.log('studyData', studyData)
                 let reviewsData = await axios.get(
                     "/isg-oreo/api/omics/" + id + "/reviews",
                     {}
-                );
+                );*/
 
-                console.log('reviewsData', reviewsData)
-                this.reviews = reviewsData.data
-                console.log('this.reviews', this.reviews)
+                //console.log('reviewsData', reviewsData)
+                //this.reviews = reviewsData.data
+                //console.log('this.reviews', this.reviews)
 
                 this.omics = omicsData.data
-                this.study = studyData.data
+                /*this.study = studyData.data*/
+              this.$emit("experDataLoad",omicsData)
 
             },
 

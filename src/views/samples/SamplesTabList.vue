@@ -28,7 +28,7 @@
         <span
           data-toggle="tooltip"
           data-placement="top"
-          title="연구대상자 등록"
+          title="객체 등록"
         >
           <button
             class="btn-primary-sm"
@@ -55,7 +55,7 @@
             >
           </th>
           <th>등록번호</th>
-          <th>연구대상자_등록번호</th>
+          <th>객체 등록번호</th>
           <th>성별</th>
           <th>샘플_고유번호</th>
           <th>샘플유래</th>
@@ -132,7 +132,7 @@ export default {
           { id: "sampleNo", name: "등록번호" },
           { id: "uniqueNo", name: "고유번호" },
           { id: "sampleName", name: "샘플명" },
-          { id: "target", name: "연구대상자" },
+          { id: "target", name: "객체" },
           { id: "disease", name: "질환명" },
         ],
 

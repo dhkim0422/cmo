@@ -1,6 +1,7 @@
 <template>
 <div>
 
+  <page-head-info :root-menu-nm="'내정보'" :menu-nm="'오믹스데이터 목록'" />
     <ul class="tab-menu m-t-75">
         <li class="menu-item"><a class="menu-link" :class="css(1)" @click="click(1)">NGS</a></li>
         <li class="menu-item"><a class="menu-link" :class="css(2)" @click="click(2)">Microarray</a></li>

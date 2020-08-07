@@ -13,7 +13,7 @@
         <li class="summary-item">
           <div class="summary-title">
             <i class="xi-users"></i>
-            연구대상자
+            객체
           </div>
           <div class="summary-num">{{ result.target }}</div>
         </li>

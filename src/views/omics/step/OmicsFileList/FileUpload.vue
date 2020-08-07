@@ -22,7 +22,7 @@
                 </file-upload>
 
 
-                <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
+                <span data-toggle="tooltip" data-placement="top" title="객체 등록">
                     <!--등록은 id=registPopup 로연결되어 있음 -->
                     <button class="btn-outline-secondary-sm" v-b-modal.sample-modal >
                         <i class="xi-link"></i><span class="sr-only">샘플연결</span>

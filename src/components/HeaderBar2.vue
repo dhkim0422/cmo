@@ -25,7 +25,7 @@
                 <a class="nav-link" @click="goto('/project/projectList')" title="과제 목록">과제 목록</a>
               </li>
               <li>
-                <a class="nav-link" @click="goto('/targets/targetList')" title="연구대상자 목록">연구대상자 목록</a>
+                <a class="nav-link" @click="goto('/targets/targetList')" title="객체 목록">객체 목록</a>
               </li>
               <li>
                 <a class="nav-link" @click="goto('/samples/samplesList')" title="샘플 목록">샘플 목록</a>
@@ -92,8 +92,8 @@ export default {
         { path: "/project/projectList", rootMenuNm: "과제", menuNm: "과제" },
         {
           path: "/targets/targetList",
-          rootMenuNm: "연구대상자",
-          menuNm: "연구대상자"
+          rootMenuNm: "객체",
+          menuNm: "객체"
         },
         { path: "/samples/samplesList", rootMenuNm: "샘플", menuNm: "샘플" },
         {

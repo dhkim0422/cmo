@@ -59,7 +59,7 @@
                                 </div>
                             </th>
                             <th class="fixed-x">등록번호</th>
-                            <th>연구대상자 등록번호</th>
+                            <th>객체 등록번호</th>
                             <th>성별</th>
                             <th>샘플 고유번호</th>
                             <th>샘플유래</th>

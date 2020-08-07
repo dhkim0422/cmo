@@ -1,178 +1,319 @@
 <template>
-    <b-modal id="projectSearchPopup" size="xl" title="연구과제 목록" hide-footer>
-        <div class="">
-            <!-- modal-body -->
-            <div class="modal-body">
+    <b-modal id="ProjectSearchPopup" size="xl" title="연구과제 목록" hide-footer>
+        <!-- 검색폼 -->
 
-                <!-- list filter -->
-                <div class="filter-group">
-                    <div class="group-item">
-                        <total-record-count :result-list="resultList"/>
-                    </div>
-                    <div class="group-item">
-                        <div class="search-input-group">
-                            <input class="search-input" type="text" placeholder="검색어" ref="focusThis"
-                                   v-model="params.keyword" @keydown.enter="search()"/>
-                            <button class="search-btn" @click="search()">
-                                <span class="sr-only">조회</span>
-                                <i class="xi-search"/>
-                            </button>
-                        </div>
+        <search-box :filters="filters" @searchClick="changeParams"></search-box>
+        <!-- 검색 목록 -->
 
-                        <page-unit :page-unit="resultList.data.numberOfRows" @onChangePageUnit="search"/>
-                        <!--<button class="btn-primary-sm" type="button" @click="select()">
-                            <i class="xi-file-add"></i>
-                            <span class="sr-only">선택</span>
-                        </button>-->
-                    </div>
-                </div>
+        <div class="filter-group">
+            <div class="group-item">
                 <div>
-                <b-table
-                        ref="selectableTable"
-                        selectable
-                        select-mode="single"
-                        class="data-table"
-                        :items="items"
-                        :fields="fields"
-                        @row-selected="onRowSelected"
-                >
-                    <template v-slot:cell(selected)="{ rowSelected }">
-                        <template v-if="rowSelected">
-                            <span aria-hidden="true">&check;</span>
-                            <span class="sr-only">Selected</span>
-                        </template>
-                        <template v-else>
-                            <span aria-hidden="true">&nbsp;</span>
-                            <span class="sr-only">Not selected</span>
-                        </template>
-                    </template>
-                </b-table>
-                <b-col class="my-1">
-                    <b-pagination v-model="resultList.data.currentPage" :per-page="resultList.data.numberOfRows"
-                                  :total-rows="resultList.data.total" size="sm" align="center"
-                                  @change="changePageNo"
-                    />
-                </b-col>
+
+                    <!--<b-form-checkbox
+                            v-model="allSelected"
+                            :indeterminate="indeterminate"
+                            @change="toggleAll"
+                    >
+                    <label for="chkPrjAll">
+                        <span class="sr-only">전체선택</span>
+                    </label>
+                    </b-form-checkbox>
+                    -->
+
                 </div>
-                <!--<table class="data-table custom-table-scrollable">
-                    <caption class="sr-only">목록</caption>
-                    <thead>
-                    <tr>
-                        <th class="fixed-x" style="width: 70px;">
-                            <div class="custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="searchProjectAll"
-                                       ng-model="modelHandler.checkedAll" ng-disabled="true"
-                                       ng-change="modelHandler.selectAll(modelHandler.checkedAll)" />
-                                <label class="custom-control-label" for="searchProjectAll">
-                                    <span class="sr-only">모두선택</span>
-                                </label>
-                            </div>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="item in modelHandler.getItems()">
-                        <td class="fixed-x">
-                            <div class="custom-checkbox">
-                                <input type="checkbox" class="custom-control-input"
-                                       checklist-model="modelHandler.selectedIdList"
-                                       checklist-value="item.id" ng-change="modelHandler.select(item, true)" />
-                                <label class="custom-control-label" >
-                                    <span class="sr-only">선택</span>
-                                </label>
-                            </div>
-                        </td>
-
-                    </tr>
-                    </tbody>
-                </table>-->
+                <total-record-count :result-list="resultList"/>
             </div>
+            <div class="group-item">
 
-            <!-- modal-footer -->
-            <div class="modal-footer">
-                <button type="reset" class="btn-outline-secondary" @click="close">취소하기</button>
-                <button type="submit" class="btn-primary" ng-click="select()"
-                        ng-disabled="!modelHandler.hasSelectedItems()">선택하기
-                </button>
+                <page-unit :page-unit="resultList.data.numberOfRows" @onChangePageUnit="onChangePageUnit"></page-unit>
             </div>
         </div>
 
-    </b-modal>
+        <b-form-checkbox-group id="checkbox-group" v-model="selected" name="itemId">
+            <div
+                    v-for="(result, index) in resultList.data.list"
+                    class="data-card"
+                    :key="`result-${index}`"
+            >
+                <div class="card-header">
+                    <div class="block-group">
+                        <div class="block">
+                            <div style="width: 270px">
 
+                                <b-form-checkbox :value="result" size="lg">
+                                    <i class="xi-receipt"></i>
+                                    {{ result.accession }}
+                                </b-form-checkbox>
+
+                            </div>
+                        </div>
+                        <div class="block" style="width: 800px; margin-left: 55px">
+                            {{ result.program }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="view-table">
+                        <caption class="sr-only">
+                            상세정보
+                        </caption>
+                        <tbody>
+                        <tr>
+                            <th scope="row">대분야</th>
+                            <td>{{ result.unitProgram }}</td>
+                            <th scope="row">ATIS 고유번호</th>
+                            <td>{{ result.uniqueNo }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">과제명</th>
+                            <td colspan="3">{{ result.name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">중분야</th>
+                            <td>{{ result.middleRealm }}</td>
+                            <th scope="row">연구상태</th>
+                            <td>{{ result.projectStatus == undefined ? "상태값 이상" : result.projectStatus.name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">주관기관</th>
+                            <td>{{ result.institute }}</td>
+                            <th scope="row">주관책임자</th>
+                            <td>{{ result.charger }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div v-show="resultList.data.list.length !== 0" class="text-center"></div>
+            <div></div>
+
+            <div
+                    v-show="resultList.data.list.length === 0"
+                    class="data-card"
+                    aria-hidden="true"
+                    style
+            >
+                <div class="card-body text-center">검색 결과가 없습니다</div>
+            </div>
+
+            <b-pagination v-model="resultList.data.currentPage"
+                          :per-page="resultList.data.numberOfRows"
+                          :total-rows="resultList.data.total"
+                          size="sm"
+                          align="center"
+                          @change="changePageNo"
+            />
+        </b-form-checkbox-group>
+        <!-- modal-footer -->
+        <div class="modal-footer">
+            <button type="reset" class="btn-outline-secondary" @click="close">취소하기</button>
+            <button type="submit" class="btn-primary" @click="select()">선택하기</button>
+        </div>
+    </b-modal>
 </template>
 
 <script>
-    import TotalRecordCount from "../../components/TotalRecordCount";
     import axios from "../../utils/axios";
+    import ProjectRegist from "./ProjectMerge";
     import PageUnit from "../../components/PageUnit";
 
     export default {
-        name: "ProjectSearchPopup",
-        components: {PageUnit, TotalRecordCount},
+        name: "ProjectList",
+        components: {PageUnit, ProjectRegist},
+        watch: {
+            selected(newVal, oldVal) {
+                // Handle changes in individual flavour checkboxes
+                if (newVal.length === 0) {
+                    this.indeterminate = false
+                    this.allSelected = false
+                } else if (newVal.length === this.resultList.data.list.length) {
+                    this.indeterminate = false
+                    this.allSelected = true
+                } else {
+                    this.indeterminate = true
+                    this.allSelected = false
+                }
+            }
+        },
         data() {
             return {
                 selected: [],
-
+                allSelected: false,
+                indeterminate: false,
+                isRegist: false,
+                currentPageNo: 1,
+                filter: {
+                    keyword: "",
+                },
                 resultList: {
                     data: {
                         total: 0,
                         currentPage: 1,
                         numberOfRows: 10,
-                        list: []
-                    }
+                        list: [],
+                    },
                 },
-                fields: [
-                    {key: 'selected', label: '선택'},
-                    {key: 'accession', label: '등록번호'},
-                    {key: 'uniqueNo', label: 'KEITI 고유번호'},
-                    {key: 'program', label: '사업명'},
-                    {key: 'unitProgram', label: '단위사업'},
-                    {key: 'middleRealm', label: '중분야'},
-                    {key: 'name', label: '연구과제 제목'},
-                    {key: 'institute', label: '주관기관'},
-                    {key: 'charger', label: '주관책임자'}
-                ],
-                items: [],
-                params: {keyword: ''}
-            }
+                filters: {
+                    fields: [
+                        {id: "", name: "전체"},
+                        {id: "projectNo", name: "일련번호"},
+                        {id: "projectName", name: "과제명"},
+                        {id: "uniqueNo", name: "ATIS 고유번호"},
+                        {id: "program", name: "사업명"},
+                        {id: "unitProgram", name: "대분야"},
+                        {id: "middleRealm", name: "과제중분류"},
+                        {id: "status", name: "연구상태"},
+                        {id: "institute", name: "주관기관"},
+                        {id: "charger", name: "주관책임자"},
+                        {id: "participants", name: "참여기업"},
+                        {id: "purpose", name: "연구개발 목표"},
+                        {id: "contents", name: "연구개발 내용"},
+                        {id: "objective", name: "최종목표"},
+                        {id: "conclusion", name: "연구내용"},
+                        {id: "features", name: "개발기술 특징"},
+                        {id: "expectation", name: "기대효과"},
+                        {id: "appliedTo", name: "적용분야"},
+                        {id: "keywords", name: "키워드"},
+                    ],
+                    params: {},
+                },
+            };
         },
         methods: {
-            onRowSelected(items) {
-                this.selected = items
+            onChangePageUnit(pageUnit) {
+                this.resultList.data.numberOfRows = pageUnit
+                this.selectList()
+            },
+            toggleAll(checked) {
+                this.selected = checked ? this.resultList.data.list.slice() : []
             },
             //Pagination 컴포넌트의 change emit
             changePageNo(pageNo) {
-                this.resultList.data.currentPage = pageNo
-                this.selectList(pageNo);
+                this.currentPageNo = pageNo;
+                this.selectList();
             },
-            select() {
-                this.$emit('onProjectSelected',this.selected)
-                this.close()
+            changeParams(params) {
+                this.params = params;
+                this.selectList();
             },
-            async search( page = 1) {
-                let url = '/isg-oreo/api/clinic-studies'
+            async selectList(page = 1) {
+                this.isRegist = false
+                let url = "/isg-oreo/api/projects";
                 const params = new URLSearchParams();
-
-                //params.append('fields', row.id)
-                params.append('keyword', this.params.keyword)
-
+                if (this.params.keyword != '') {
+                    for (const row of this.params.fields) {
+                        if (row.id !== '') params.append('fields', row.id)
+                    }
+                    params.append('keyword', this.params.keyword)
+                }
                 params.append('ownerId', 7)
-                params.append('omicsType', this.omicsType)
                 params.append('firstIndex', (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows)
-                params.append('pageSize', this.resultList.data.numberOfRows)
                 params.append('rowSize', this.resultList.data.numberOfRows)
                 params.append('currentPage', page)
                 this.resultList = await axios.get(url, {params: params});
-                this.items = this.resultList.data.list
 
             },
-            close(){
-                this.$bvModal.hide('projectSearchPopup')
+            close() {
+                this.$bvModal.hide('ProjectSearchPopup')
+            },
+            async select() {
+                console.log(this.selected)
+                if (this.selected.length == 0) {
+                    await this.$alert(
+                        '항목을 선택 하신 후 진행이 가능합니다.',
+                        '선택한 항목이 없습니다. ',
+                        'error'
+                    )
+                    return
+                }
+                this.$emit('onProjectSelected', this.selected)
+                this.selected = [];//저장된 데이터 제거
+                this.close()
+            },
+
+        },
+    };
+    /*
+        import TotalRecordCount from "../../components/TotalRecordCount";
+        import axios from "../../utils/axios";
+        import PageUnit from "../../components/PageUnit";
+
+        export default {
+            name: "ProjectSearchPopup",
+            components: {PageUnit, TotalRecordCount},
+            data() {
+                return {
+                    selected: [],
+
+                    resultList: {
+                        data: {
+                            total: 0,
+                            currentPage: 1,
+                            numberOfRows: 10,
+                            list: []
+                        }
+                    },
+                    fields: [
+                        {key: 'selected', label: '선택'},
+                        {key: 'accession', label: '등록번호'},
+                        {key: 'uniqueNo', label: '임상 고유번호'},
+                        {key: 'program.accession', label: '연구과제 등록번호'},
+                        {key: 'name', label: '연구제목'},
+                        {key: 'rt', label: '연구유형'},
+                        {key: 'rd', label: '연구대상 표현형/질환'},
+                    ],
+                    items: [],
+                    params: {keyword: ''}
+                }
+            },
+            methods: {
+                onRowSelected(items) {
+                    this.selected = items
+                },
+                //Pagination 컴포넌트의 change emit
+                changePageNo(pageNo) {
+                    this.resultList.data.currentPage = pageNo
+                    this.selectList(pageNo);
+                },
+                async select() {
+                    console.log(this.selected)
+                    if (this.selected.length == 0) {
+                        await this.$alert(
+                            '항목을 선택 하신 후 진행이 가능합니다.',
+                            '선택한 항목이 없습니다. ',
+                            'error'
+                        )
+                        return
+                    }
+
+
+                    this.$emit('onProjectSelected', this.selected)
+                    this.selected = [];//저장된 데이터 제거
+                    this.close()
+                },
+                async search(page = 1) {
+                    let url = '/isg-oreo/api/clinic-studies'
+                    const params = new URLSearchParams();
+
+                    //params.append('fields', row.id)
+                    params.append('keyword', this.params.keyword)
+
+                    params.append('ownerId', 7)
+                    params.append('omicsType', this.omicsType)
+                    params.append('firstIndex', (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows)
+                    params.append('pageSize', this.resultList.data.numberOfRows)
+                    params.append('rowSize', this.resultList.data.numberOfRows)
+                    params.append('currentPage', page)
+                    this.resultList = await axios.get(url, {params: params});
+                    this.items = this.resultList.data.list
+
+                },
+                close() {
+                    this.$bvModal.hide('ProjectSearchPopup')
+                }
             }
         }
-    }
+    */
 </script>
 
-<style scoped>
 
-</style>

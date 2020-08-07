@@ -7,11 +7,11 @@
                         <!-- modal-body -->
                         <div class="">
                             <h2 class="h2">
-                                연구 대상자 기본정보
+                                객체 기본정보
                             </h2>
                             <table class="view-table">
                                 <caption class="sr-only">
-                                    연구 대상자 기본정보
+                                    객체 기본정보
                                 </caption>
                                 <tbody>
                                 <tr v-if="!isCreateForm()">
@@ -23,15 +23,15 @@
                                 <tr>
                                     <th class="form-group required control-label" >
                                         <label>
-                                            연구대상자 고유번호
+                                          객체 고유번호
                                         </label>
                                     </th>
                                     <td>
                                         <validation-provider rules="required" v-slot="{ errors }">
                                             <input class="form-control"
                                                    type="text"
-                                                   title="연구대상자 고유번호"
-                                                   name="연구대상자 고유번호"
+                                                   title="객체 고유번호"
+                                                   name="객체 고유번호"
                                                    placeholder="작성하여주세요"
                                                    v-model="model.uniqueNo"
                                             />
@@ -96,7 +96,7 @@
                                         </validation-provider>
                                     </td>
                                 </tr>
-                                <tr>
+                                <!--<tr>
                                     <th scope="row" class="form-group required control-label">
                                         <label>
                                             제3자 정보제공 동의서
@@ -115,7 +115,7 @@
                                             <span>{{ errors[0] }}</span>
                                         </validation-provider>
                                     </td>
-                                </tr>
+                                </tr>-->
                                 </tbody>
                             </table>
                         </div>
@@ -145,7 +145,7 @@
         async created() {
 
             this.codes = this.$store.getters.getCodes
-            this.title = (this.isCreateForm() ? '연구대상자 등록' : '연구대상자 수정')
+            this.title = (this.isCreateForm() ? '객체 등록' : '객체 수정')
             this.initCode()
         },
         watch:{

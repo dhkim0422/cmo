@@ -1,10 +1,11 @@
 <template>
   <div class="container" id="content">
-    <div class="filter-group" style="margin-bottom: 0px;">
+    <page-head-info :root-menu-nm="'스토리지'" :menu-nm="model.name"/>
+    <!--<div class="filter-group" style="margin-bottom: 0px;">
       <div class="group-item">
         <h2 class="h2">{{ model.name }}</h2>
       </div>
-    </div>
+    </div>-->
 
     <div class="row">
       <div class="col-2"></div>
@@ -94,10 +95,11 @@
 </template>
 <script>
 import axios from "../../utils/axios";
+import PageHeadInfo from "@/components/PageHeadInfo";
 
 export default {
   name: "StoragePosition",
-
+  components: {PageHeadInfo},
   data() {
     return {
       tubeKey: "", //tube id

@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-
+      <page-head-info :root-menu-nm="'내정보'" :menu-nm="'객체 목록'"/>
         <!-- 검색폼 -->
         <search-box :filters="filters" @searchClick="changeParams"></search-box>
 
@@ -16,7 +16,7 @@
                 <!-- 로우수를 넘겨주며 기본값을 10으로 설정 -->
                 <page-unit :page-unit="resultList.data.numberOfRows"
                            @onChangePageUnit="onChangePageUnit"></page-unit>
-                <span data-toggle="tooltip" data-placement="top" title="연구대상자_등록">
+                <span data-toggle="tooltip" data-placement="top" title="객체 등록">
                     <!--등록은 id=registPopup 로연결되어 있음 -->
                     <b-button class="btn-primary-sm" v-b-modal.registPopup variant="primary" @click="onClickRegist">
                         <i class="xi-file-add"></i><span class="sr-only">등록</span>
