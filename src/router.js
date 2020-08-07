@@ -137,6 +137,11 @@ export default new Router({
       path: "/omics/omicsWizard/:omicsType/:id",
       name: "omicsWizard update",
       component: () => import("./views/omics/OmicsWizard"),
+    },
+    {
+      path: "/species/speciesList",
+      name: "Species List",
+      component: () => import("./views/species/SpeciesTypeList"),
     }
 
 

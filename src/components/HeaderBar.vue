@@ -39,11 +39,15 @@
               <!--<li>
                 <a class="nav-link" @click="goto('/omics/omicsReview')" title="심의/승인">오믹스 심의</a>
               </li>-->
+              <li class="nav-item">
+                <a class="nav-link" @click="goto('/species/speciesList')" title="종관리">종관리</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" @click="goto('/storage/storageList')" title="저장고">저장고</a>
+              </li>
             </ul>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" @click="goto('/storage/storageList')" title="저장고">저장고</a>
-          </li>
+
           <li class="nav-item">
             <a
               v-if="$store.getters.loginAt"
@@ -99,7 +103,7 @@ export default {
           rootMenuNm: "내정보",
           menuNm: "등록의뢰 심의/승인"
         },
-        { path: "/storage/storageList", rootMenuNm: "저장고", menuNm: "저장고" }
+
       ],
       rootMenuNm: "",
       menuNm: ""
