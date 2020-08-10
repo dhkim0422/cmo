@@ -128,7 +128,7 @@
                     저장하기
                 </b-button>
             </div>
-            {{samplesInfo}} / {{isCreateForm()}}
+
         </div>
     </b-modal>
 </template>

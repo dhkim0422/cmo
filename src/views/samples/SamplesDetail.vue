@@ -1,6 +1,7 @@
 <template>
     <div class="container" id="content">
 
+      <page-head-info :root-menu-nm="model.name" :menu-nm="model.accession"/>
         <!-- 요약 -->
         <ul class="summary offset-t">
             <li class="summary-item">
