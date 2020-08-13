@@ -24,13 +24,7 @@
           </div>
           <div class="summary-num">{{ result.sample }}</div>
         </li>
-        <li class="summary-item">
-          <div class="summary-title">
-            <i class="xi-business"></i>
-            환경 유해성 연구
-          </div>
-          <div class="summary-num">{{ result.study }}</div>
-        </li>
+
         <li class="summary-item">
           <div class="summary-title"><i class="xi-chip"></i>NGS</div>
           <div class="summary-num">{{ result.NGS }}</div>

@@ -1,8 +1,5 @@
 <template>
   <div class="container">
-    <page-head-info :root-menu-nm="'내정보'" :menu-nm="'샘플 목록'"/>
-    <!-- 검색폼 -->
-
     <search-box :filters="filter" @searchClick="changeParams"></search-box>
     <!-- 검색 목록 -->
     <div class="filter-group">
@@ -10,23 +7,9 @@
         <total-record-count :result-list="resultList"/>
       </div>
       <div class="group-item">
-        <b-button lass="btn-outline-secondary-sm" title="삭제" @click="remove">
-          <i class="xi-trash"></i><span class="sr-only">삭제</span>
-        </b-button>
         <!-- 로우수를 넘겨주며 기본값을 10으로 설정 -->
         <page-unit :page-unit="resultList.data.numberOfRows"
                    @onChangePageUnit="onChangePageUnit"></page-unit>
-        <span data-toggle="tooltip" data-placement="top" title="연구샘플_등록">
-                    <!--등록은 id=registPopup 로연결되어 있음 -->
-                    <b-button class="btn-primary-sm" v-b-modal.sampleSavePopup variant="primary"
-                              @click="onClickCreateLink">
-                        <i class="xi-file-add"></i><span class="sr-only">등록</span>
-                    </b-button>
-          <!--등록을 위한 페잊 컴포넌트-->
-                    <samples-merge :samples-info="'REG'" @saveOK="selectList" v-if="isRegist"/>
-                <div>
-                </div>
-                </span>
       </div>
     </div>
 
@@ -57,11 +40,19 @@
           <span class="sr-only">Not selected</span>
         </template>
       </template>
-      <template v-slot:cell(accession)="data">
-        <a :href="'samplesDetail/' + data.item.id">{{ data.value }}</a>
+      <template v-slot:cell(id)="data">
+        <a :href="'species/' + data.item.id">{{ data.value }}</a>
       </template>
-      <template v-slot:cell(agreeProvide)="data">
-        {{ data.value == true ? '있음' : '없음' }}
+      <template v-slot:cell(scientificNm)="data">
+        <a :href="'species/' + data.item.id">{{ data.value }}</a>
+      </template>
+      <template v-slot:cell(speciesNm)="data">
+        <div>(국문){{ data.item.speciesNmKr }}</div>
+        <div>(영문){{ data.item.speciesNmEn }}</div>
+      </template>
+      <template v-slot:cell(kindNm)="data">
+        <div>(국문){{ data.item.kindNmKr }}</div>
+        <div>(영문){{ data.item.kindNmEn }}</div>
       </template>
 
     </b-table>
@@ -78,11 +69,12 @@
 <script>
 
 import axios from "../../utils/axios";
-import SamplesMerge from "./SamplesMerge";
+import SpeciesMerge from "@/views/species/SpeciesMerge";
+
 
 export default {
-  name: "SamplesList",
-  components: {SamplesMerge},
+  name: "SpeciesTypeList",
+  components: {SpeciesMerge},
   data() {
     return {
       isRegist: false,
@@ -91,36 +83,12 @@ export default {
           key: 'selected',
           label: '선택'
         },
-        {key: 'accession', name: '등록번호'},
-        {
-          key: 'target.accession',
-          label: '연구샘플 등록번호'
-        },
-        {
-          key: 'target.genderName',
-          label: '성별'
-        },
-        {
-          key: 'uniqueNo',
-          label: '샘플 고유번호 '
+        {key: 'id', label: '종 번호'},
+        {key: 'scientificNm', label: '학명'},
+        {key: 'speciesNm', label: '종명'},
+        {key: 'kindNm', label: '품종명'},
 
-        },
-        {
-          key: 'origin.name',
-          label: '샘플유래'
-        },
-        {
-          key: 'name',
-          label: '샘플명'
-        },
-        {
-          key: 'type.name',
-          label: '샘플구분'
-        },
-        {
-          key: 'disease',
-          label: '질환명'
-        }
+
       ],
       items: [],
       selected: '',
@@ -141,11 +109,10 @@ export default {
       filter: {
         fields: [
           {id: "", name: "전체"},
-          {id: "sampleNo", name: "등록번호"},
-          {id: "uniqueNo", name: "고유번호"},
-          {id: "sampleName", name: "샘플명"},
-          {id: "target", name: "연구샘플"},
-          {id: "disease", name: "질환명"},
+          {id: "speciesId", name: "종관리 번호"},
+          {id: "speciesNm", name: "종명"},
+          {id: "kndNm", name: "품종명"},
+          {id: "regist", name: "사용자"},
         ]
       },
       params: {},
@@ -171,7 +138,7 @@ export default {
     },
     async selectList(page = 1) {
       this.isRegist = false
-      let url = "/isg-oreo/api/clinic-samples";
+      let url = "/isg-oreo/api/speciesList";
       const params = new URLSearchParams();
       if (this.params.keyword != '') {
         for (const row of this.params.fields) {
@@ -184,42 +151,8 @@ export default {
       params.append('currentPage', page)
       this.resultList = await axios.get(url, {params: params});
       this.items = this.resultList.data.list
-    },
-    onClickDetailLink(target) {
-      this.$router.push({path: "/samples/SamplesDetail/" + target.id});
-    },
-    onClickCreateLink() {
-      this.isRegist = true
-    },
-    async remove() {
-      if (this.selected.length == 0) {
-        this.$alert('', "선태된 내역이 없습니다.", 'error');
-        return;
-      }
+    }
 
-      await this.$confirm('', "선태된 삭제 하시겠습니까?", 'error');
-      let url = '/isg-oreo/api/clinic-samples?action=REMOVE'
-      let response = await axios.put(url, this.selected);
-
-      let msg = "";
-      if (response.data.errorList.total != 0) {
-        this.$alert('다시 시도해 주세요.', '문제가 발생했습니다.', 'error');
-        return
-      }
-      if (response.data.failList.total != 0) {
-
-        let aceession = new Array()
-        for (const row of response.data.failList.list) {
-          aceession.push(row.accession)
-        }
-
-        this.$alert(aceession, '이미 참조된 내역이 있습니다.', 'info');
-      } else {
-        this.$alert('', response.data.successList.total + '건 삭제 처리 되었습니다', 'info');
-      }
-
-      this.selectList()
-    },
 
   },
 };

@@ -169,7 +169,7 @@
                     }
                     params.append('keyword', this.params.keyword)
                 }
-                params.append('firstIndex', 1)
+              params.append('firstIndex', (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows)
                 params.append('rowSize', this.resultList.data.numberOfRows)
                 params.append('currentPage', page)
                 this.resultList = await axios.get(url, {params: params});

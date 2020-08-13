@@ -55,11 +55,12 @@
           <th>섹터(Y축)</th>
           <th>박스(Z축)</th>
           <th>튜브크기</th>
+          <th> 저장 샘플 수 </th>
         </tr>
       </thead>
       <tbody>
         <tr v-if="response.data.list.length == 0">
-          <td colspan="8" class="text-center">데이터가 없습니다.</td>
+          <td colspan="9" class="text-center">데이터가 없습니다.</td>
         </tr>
         <tr v-else v-for="(item, index) in response.data.list" :key="`result${index}`">
           <td class="custom-checkbox" style="min-width: 65px;">
@@ -85,6 +86,7 @@
           <td>{{ item.sector }}</td>
           <td>{{ item.box }}</td>
           <td>{{ item.tube == "9" ? "9 X 9" : "5 X 5" }}</td>
+          <td>{{ item.cnt }}</td>
         </tr>
       </tbody>
     </table>
@@ -115,9 +117,9 @@ export default {
       response: {
         data: {
           total: 0,
-          currentPage: 0,
+          currentPage: 1,
           numberOfRows: 10,
-          currentPageNo: 0,
+          currentPageNo: 1,
           pageSize: 10,
           list: [],
           target: {},

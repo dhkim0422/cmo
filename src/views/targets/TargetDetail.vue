@@ -5,12 +5,6 @@
     <ul class="summary offset-t">
       <li class="summary-item">
         <div class="summary-title">
-          <i class="xi-business"></i>환경 유해성 연구
-        </div>
-        <div class="summary-num">{{ summary.study }}</div>
-      </li>
-      <li class="summary-item">
-        <div class="summary-title">
           <i class="xi-opacity"></i>연구샘플
         </div>
         <div class="summary-num">{{ summary.sample }}</div>
@@ -75,6 +69,16 @@
             성별
           </th>
           <td>{{ model.genderName }}</td>
+        </tr>
+        <tr>
+          <th scope="row">
+            축종
+          </th>
+          <td colspan="3">
+            {{ model.species && model.species.speciesNmKr }}({{ model.species && model.species.speciesNmEn }}) >
+            {{ model.species && model.species.kindNmKr }} ({{ model.species && model.species.kindNmEn }})
+
+          </td>
         </tr>
         <!--<tr>
           <th scope="row">객체 제공 동의서</th>

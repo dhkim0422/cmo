@@ -1,5 +1,7 @@
 <template>
   <div class="container" id="content">
+    <page-head-info :root-menu-nm="'저장고'" :menu-nm="'저장고 등록'"/>
+    <br>
     <div class="filter-group" style="margin-bottom: 0px;">
       <div class="group-item">
         <h2 class="h2">저장고 일반정보</h2>

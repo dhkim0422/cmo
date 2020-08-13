@@ -4,13 +4,7 @@
     <form>
       <!-- 요약 -->
       <ul class="summary offset-t">
-        <li class="summary-item">
-          <div class="summary-title">
-            <i class="xi-business"></i>
-            환경_유해성_연구
-          </div>
-          <div class="summary-num">{{ this.summary.study }}</div>
-        </li>
+
         <li class="summary-item">
           <div class="summary-title">
             <i class="xi-users"></i>

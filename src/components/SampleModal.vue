@@ -20,8 +20,17 @@
         class="data-table"
         :items="items"
         :fields="fields"
+        :busy="this.items.length == 0"
         @row-selected="onRowSelected"
+
       >
+
+        <template v-slot:table-busy>
+          <div class="text-center  my-2">
+            <!--<b-spinner class="align-middle"></b-spinner>-->
+            검색된 항목이 없습니다.
+          </div>
+        </template>
         <template v-slot:cell(selected)="{ rowSelected }">
           <template v-if="rowSelected">
             <span aria-hidden="true">&check;</span>
@@ -48,9 +57,11 @@
         @change="changePageNo"
       />
     </b-container>
+
     <template v-slot:modal-footer>
       <b-button variant="secondary" class="float-right" @click="$bvModal.hide('sample-modal')">닫기</b-button>
     </template>
+
   </b-modal>
 </template>
 
@@ -59,6 +70,7 @@ import axios from "@/utils/axios";
 
 export default {
   name: "SampleModal",
+  props:['tube'],
   data() {
     return {
       fields: [
@@ -145,13 +157,31 @@ export default {
     async selectList(page = 1) {
       this.isRegist = false;
       let url = "/isg-oreo/api/clinic-samples";
-      this.params["rowSize"] = this.resultList.data.numberOfRows;
-      this.params["firstIndex"] = (this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows
-      this.params["currentPage"] = page;
-      this.resultList = await axios.get(url, { params: this.params });
+
+      const params = new URLSearchParams();
+      params.append("rowSize",this.resultList.data.numberOfRows)
+      params.append("firstIndex",(this.resultList.data.currentPage - 1) * this.resultList.data.numberOfRows)
+      params.append("currentPage",page)
+
+      //검색된 필터에 대한 처리
+
+      /*if (this.params.keyword != '') {
+        for (const row of this.params.fields) {
+          if (row.id !== '') params.append('fields', row.id)
+        }
+        params.append('keyword', this.params.keyword)
+      }*/
+      //검석 제외 데이터
+      let arrId = []
+      this.tube.map((value,index) =>{
+        params.append('unSelectId',value.sampleId)
+      })
+
+      this.resultList = await axios.get(url, {params: params});
       this.items = this.resultList.data.list;
     },
     onAccession(item) {
+      this.items = []
       console.log('item',item)
       this.$emit("sample", item);
       this.$bvModal.hide("sample-modal");

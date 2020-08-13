@@ -90,7 +90,8 @@
         <b-button v-else style="margin-right: 10px;" variant="primary" @click="onSave">저장</b-button>
       </div>
     </div>
-    <SampleModal @sample="onSample" />
+    <SampleModal :tube="this.storagePosition.tube"  @sample="onSample" />
+
   </div>
 </template>
 <script>
