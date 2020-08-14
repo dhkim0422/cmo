@@ -15,15 +15,15 @@
         <div style="padding-bottom: 30px; display: flex; justify-content: center;">
           <template v-for="(item, index) in headerSteps">
             <div
-              :class="stepActive(index + 1)"
-              class="step-container"
-              :key="`header${index}`"
-              @click="onStep(index + 1)"
+                :class="stepActive(index + 1)"
+                class="step-container"
+                :key="`header${index}`"
+                @click="onStep(index + 1)"
             >
               <div class="step">{{ index + 1 }}</div>
               <div class="label">{{ item }}</div>
             </div>
-            <hr v-if="index + 1 < headerSteps.length" class="divider" :key="`divider${index}`" />
+            <hr v-if="index + 1 < headerSteps.length" class="divider" :key="`divider${index}`"/>
           </template>
         </div>
       </div>
@@ -38,35 +38,38 @@
             <div style="padding-bottom: 15px; display: flex; justify-content: center;">
               <div style="text-align: center; width: 15px; margin-right: 15px;"></div>
               <div
-                :class="colClass"
-                v-for="(item, index) in genericeNumber(bodyStep.x)"
-                :key="`rack1${index}`"
-              >{{ numberToAlphabet(item) }}</div>
+                  :class="colClass"
+                  v-for="(item, index) in genericeNumber(bodyStep.x)"
+                  :key="`rack1${index}`"
+              >{{ numberToAlphabet(item) }}
+              </div>
             </div>
           </div>
         </div>
 
         <div
-          class="row"
-          v-for="(item, index) in genericeNumber(bodyStep.y)"
-          :key="`sector1${index}`"
-          style="margin-bottom: 10px;"
+            class="row"
+            v-for="(item, index) in genericeNumber(bodyStep.y)"
+            :key="`sector1${index}`"
+            style="margin-bottom: 10px;"
         >
           <div class="col-12">
             <div style="display: flex; justify-content: center; align-items: center;">
               <div style="text-align: center; width: 15px; margin-right: 15px;">{{ item }}</div>
               <div
-                style="display: flex; justify-content: center; align-items: center;"
-                v-for="(item, childIndex) in genericeNumber(bodyStep.x)"
-                :key="`col-${bodyIndex}-${index}-${childIndex}`"
-                :class="selectedClass(`col-${bodyIndex}-${index}-${childIndex}`)"
-                @click="
+                  style="display: flex; justify-content: center; align-items: center;"
+                  v-for="(item, childIndex) in genericeNumber(bodyStep.x)"
+                  :key="`col-${bodyIndex}-${index}-${childIndex}`"
+                  :class="selectedClass(`col-${bodyIndex}-${index}-${childIndex}`)"
+                  @click="
                   onStorageBox(`col-${bodyIndex}-${index}-${childIndex}`, {
                     x: childIndex + 1,
                     y: index + 1,
                   })
                 "
-              >{{ tubeText[`col-${bodyIndex}-${index}-${childIndex}`] }}</div>
+              >{{ tubeText[`col-${bodyIndex}-${index}-${childIndex}`] }}<br>
+
+              </div>
             </div>
           </div>
         </div>
@@ -76,23 +79,26 @@
     <div class="row m-3">
       <div class="col-12 mt-3" style="text-align: center">
         <b-button
-          style="margin-right: 10px;"
-          variant="secondary"
-          v-if="step > 1"
-          @click="onStep(step-1)"
-        >이전</b-button>
+            style="margin-right: 10px;"
+            variant="secondary"
+            v-if="step > 1"
+            @click="onStep(step-1)"
+        >이전
+        </b-button>
         <b-button
-          style="margin-right: 10px;"
-          variant="secondary"
-          v-if="step < headerSteps.length"
-          @click="onStep(step+1)"
-        >다음</b-button>
+            style="margin-right: 10px;"
+            variant="secondary"
+            v-if="step < headerSteps.length"
+            @click="onStep(step+1)"
+        >다음
+        </b-button>
         <b-button v-else style="margin-right: 10px;" variant="primary" @click="onSave">저장</b-button>
       </div>
     </div>
-    <SampleModal :tube="this.storagePosition.tube"  @sample="onSample" />
+    <SampleModal :tube="this.storagePosition.tube" @sample="onSample"/>
 
   </div>
+
 </template>
 <script>
 import axios from "../../utils/axios";
@@ -136,9 +142,9 @@ export default {
   },
   watch: {
     //마지막 step 일 경우 sample 데이터를 조회하고 출력한다.
-    step: async function(newValue, oldValue) {
+    step: async function (newValue, oldValue) {
       if (newValue === this.headerSteps.length) {
-        const response = await axios.get(`/isg-oreo/api/storagePosition`, {
+        let response = await axios.get(`/isg-oreo/api/storagePosition`, {
           params: {
             storageNo: this.$route.params.id,
             rack: this.storagePosition.rack,
@@ -151,16 +157,30 @@ export default {
 
         const tube = response.data.map(item => {
           this.tubeText[
-            `col-${newValue - 1}-${item.tubeY - 1}-${item.tubeX - 1}`
-          ] = item.accession;
+              `col-${newValue - 1}-${item.tubeY - 1}-${item.tubeX - 1}`
+              ] = item.accession;
           return {
             sampleId: item.clincSmpleId,
             tubeX: item.tubeX,
             tubeY: item.tubeY
           };
         });
-        this.tubeText = { ...this.tubeText };
+        this.tubeText = {...this.tubeText};
         this.storagePosition.tube = tube;
+      } else {
+
+        if (this.step === 1 && this.model.type === "200") {
+          this.onStorageCount()
+        }
+
+        if (this.step === 1 && this.model.type === "100") {
+          this.onContainerCount()
+        }
+
+        if (this.step === 2 && this.model.type === "200") {
+          this.onContainerCount()
+        }
+
       }
     }
   },
@@ -169,9 +189,58 @@ export default {
     if (this.$route.params.id) this.initData();
   },
   methods: {
+    async onStorageCount() {
+      const response = await axios.get(`/isg-oreo/api/storageCount`, {
+        params: {
+          storageNo: this.$route.params.id,
+        }
+      });
+      const tube = response.data.map(item => {
+        console.log(`col-${this.step-1}-${item.sector- 1}-${item.rack - 1}`)
+        this.tubeText[
+            `col-${this.step-1}-${item.sector- 1}-${item.rack - 1}`
+            ] = item.cnt;
+        return {
+          cnt: item.cnt,
+          tubeX: item.tubeX,
+          tubeY: item.tubeY
+        };
+      });
+      //
+      this.storagePosition = {
+        ...this.storagePosition,
+        tubeX: '',
+        tubeY: ''
+      };
+    },
+    async onContainerCount() {
+
+      const response = await axios.get(`/isg-oreo/api/containerCount`, {
+        params: {
+          storageNo: this.$route.params.id,
+          rack: this.storagePosition.rack,
+          sector: this.storagePosition.sector
+        }
+
+      });
+      console.log('response',response)
+      const tube = response.data.map(item => {
+        console.log("item" , item)
+        this.tubeText[
+            `col-${this.step-1}-${item.box - 1}-${0}`
+            ] = item.cnt;
+
+
+        console.log("this.tubeText" , this.tubeText)
+        this.storagePosition = {
+          ...this.storagePosition,
+          box: 0
+        };
+      });
+    },
     onSample(item) {
       this.tubeText[this.tubeKey] = item.accession;
-      this.tubeText = { ...this.tubeText };
+      this.tubeText = {...this.tubeText};
       let tube = this.storagePosition["tube"] || [];
       tube = [
         ...tube,
@@ -207,15 +276,17 @@ export default {
     },
 
     stepActive(step) {
-      return { active: this.step === step };
+      return {active: this.step === step};
     },
     onStorageBox(key, coord) {
+
       //selected style
       this.selectedKey[this.step - 1] = key;
       this.selectedKey = [...this.selectedKey];
 
       //선택한 좌표 step에 따라 설정해야 될 컬럼이 다르다.
       if (this.step === 1 && this.model.type === "100") {
+        console.log("??????????1")
         this.storagePosition = {
           ...this.storagePosition,
           rack: coord.x,
@@ -225,6 +296,7 @@ export default {
       }
 
       if (this.step === 1 && this.model.type === "200") {
+        console.log("??????????2")
         this.storagePosition = {
           ...this.storagePosition,
           rack: coord.x,
@@ -234,6 +306,7 @@ export default {
 
       //질소탱크
       if (this.step === 2 && this.model.type === "100") {
+        console.log("??????????3")
         this.storagePosition = {
           ...this.storagePosition,
           tubeX: coord.x,
@@ -243,10 +316,12 @@ export default {
 
       //초저온냉동고
       if (this.step === 2 && this.model.type === "200") {
-        this.storagePosition = { ...this.storagePosition, box: coord.y };
+        console.log("??????????4")
+        this.storagePosition = {...this.storagePosition, box: coord.y};
       }
 
       if (this.step === 3) {
+        console.log("??????????6")
         this.storagePosition = {
           ...this.storagePosition,
           tubeX: coord.x,
@@ -268,25 +343,26 @@ export default {
     //초기화
     async initData() {
       const response = await axios.get(
-        `/isg-oreo/api/storages/${this.$route.params.id}`
+          `/isg-oreo/api/storages/${this.$route.params.id}`
       );
+      this.onStorageCount()
       this.model = response.data;
 
       //질소탱크
       if (this.model.type === "100") {
         this.headerSteps = ["랙(X축), 섹터(Y축)", "박스"];
         this.bodySteps = [
-          { step: 1, x: this.model.rack, y: this.model.sector },
-          { step: 2, x: this.model.tube, y: this.model.tube }
+          {step: 1, x: this.model.rack, y: this.model.sector},
+          {step: 2, x: this.model.tube, y: this.model.tube}
         ];
 
         //초저온냉동고
       } else if (this.model.type === "200") {
         this.headerSteps = ["랙(X축), 섹터(Y축)", "컨테이너(Z축)", "박스"];
         this.bodySteps = [
-          { step: 1, x: this.model.rack, y: this.model.sector },
-          { step: 2, x: 1, y: this.model.box },
-          { step: 3, x: this.model.tube, y: this.model.tube }
+          {step: 1, x: this.model.rack, y: this.model.sector},
+          {step: 2, x: 1, y: this.model.box},
+          {step: 3, x: this.model.tube, y: this.model.tube}
         ];
       }
     }
@@ -300,6 +376,7 @@ export default {
   align-items: center;
   cursor: pointer;
 }
+
 .active .step {
   background-color: #39bfc4;
 }
@@ -320,9 +397,11 @@ export default {
   align-items: center;
   margin-right: 10px;
 }
+
 .label {
   color: #556889a3;
 }
+
 .divider {
   display: block;
   flex: 1 1 0px;
@@ -347,6 +426,7 @@ export default {
   margin-right: 10px;
   text-align: center;
 }
+
 .col-box {
   width: 50px;
   margin-right: 10px;
@@ -360,6 +440,7 @@ export default {
   width: 80px;
   margin-right: 10px;
 }
+
 .tube:hover {
   background-color: #a1a1a1;
   cursor: pointer;
@@ -368,10 +449,11 @@ export default {
 .box {
   background-color: #e1e1e1;
   border: 1px solid #000;
-  height: 30px;
-  width: 50px;
+  height: 50px;
+  width: 100px;
   margin-right: 10px;
 }
+
 .box:hover {
   background-color: #a1a1a1;
   cursor: pointer;

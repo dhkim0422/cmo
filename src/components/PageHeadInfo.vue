@@ -27,9 +27,7 @@ export default {
     }
   },
   created() {
-    if(this.menuNm.substr(this.menuNm.length -2) === "목록"){
-      this.showBack = false
-    }
+
   },
   methods:{
     moveToBack(){
