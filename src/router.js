@@ -147,6 +147,11 @@ export default new Router({
             path: "/species/species/:id",
             name: "Species List",
             component: () => import("./views/species/SpeciesDetail"),
+        },
+        {
+            path: "/registUser",
+            name: "Species List",
+            component: () => import("./views/user/UserRegiset"),
         }
 
 

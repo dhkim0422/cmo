@@ -28,7 +28,7 @@
                         <i class="xi-link"></i><span class="sr-only">샘플연결</span>
                     </button>
                     <!--등록을 위한 페잊 컴포넌트-->
-                    <sample-modal @sample="onSampleSelect" />
+                    <sample-modal :tube="[]" @sample="onSampleSelect" />
                 </span>
 
                 <button class="btn-outline-secondary-sm" type="button" @click="remove"
@@ -60,7 +60,7 @@
                 <th>
                     등록번호
                 </th>
-                <th>
+                <th>x
                     연구샘플
                 </th>
                 <th>

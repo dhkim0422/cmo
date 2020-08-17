@@ -87,6 +87,44 @@
         </tbody>
       </table>
     </div>
+    <b-table
+        ref="selectableTable"
+        selectable
+        select-mode="multi"
+        class="data-table"
+        :items="items"
+        :fields="fields"
+        :busy="this.items.length == 0"
+        @row-selected="onRowSelected"
+
+    >
+      <template v-slot:table-busy>
+        <div class="text-center  my-2">
+          <!--<b-spinner class="align-middle"></b-spinner>-->
+          검색된 항목이 없습니다.
+        </div>
+      </template>
+      <template v-slot:cell(selected)="{ rowSelected }">
+        <template v-if="rowSelected">
+          <span aria-hidden="true">&check;</span>
+          <span class="sr-only">Selected</span>
+        </template>
+        <template v-else>
+          <span aria-hidden="true">&nbsp;</span>
+          <span class="sr-only">Not selected</span>
+        </template>
+      </template>
+      <template v-slot:cell(accession)="data">
+        <a :href="'targetsDetail/' + data.item.id">{{data.value}}</a>
+      </template>
+      <template v-slot:cell(agreeProvide)="data">
+        {{data.value == true ? '있음' : '없음'}}
+      </template>
+      <template v-slot:cell(age)="data">
+        {{data.item.unknownAge == true ? '나이불명' : data.value}}
+      </template>
+    </b-table>
+
   </div>
 </template>
 
@@ -106,7 +144,33 @@ export default {
         target: 0,
         sample: 0,
         omics: 0
-      }
+      },
+      fields: [
+        {
+          key: 'selected',
+          label: '선택'
+        },
+        {key: 'accession'},
+        {
+          key: 'uniqueNo',
+          label: '고유대상 번호'
+        },
+        {
+          key: 'age',
+          label: '나이'
+        },
+        {
+          key: 'agreeProvide',
+          label: '동의여부'
+
+        },
+        {
+          key: 'genderName',
+          label: '성별'
+        }
+      ],
+      items: [],
+
     }
   },
   async created() {
@@ -142,7 +206,10 @@ export default {
     insertOK() {
       this.initData()
 
-    }
+    },
+    onRowSelected(items) {
+      this.selected = items
+    },
   },
   computed: {},
 }

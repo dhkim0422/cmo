@@ -33,8 +33,16 @@
                 class="data-table"
                 :items="items"
                 :fields="fields"
+                :busy="this.items.length == 0"
                 @row-selected="onRowSelected"
+
         >
+          <template v-slot:table-busy>
+            <div class="text-center  my-2">
+              <!--<b-spinner class="align-middle"></b-spinner>-->
+              검색된 항목이 없습니다.
+            </div>
+          </template>
             <template v-slot:cell(selected)="{ rowSelected }">
                 <template v-if="rowSelected">
                     <span aria-hidden="true">&check;</span>

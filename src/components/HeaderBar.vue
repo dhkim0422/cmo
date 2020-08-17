@@ -31,6 +31,9 @@
                 <a class="nav-link" @click="goto('/targets/targetList')" title="객체 목록">객체 목록</a>
               </li>
               <li>
+                <a class="nav-link" @click="goto('/targets/targetList')" title="가계도 관리">가계도 관리</a>
+              </li>
+              <li>
                 <a class="nav-link" @click="goto('/samples/samplesList')" title="샘플 목록">샘플 목록</a>
               </li>
               <li>

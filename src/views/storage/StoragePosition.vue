@@ -96,7 +96,7 @@
       </div>
     </div>
     <SampleModal :tube="this.storagePosition.tube" @sample="onSample"/>
-
+    
   </div>
 
 </template>
@@ -169,14 +169,9 @@ export default {
         this.storagePosition.tube = tube;
       } else {
 
-        if (this.step === 1 && this.model.type === "200") {
+        if (this.step === 1) {
           this.onStorageCount()
         }
-
-        if (this.step === 1 && this.model.type === "100") {
-          this.onContainerCount()
-        }
-
         if (this.step === 2 && this.model.type === "200") {
           this.onContainerCount()
         }
@@ -196,21 +191,15 @@ export default {
         }
       });
       const tube = response.data.map(item => {
-        console.log(`col-${this.step-1}-${item.sector- 1}-${item.rack - 1}`)
+        console.log(`col-${this.step - 1}-${item.sector - 1}-${item.rack - 1}`)
         this.tubeText[
-            `col-${this.step-1}-${item.sector- 1}-${item.rack - 1}`
+            `col-${this.step - 1}-${item.sector - 1}-${item.rack - 1}`
             ] = item.cnt;
-        return {
-          cnt: item.cnt,
-          tubeX: item.tubeX,
-          tubeY: item.tubeY
-        };
+
       });
       //
       this.storagePosition = {
         ...this.storagePosition,
-        tubeX: '',
-        tubeY: ''
       };
     },
     async onContainerCount() {
@@ -223,15 +212,15 @@ export default {
         }
 
       });
-      console.log('response',response)
+      console.log('response', response)
       const tube = response.data.map(item => {
-        console.log("item" , item)
+        console.log("item", item)
         this.tubeText[
-            `col-${this.step-1}-${item.box - 1}-${0}`
+            `col-${this.step - 1}-${item.box - 1}-${0}`
             ] = item.cnt;
 
 
-        console.log("this.tubeText" , this.tubeText)
+        console.log("this.tubeText", this.tubeText)
         this.storagePosition = {
           ...this.storagePosition,
           box: 0
@@ -239,6 +228,7 @@ export default {
       });
     },
     onSample(item) {
+      console.log('onSample(item)', item)
       this.tubeText[this.tubeKey] = item.accession;
       this.tubeText = {...this.tubeText};
       let tube = this.storagePosition["tube"] || [];
@@ -255,6 +245,7 @@ export default {
 
     //샘플의 위치 정보를 저장한다.
     async onSave() {
+      await this.$confirm("", "저장 하시겠습니까?", "warning");
       const response = await axios.post("/isg-oreo/api/storagePosition", {
         ...this.storagePosition,
         storageNo: this.$route.params.id
@@ -284,9 +275,10 @@ export default {
       this.selectedKey[this.step - 1] = key;
       this.selectedKey = [...this.selectedKey];
 
+
       //선택한 좌표 step에 따라 설정해야 될 컬럼이 다르다.
       if (this.step === 1 && this.model.type === "100") {
-        console.log("??????????1")
+        console.log(this.step, this.model.type)
         this.storagePosition = {
           ...this.storagePosition,
           rack: coord.x,
@@ -296,7 +288,7 @@ export default {
       }
 
       if (this.step === 1 && this.model.type === "200") {
-        console.log("??????????2")
+        console.log(this.step, this.model.type)
         this.storagePosition = {
           ...this.storagePosition,
           rack: coord.x,
@@ -306,7 +298,6 @@ export default {
 
       //질소탱크
       if (this.step === 2 && this.model.type === "100") {
-        console.log("??????????3")
         this.storagePosition = {
           ...this.storagePosition,
           tubeX: coord.x,
@@ -316,24 +307,40 @@ export default {
 
       //초저온냉동고
       if (this.step === 2 && this.model.type === "200") {
-        console.log("??????????4")
+        console.log(this.step, this.model.type)
         this.storagePosition = {...this.storagePosition, box: coord.y};
       }
 
       if (this.step === 3) {
-        console.log("??????????6")
+        console.log(this.step, this.model.type)
         this.storagePosition = {
           ...this.storagePosition,
           tubeX: coord.x,
           tubeY: coord.y
         };
       }
-
       //박스를 선택
       if (this.step === this.headerSteps.length) {
-        this.tubeKey = key;
-        this.$bvModal.show("sample-modal");
+
+        console.log("111111", this.tubeText[key])
+        if (this.tubeText[key] == undefined || this.tubeText[key] == '') {
+
+          this.tubeKey = key;
+          this.$bvModal.show("sample-modal");
+        } else {
+          //x, y 내역으로 해당 구역에 데이터를 삭제
+          this.$confirm('제외한 데이터는 저장버튼을 클릭해야 저장됩니다.', '해당 내역을 삭제 하겠습니까?', 'warning').then(() => {
+            this.storagePosition.tube = this.storagePosition.tube.filter((v, i) => {
+              return v.tubeX != coord.x && v.tubeY != coord.y
+            })
+            this.tubeText[key] = ''
+          });
+
+
+        }
+        return false
       }
+      this.onStep(this.step + 1)
     },
 
     genericeNumber(value) {
@@ -436,8 +443,8 @@ export default {
 .tube {
   background-color: #e1e1e1;
   border: 1px solid #000;
-  height: 50px;
-  width: 80px;
+  height: 80px;
+  width: 100px;
   margin-right: 10px;
 }
 

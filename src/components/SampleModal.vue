@@ -173,6 +173,7 @@ export default {
       }*/
       //검석 제외 데이터
       let arrId = []
+
       this.tube.map((value,index) =>{
         params.append('unSelectId',value.sampleId)
       })

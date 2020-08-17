@@ -15,10 +15,10 @@
           <div class="num">STEP 3</div>
           <div class="text">오믹스 파일 등록</div>
         </li>
-        <li class="nav-item" :class="cssStep(4)" @click="scrollTo(4)" tabindex="0">
+        <!--li class="nav-item" :class="cssStep(4)" @click="scrollTo(4)" tabindex="0">
           <div class="num">STEP 4</div>
           <div class="text">등록 동의서 업로드</div>
-        </li>
+        </li-->
       </ol>
       <div class="wizard-content">
         <omics-data-step1 :omics="omics" v-if="currentStep==1"/>
@@ -31,9 +31,9 @@
     <div class="wizard-footer">
       <b-button class="btn-primary" v-if="prevEnabled" @click="prev()">이전으로</b-button>
       <b-button class="btn-primary" v-if="nextEnabled" @click="next()">다음으로</b-button>
-      <b-button class="btn-primary" v-if="submitEnabled" @click="submit()">저장하기</b-button>
+      <!--b-button class="btn-primary" v-if="submitEnabled" @click="submit()">저장하기</b-button-->
     </div>
-    {{ this.omics.id }}
+
   </div>
 </template>
 
