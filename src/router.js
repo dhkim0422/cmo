@@ -54,7 +54,7 @@ export default new Router({
 
         {
             path: "/targets/targetsUpdate/:id/",
-            name: "targets-detail",
+            name: "Targets Merge",
             component: () => import("./views/targets/TargetsMerge"),
         },
         {
@@ -145,14 +145,20 @@ export default new Router({
         },
         {
             path: "/species/species/:id",
-            name: "Species List",
+            name: "Species Detail",
             component: () => import("./views/species/SpeciesDetail"),
         },
         {
             path: "/registUser",
-            name: "Species List",
+            name: "User Regiset",
             component: () => import("./views/user/UserRegiset"),
+        },
+        {
+            path: "/mng/userList",
+            name: "User List",
+            component: () => import("./views/user/UserList"),
         }
+
 
 
 

@@ -1,8 +1,10 @@
 <template>
     <div class="container">
+      <page-head-info :root-menu-nm="'통계'" :menu-nm="'오믹스 통계'"/>
+      <br>
       <h3>오믹스 데이터 공개/비공개 현황 통계정보</h3>
       <div class="pB-20">
-        <table class="table-view table-thead">
+        <!--<table class="table-view table-thead">
           <caption class="sr-only"></caption>
           <col style="width: 50%">
           <col style="width: 25%">
@@ -17,7 +19,27 @@
             <td class="right">{{item.totalCount}}</td>
             <td class="right">{{item.publicCount}}</td>
           </tr>
-        </table>
+        </table>-->
+        <b-table
+            ref="selectableTable"
+            class="data-table"
+            :items="analysisList"
+            :fields="this.fields"
+            :busy="this.analysisList.length == 0"
+        >
+          <template v-slot:table-busy>
+            <div class="text-center  my-2">
+              <!--<b-spinner class="align-middle"></b-spinner>-->
+              검색된 항목이 없습니다.
+            </div>
+          </template>
+          <template v-slot:cell(accession)="data">
+            <a :href="'samplesDetail/' + data.item.id">{{ data.value }}</a>
+          </template>
+          <template v-slot:cell(agreeProvide)="data">
+            {{ data.value == true ? '있음' : '없음' }}
+          </template>
+        </b-table>
       </div>
       <div class="pB-20">
         <bar-chart :data="chartDatas" ></bar-chart>
@@ -40,7 +62,20 @@ export default {
   },
   data:() => ({
     loaded: false,
-    chartDatas: null
+    chartDatas: null,
+    fields: [
+      {
+        key: 'name',
+        label: '오믹스 유형'
+      },{
+        key: 'totalCount',
+        label: '전체데이터 수'
+      },{
+        key: 'publicCount',
+        label: '공개데이터 수'
+      }
+    ],
+    items: [],
   }),
   created() {
     this.$store.dispatch('initAnalysisList', {
@@ -63,7 +98,8 @@ export default {
             label: '공개데이터',
             data: [0]
           }
-        ]
+        ],
+
       }
 
       newList.forEach((item, index) => {
