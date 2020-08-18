@@ -17,62 +17,114 @@
           <tr>
             <th>학명</th>
             <td colspan="3">
-              <b-input class="form-control"
-                       type="text"
-                       title="학명"
-                       name="학명"
-                       placeholder="작성하여주세요"
-                       v-model="model.scientificNm"
-              />
+              <validation-provider
+                  name="학명"
+                  :rules="{ required: true }"
+                  v-slot="validationContext"
+              >
+                <b-form-input
+                    v-model="model.scientificNm"
+                    placeholder="작성하여 주세요."
+                    :state="getValidationState(validationContext)"
+                ></b-form-input>
+
+                <b-form-invalid-feedback>
+                  {{
+                    validationContext.errors[0]
+                  }}
+                </b-form-invalid-feedback>
+              </validation-provider>
+
             </td>
           </tr>
           <tr>
             <th>종명(국문)</th>
             <td>
-              <b-input class="form-control"
-                       type="text"
-                       title="종명(국문)"
-                       name="종명(국문)"
-                       placeholder="작성하여주세요"
-                       v-model="model.speciesNmKr"
-              />
+              <validation-provider
+                  name="종명(국문)"
+                  :rules="{ required: true }"
+                  v-slot="validationContext"
+              >
+                <b-form-input
+                    v-model="model.speciesNmKr"
+                    placeholder="작성하여 주세요."
+                    :state="getValidationState(validationContext)"
+                ></b-form-input>
+
+                <b-form-invalid-feedback>
+                  {{
+                    validationContext.errors[0]
+                  }}
+                </b-form-invalid-feedback>
+              </validation-provider>
             </td>
           </tr>
           <tr>
             <th>종명(영문)</th>
             <td>
-              <b-input class="form-control"
-                       type="text"
-                       title="종명(영문)"
-                       name="종명(영문)"
-                       placeholder="작성하여주세요"
-                       v-model="model.speciesNmEn"
-              />
+              <validation-provider
+                  name="종명(영문)"
+                  :rules="{ required: true }"
+                  v-slot="validationContext"
+              >
+                <b-form-input
+                    v-model="model.speciesNmEn"
+                    placeholder="작성하여 주세요."
+                    :state="getValidationState(validationContext)"
+                ></b-form-input>
+
+                <b-form-invalid-feedback>
+                  {{
+                    validationContext.errors[0]
+                  }}
+                </b-form-invalid-feedback>
+              </validation-provider>
             </td>
 
           </tr>
           <tr>
             <th>품종명(국문)</th>
             <td>
-              <b-input class="form-control"
-                       type="text"
-                       title="품종명(국문)"
-                       name="품종명(국문)"
-                       placeholder="작성하여주세요"
-                       v-model="model.kindNmKr"
-              />
+              <validation-provider
+                  name="품종명(국문)"
+                  :rules="{ required: true }"
+                  v-slot="validationContext"
+              >
+                <b-form-input
+                    v-model="model.kindNmKr"
+                    placeholder="작성하여 주세요."
+                    :state="getValidationState(validationContext)"
+                ></b-form-input>
+
+                <b-form-invalid-feedback>
+                  {{
+                    validationContext.errors[0]
+                  }}
+                </b-form-invalid-feedback>
+              </validation-provider>
+
             </td>
           </tr>
           <tr>
             <th>품종명(영문)</th>
             <td>
-              <b-input class="form-control"
-                       type="text"
-                       title="품종명(영문)"
-                       name="품종명(영문)"
-                       placeholder="작성하여주세요"
-                       v-model="model.kindNmEn"
-              />
+              <validation-provider
+                  name="품종명(영문)"
+                  :rules="{ required: true }"
+                  v-slot="validationContext"
+              >
+                <b-form-input
+                    v-model="model.kindNmEn"
+                    placeholder="작성하여 주세요."
+                    :state="getValidationState(validationContext)"
+                ></b-form-input>
+
+                <b-form-invalid-feedback>
+                  {{
+                    validationContext.errors[0]
+                  }}
+                </b-form-invalid-feedback>
+              </validation-provider>
             </td>
           </tr>
 
@@ -87,7 +139,6 @@
           </b-button>
         </div>
       </div>
-      {{ model }}
     </div>
   </b-modal>
 
@@ -137,7 +188,7 @@ export default {
 
     },
     submit() {
-      console.log("11111?",this.model.id)
+      console.log("11111?", this.model.id)
       if (this.model.id == '') {
         this.$axios.post('/isg-oreo/api/species', this.model).then(() => {
           this.$emit('saveOK', 'OK')
@@ -155,7 +206,10 @@ export default {
     },
     close() {
       this.$bvModal.hide('SpeciesMerge')
-    }
+    },
+    getValidationState({dirty, validated, valid = null}) {
+      return dirty || validated ? valid : null;
+    },
   }
 }
 </script>

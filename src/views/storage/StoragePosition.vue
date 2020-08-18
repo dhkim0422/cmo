@@ -95,8 +95,8 @@
         <b-button v-else style="margin-right: 10px;" variant="primary" @click="onSave">저장</b-button>
       </div>
     </div>
-    <SampleModal :tube="this.storagePosition.tube" @sample="onSample"/>
-    
+    <SampleModal :tube="this.storagePosition.tube" :type="'storage'" @sample="onSample"/>
+
   </div>
 
 </template>
@@ -326,7 +326,7 @@ export default {
         if (this.tubeText[key] == undefined || this.tubeText[key] == '') {
 
           this.tubeKey = key;
-          this.$bvModal.show("sample-modal");
+          this.$bvModal.show("sample-modalstorage");
         } else {
           //x, y 내역으로 해당 구역에 데이터를 삭제
           this.$confirm('제외한 데이터는 저장버튼을 클릭해야 저장됩니다.', '해당 내역을 삭제 하겠습니까?', 'warning').then(() => {

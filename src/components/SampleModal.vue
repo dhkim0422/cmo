@@ -1,6 +1,8 @@
 <template>
-  <b-modal id="sample-modal" size="xl" title="샘플">
+  <div>
+    <b-modal :id="'sample-modal'+this.type" size="xl" title="샘플">
     <b-container>
+
       <search-box :filters="filters" @searchClick="selectList"></search-box>
       <!-- 검색 목록 -->
       <div class="filter-group">
@@ -59,10 +61,11 @@
     </b-container>
 
     <template v-slot:modal-footer>
-      <b-button variant="secondary" class="float-right" @click="$bvModal.hide('sample-modal')">닫기</b-button>
+      <b-button variant="secondary" class="float-right" @click="close">닫기</b-button>
     </template>
 
   </b-modal>
+  </div>
 </template>
 
 <script>
@@ -70,7 +73,7 @@ import axios from "@/utils/axios";
 
 export default {
   name: "SampleModal",
-  props:['tube'],
+  props:['tube','type'],
   data() {
     return {
       fields: [
@@ -135,7 +138,11 @@ export default {
       params: {}
     };
   },
-  created() {},
+  created() {
+    if(this.type == undefined){
+      this.type = '';
+    }
+  },
   computed: {},
   methods: {
     changeParams(params) {
@@ -185,7 +192,10 @@ export default {
       this.items = []
       console.log('item',item)
       this.$emit("sample", item);
-      this.$bvModal.hide("sample-modal");
+      this.close()
+    },
+    close(){
+      this.$bvModal.hide("sample-modal"+this.type);
     }
   }
 };

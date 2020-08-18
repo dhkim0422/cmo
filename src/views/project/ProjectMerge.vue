@@ -3,249 +3,329 @@
 
   <b-modal id="projectPopup" size="xl" :title="title()" hide-footer>
     <div>
+      <validation-observer ref="observer" v-slot="{ handleSubmit }">
+        <form @submit.prevent="submit()" name="prjForm">
+          <!-- modal-header -->
 
-      <form @submit.prevent="submit()" name="prjForm">
-        <!-- modal-header -->
 
-
-        <!-- modal-body -->
-        <div class="modal-body">
-          <h2 class="h2">
-            기본정보
-          </h2>
-          <table class="view-table">
-            <caption class="sr-only">
+          <!-- modal-body -->
+          <div class="modal-body">
+            <h2 class="h2">
               기본정보
-            </caption>
-            <tbody>
-            <tr v-if="!isCreateForm">
-              <th class="form-group required control-label">
-                <label>
-                  {{ !isCreateForm ? "ATIS 고유번호" : "등록번호" }}
-                </label>
-              </th>
-              <td colspan="3">{{ model.accession }}</td>
-            </tr>
-            <tr>
-              <th class="form-group required control-label"><label>
-                ATIS 고유번호
-              </label></th>
-              <td colspan="3">
-                <input class="form-control"
-                       type="text"
-                       title="ATIS 고유번호"
-                       name="ATIS 고유번호"
-                       placeholder="작성하여주세요"
-                       v-model="model.uniqueNo"
-                />
+            </h2>
+            <table class="view-table">
+              <caption class="sr-only">
+                기본정보
+              </caption>
+              <tbody>
+              <tr v-if="!isCreateForm">
+                <th class="form-group required control-label">
+                  <label>
+                    {{ !isCreateForm ? "ATIS 고유번호" : "등록번호" }}
+                  </label>
+                </th>
+                <td colspan="3">{{ model.accession }}</td>
+              </tr>
+              <tr>
+                <th class="form-group required control-label"><label>
+                  ATIS 고유번호
+                </label></th>
+                <td colspan="3">
+                  <validation-provider
+                      name="ATIS 고유번호"
+                      :rules="{ required: true }"
+                      v-slot="validationContext"
+
+                  >
+                    <b-form-input
+                        v-model="model.uniqueNo"
+                        placeholder="작성하여주세요"
+                        :state="getValidationState(validationContext)"
+                    ></b-form-input>
+                    <b-form-invalid-feedback>
+                      {{
+                        validationContext.errors[0]
+                      }}
+                    </b-form-invalid-feedback>
+                  </validation-provider>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="form-group required control-label">
+                  <label>
+                    사업명
+                  </label>
+                </th>
+                <td colspan="3">
+                  <validation-provider
+                      name="사업명"
+                      :rules="{ required: true }"
+                      v-slot="validationContext"
+
+                  >
+                    <b-form-input
+                        v-model="model.program"
+                        placeholder="작성하여주세요"
+                        :state="getValidationState(validationContext)"
+                    ></b-form-input>
+                    <b-form-invalid-feedback>
+                      {{
+                        validationContext.errors[0]
+                      }}
+                    </b-form-invalid-feedback>
+                  </validation-provider>
+
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="form-group required control-label"><label>
+                  대분야
+                </label></th>
+                <td>
+                  <validation-provider
+                      name="대분야"
+                      :rules="{ required: true }"
+                      v-slot="validationContext"
+
+                  >
+                    <b-form-select v-model="model.unitProgram" :options="projectType"
+                                   :state="getValidationState(validationContext)"/>
+                    <b-form-invalid-feedback>
+                      {{
+                        validationContext.errors[0]
+                      }}
+                    </b-form-invalid-feedback>
+                  </validation-provider>
 
 
-              </td>
-            </tr>
-            <tr>
-              <th scope="row" class="form-group required control-label">
-                <label>
-                  사업명
-                </label>
-              </th>
-              <td colspan="3">
-                <input class="form-control" type="text" title="키워드사업명"
-                       placeholder="작성하여주세요" name="program"
-                       v-model="model.program" ng-required="true" maxlength="255" minlength="3"/>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row" class="form-group required control-label"><label>
-                대분야
-              </label></th>
-              <td>
+                  <!--<input class="form-control" type="text" title="대분야"
+                         name="unitProgram"
+                         placeholder="작성하여주세요"
+                         v-model="model.unitProgram"
+                  />-->
+                </td>
 
-                <b-form-select v-model="model.unitProgram" :options="projectType"/>
-                <!--<input class="form-control" type="text" title="대분야"
-                       name="unitProgram"
-                       placeholder="작성하여주세요"
-                       v-model="model.unitProgram"
-                />-->
-              </td>
+                <th scope="row" class="form-group required control-label"><label>
+                  중분야
+                </label></th>
+                <td>
+                  <validation-provider
+                      name="중분야"
+                      :rules="{ required: true }"
+                      v-slot="validationContext"
 
-              <th scope="row" class="form-group required control-label"><label>
-                중분야
-              </label></th>
-              <td>
-                <b-form-select v-model="model.middleRealm" :options="subProjectType"/>
-              </td>
-              <!--<th scope="row" class="form-group required control-label">
-                <label>
-                  연구상태
-                </label>
-              </th>
-              <td>
+                  >
+                    <b-form-select v-model="model.middleRealm" :options="subProjectType"
+                                   :state="getValidationState(validationContext)"/>
+                    <b-form-invalid-feedback>
+                      {{
+                        validationContext.errors[0]
+                      }}
+                    </b-form-invalid-feedback>
+                  </validation-provider>
 
-                <select class="form-control" v-model="model.status" name="status">
-                  <option label="성공" value="SUCCESS" selected="selected">성공</option>
-                  <option label="중단" value="STOP">중단</option>
-                  <option label="실패" value="FAIL">실패</option>
-                  <option label="최종연구종료" value="END">최종연구종료</option>
-                </select>
+                </td>
+                <!--<th scope="row" class="form-group required control-label">
+                  <label>
+                    연구상태
+                  </label>
+                </th>
+                <td>
+
+                  <select class="form-control" v-model="model.status" name="status">
+                    <option label="성공" value="SUCCESS" selected="selected">성공</option>
+                    <option label="중단" value="STOP">중단</option>
+                    <option label="실패" value="FAIL">실패</option>
+                    <option label="최종연구종료" value="END">최종연구종료</option>
+                  </select>
 
 
-              </td>-->
-            </tr>
-            <tr>
-              <th scope="row" class="form-group required control-label"><label>
-                과제명
-              </label></th>
-              <td colspan="3">
-                <input class="form-control" type="text" title="과제명" name="name"
-                       placeholder="작성하여주세요"
-                       v-model="model.name"/>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row" class="form-group required control-label"><label>
-                주관기관
-              </label></th>
-              <td>
-                <input class="form-control" type="text" title="주관기관"
-                       name="institute" placeholder="작성하여주세요"
-                       v-model="model.institute"
-                />
-              </td>
-              <th scope="row">
-                주관책임자
-              </th>
-              <td>
-                <input class="form-control" type="text" title="키워드주관책임자"
-                       name="charger"
-                       placeholder="작성하여주세요"
-                       v-model="model.charger"/>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">
-                참여기업
-              </th>
-              <td>
-                <input class="form-control" type="text" title="키워드참여기업"
-                       name="participants"
-                       placeholder="작성하여주세요" v-model="model.participants" maxlength="255"/>
-              </td>
-              <th scope="row"><label>
-                총 연구기간
-              </label></th>
-              <td>
-                <div layout="row" style="height:55px">
-                  <b-form-datepicker v-model="model.begin" id="datepicker-begin" size="sm" local="ko"
-                                     class="mb-2"></b-form-datepicker>
-                  <b-form-datepicker v-model="model.end" id="datepicker-end" size="sm" local="ko"
-                                     class="mb-2"></b-form-datepicker>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">
-                연구개발 목표
-              </th>
-              <td colspan="3">
+                </td>-->
+              </tr>
+              <tr>
+                <th scope="row" class="form-group required control-label"><label>
+                  과제명
+                </label></th>
+                <td colspan="3">
+                  <validation-provider
+                      name="과제명"
+                      :rules="{ required: true }"
+                      v-slot="validationContext"
+
+                  >
+                    <b-form-input
+                        v-model="model.name"
+                        placeholder="작성하여주세요"
+                        :state="getValidationState(validationContext)"
+                    ></b-form-input>
+                    <b-form-invalid-feedback>
+                      {{
+                        validationContext.errors[0]
+                      }}
+                    </b-form-invalid-feedback>
+                  </validation-provider>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="form-group required control-label"><label>
+                  주관기관
+                </label></th>
+                <td>
+                  <validation-provider
+                      name="주관기관"
+                      :rules="{ required: true }"
+                      v-slot="validationContext"
+
+                  >
+                    <b-form-input
+                        v-model="model.institute"
+                        placeholder="작성하여주세요"
+                        :state="getValidationState(validationContext)"
+                    ></b-form-input>
+                    <b-form-invalid-feedback>
+                      {{
+                        validationContext.errors[0]
+                      }}
+                    </b-form-invalid-feedback>
+                  </validation-provider>
+
+                </td>
+                <th scope="row">
+                  주관책임자
+                </th>
+                <td>
+                  <input class="form-control" type="text" title="키워드주관책임자"
+                         name="charger"
+                         placeholder="작성하여주세요"
+                         v-model="model.charger"/>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">
+                  참여기업
+                </th>
+                <td>
+                  <input class="form-control" type="text" title="키워드참여기업"
+                         name="participants"
+                         placeholder="작성하여주세요" v-model="model.participants" maxlength="255"/>
+                </td>
+                <th scope="row"><label>
+                  총 연구기간
+                </label></th>
+                <td>
+                  <div layout="row" style="height:55px">
+                    <b-form-datepicker v-model="model.begin" id="datepicker-begin" size="sm" local="ko"
+                                       class="mb-2"></b-form-datepicker>
+                    <b-form-datepicker v-model="model.end" id="datepicker-end" size="sm" local="ko"
+                                       class="mb-2"></b-form-datepicker>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">
+                  연구개발 목표
+                </th>
+                <td colspan="3">
                                 <textarea class="form-control" cols="30" rows="5" title="연구개발_목표"
                                           name="purpose"
                                           placeholder="작성하여주세요" v-model="model.purpose">
 
                                 </textarea>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">
-                연구개발 내용
-              </th>
-              <td colspan="3">
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">
+                  연구개발 내용
+                </th>
+                <td colspan="3">
                                 <textarea class="form-control" cols="30" rows="5" title="연구개발 내용"
                                           name="contents"
                                           placeholder="작성하여주세요" v-model="model.contents">
 
                                 </textarea>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-          <!--                    <h2 class="h2">
-                                  연구개발 결과
-                              </h2>
-                              <table class="view-table">
-                                  <caption class="sr-only">
-                                      연구개발 결과
-                                  </caption>
-                                  <tbody>
-                                  <tr>
-                                      <th scope="row">
-                                          개발내용_및_결과
-                                      </th>
-                                      <td>
-                                          <textarea class="form-control" cols="30" rows="5" title="개발내용_및_결과"
-                                                    name="conclusion"
-                                                    placeholder="작성하여주세요"
-                                                    v-model="model.conclusion">
-                                          </textarea>
-                                      </td>
-                                  </tr>
-                                  <tr>
-                                      <th scope="row">
-                                          키워드
-                                      </th>
-                                      <td>
-                                          <input class="form-control" type="text" title="키워드"
-                                                 name="keywords"
-                                                 placeholder="작성하여주세요" v-model="model.keywords" maxlength="512"/>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            <!--                    <h2 class="h2">
+                                    연구개발 결과
+                                </h2>
+                                <table class="view-table">
+                                    <caption class="sr-only">
+                                        연구개발 결과
+                                    </caption>
+                                    <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            개발내용_및_결과
+                                        </th>
+                                        <td>
+                                            <textarea class="form-control" cols="30" rows="5" title="개발내용_및_결과"
+                                                      name="conclusion"
+                                                      placeholder="작성하여주세요"
+                                                      v-model="model.conclusion">
+                                            </textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            키워드
+                                        </th>
+                                        <td>
+                                            <input class="form-control" type="text" title="키워드"
+                                                   name="keywords"
+                                                   placeholder="작성하여주세요" v-model="model.keywords" maxlength="512"/>
 
 
-                                      </td>
-                                  </tr>
-                                  <tr>
-                                      <th scope="row">
-                                          개발기술의 특징,장점
-                                      </th>
-                                      <td>
-                                          <textarea class="form-control" cols="30" rows="5" title="개발기술의_특징,_장점"
-                                                    name="features"
-                                                    placeholder="작성하여주세요" v-model="model.features"></textarea>
-                                      </td>
-                                  </tr>
-                                  <tr>
-                                      <th scope="row">
-                                          기대효과
-                                      </th>
-                                      <td>
-                                          <textarea class="form-control" cols="30" rows="5" title="기대효과"
-                                                    placeholder="작성하여주세요"
-                                                    name="expectation"
-                                                    v-model="model.expectation"></textarea>
-                                      </td>
-                                  </tr>
-                                  <tr>
-                                      <th scope="row">
-                                          적용분야
-                                      </th>
-                                      <td>
-                                          <textarea class="form-control" cols="30" rows="5" title="적용분야"
-                                                    name="appliedTo"
-                                                    placeholder="작성하여주세요" v-model="model.appliedTo"></textarea>
-                                      </td>
-                                  </tr>
-                                  </tbody>
-                              </table>-->
-        </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            개발기술의 특징,장점
+                                        </th>
+                                        <td>
+                                            <textarea class="form-control" cols="30" rows="5" title="개발기술의_특징,_장점"
+                                                      name="features"
+                                                      placeholder="작성하여주세요" v-model="model.features"></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            기대효과
+                                        </th>
+                                        <td>
+                                            <textarea class="form-control" cols="30" rows="5" title="기대효과"
+                                                      placeholder="작성하여주세요"
+                                                      name="expectation"
+                                                      v-model="model.expectation"></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            적용분야
+                                        </th>
+                                        <td>
+                                            <textarea class="form-control" cols="30" rows="5" title="적용분야"
+                                                      name="appliedTo"
+                                                      placeholder="작성하여주세요" v-model="model.appliedTo"></textarea>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>-->
+          </div>
 
-        <!-- modal-footer -->
-        <div class="modal-footer">
-          <button type="reset" class="btn-outline-secondary" @click="close">
-            취소하기
-          </button>
-          <button type="submit" class="btn-primary">
-            저장하기
-          </button>
-        </div>
+          <!-- modal-footer -->
+          <div class="modal-footer">
+            <button type="reset" class="btn-outline-secondary" @click="close">
+              취소하기
+            </button>
+            <button type="submit" class="btn-primary">
+              저장하기
+            </button>
+          </div>
 
-      </form>
+        </form>
+      </validation-observer>
     </div>
   </b-modal>
 
@@ -361,7 +441,10 @@ export default {
         }
       })
       return arr
-    }
+    },
+    getValidationState({dirty, validated, valid = null}) {
+      return dirty || validated ? valid : null;
+    },
   },
 }
 

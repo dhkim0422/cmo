@@ -24,11 +24,11 @@
 
                 <span data-toggle="tooltip" data-placement="top" title="객체 등록">
                     <!--등록은 id=registPopup 로연결되어 있음 -->
-                    <button class="btn-outline-secondary-sm" v-b-modal.sample-modal >
+                    <button class="btn-outline-secondary-sm" @click="onSampleModal" >
                         <i class="xi-link"></i><span class="sr-only">샘플연결</span>
                     </button>
                     <!--등록을 위한 페잊 컴포넌트-->
-                    <sample-modal :tube="[]" @sample="onSampleSelect" />
+                    <sample-modal :tube="[]" :type="this.type.name" @sample="onSampleSelect" />
                 </span>
 
                 <button class="btn-outline-secondary-sm" type="button" @click="remove"
@@ -60,7 +60,7 @@
                 <th>
                     등록번호
                 </th>
-                <th>x
+                <th>
                     연구샘플
                 </th>
                 <th>
@@ -114,6 +114,7 @@
         <div>
             <div v-for="err in this.errors"> {{err}}</div>
         </div>
+
     </div>
 </template>
 <style>
@@ -288,8 +289,12 @@
                 console.log(url)
                 const resultList = await axios.put(url, this.selectedFile);
                 this.$alert(resultList.data.list.length + '건 삭제 되었습니다','처리 완료 되었습니다.','info')
+            },
+            onSampleModal(){
+               let type = this.type && ''
+              console.log('???????????11','sample-modal'+this.type.name);
+              this.$bvModal.show('sample-modal'+this.type.name)
             }
-
 
         }
     }

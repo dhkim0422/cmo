@@ -46,12 +46,12 @@
         </template>
       </template>
       <template v-slot:cell(speciesNm)="data">
-        <div>(국문){{ data.item && data.item.speciesNmKr }}</div>
-        <div>(영문){{ data.item && data.item.speciesNmEn }}</div>
+        <div>{{ data.item && data.item.speciesNmKr }}</div>
+        <div>({{ data.item && data.item.speciesNmEn }})</div>
       </template>
       <template v-slot:cell(kindNm)="data">
-        <div>(국문){{ data.item && data.item.kindNmKr }}</div>
-        <div>(영문){{ data.item && data.item.kindNmEn }}</div>
+        <div>{{ data.item && data.item.kindNmKr }}</div>
+        <div>({{ data.item && data.item.kindNmEn }})</div>
       </template>
 
     </b-table>

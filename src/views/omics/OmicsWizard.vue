@@ -24,7 +24,7 @@
         <omics-data-step1 :omics="omics" v-if="currentStep==1"/>
         <omics-data-step2 :omics="omics" @onSaveOmicsData="onSaveOmicsData" v-if="currentStep==2"/>
         <omics-data-step3 :omics="omics" v-if="currentStep==3"/>
-        <omics-data-step4 :omics="omics" v-if="currentStep==4"/>
+        <!--omics-data-step4 :omics="omics" v-if="currentStep==4"/-->
       </div>
     </div>
     <!-- Wizard-footer -->

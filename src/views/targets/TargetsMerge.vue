@@ -27,15 +27,19 @@
                   </label>
                 </th>
                 <td>
-                  <validation-provider rules="required" v-slot="{ errors }">
-                    <input class="form-control"
-                           type="text"
-                           title="객체 고유번호"
-                           name="객체 고유번호"
-                           placeholder="작성하여주세요"
-                           v-model="model.uniqueNo"
+                  <validation-provider
+                      name="구분"
+                      :rules="{ required: true }"
+                      v-slot="validationContext"
+                  >
+                    <b-form-input class="form-control"
+                                  placeholder="작성하여주세요"
+                                  v-model="model.uniqueNo"
+                                  :state="getValidationState(validationContext)"
                     />
-                    <span>{{ errors[0] }}</span>
+                    <b-form-invalid-feedback>
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
                   </validation-provider>
                 </td>
               </tr>
@@ -48,30 +52,32 @@
                 <td>
                   <div class="date-range">
                     <div class="date-input-group">
-                      <validation-provider rules="required" v-slot="{ errors }">
-                        <input class="form-control"
-                               type="text"
-                               title="나이"
-                               name="나이"
-                               placeholder="작성하여주세요"
-                               v-model="model.age"
-                               :disabled="model.unknownAge"
-                               maxlength="3"/>
-                        <span>{{ errors[0] }}</span>
+                      <validation-provider
+                          name="나이"
+                          :rules="{ required: true }"
+                          v-slot="validationContext"
+                      >
+                        <b-form-input class="form-control"
+                                      placeholder="작성하여주세요"
+                                      v-model="model.age"
+                                      :disabled="model.unknownAge"
+                                      :state="getValidationState(validationContext)"
+                        />
+                        <b-form-invalid-feedback>
+                          {{ validationContext.errors[0] }}
+                        </b-form-invalid-feedback>
                       </validation-provider>
 
                     </div>
                     <div class="date-range-dash"></div>
                     <div class="date-input-group">
                       <div class="custom-checkbox">
-                        <input type="checkbox" id="chk-unknown-age"
-                               class="custom-control-input"
-                               v-model="model.unknownAge"
-
-                        />
-                        <label class="custom-control-label" for="chk-unknown-age">
+                        <b-form-checkbox class="form-control"
+                                         placeholder="작성하여주세요"
+                                         v-model="model.unknownAge"
+                        >
                           나이불명
-                        </label>
+                        </b-form-checkbox>
                       </div>
                     </div>
                   </div>
@@ -84,14 +90,26 @@
                   </label>
                 </th>
                 <td>
-                  <validation-provider rules="required" v-slot="{ errors }">
-                    <select class="form-control" placeholder="성별을 선택하세요" v-model="model.gender"
-                            name="성별">
+                  <validation-provider
+                      name="성별"
+                      :rules="{ required: true }"
+                      v-slot="validationContext"
+                  >
+                    <b-form-select class="form-control"
+                                   v-model="model.gender"
+                                   :state="getValidationState(validationContext)"
+                    >
                       <option value="">선택</option>
                       <option v-for="code in codes.GEN" :value="code.code">
                         {{ code.name }}
                       </option>
-                    </select>
+                    </b-form-select>
+                    <b-form-invalid-feedback>
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
+                  </validation-provider>
+                  <validation-provider rules="required" v-slot="{ errors }">
+
                     <span>{{ errors[0] }}</span>
                   </validation-provider>
                 </td>
@@ -107,8 +125,8 @@
                   </label>
                 </th>
                 <td>
-                    (국문) {{model.species.speciesNmKr}} > {{model.species.kindNmKr}} <br>
-                    (영문) {{model.species.speciesNmEn}} > {{model.species.kindNmEn}}
+                  (국문) {{ model.species.speciesNmKr }} > {{ model.species.kindNmKr }} <br>
+                  (영문) {{ model.species.speciesNmEn }} > {{ model.species.kindNmEn }}
 
                 </td>
               </tr>
@@ -216,8 +234,8 @@ export default {
     isCreateForm() {//true 면 등록 false 면 수정
       return this.targetInfo === undefined
     },
-    removeSpecies(){
-      this.model.species = {id:''}
+    removeSpecies() {
+      this.model.species = {id: ''}
     },
     async initCode() {
       //공통코드 로드
@@ -269,7 +287,10 @@ export default {
     },
     speciesSelected(item) {
       this.model.species = item
-    }
+    },
+    getValidationState({dirty, validated, valid = null}) {
+      return dirty || validated ? valid : null;
+    },
   }
 }
 

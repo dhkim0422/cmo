@@ -64,12 +64,10 @@
         <a :href="'species/' + data.item.id">{{ data.value }}</a>
       </template>
       <template v-slot:cell(speciesNm)="data">
-        <div>(국문){{data.item.speciesNmKr}}</div>
-        <div>(영문){{data.item.speciesNmEn}}</div>
+        <div>{{ data.item && data.item.speciesNmKr }} ({{ data.item && data.item.speciesNmEn }})</div>
       </template>
       <template v-slot:cell(kindNm)="data">
-        <div>(국문){{data.item.kindNmKr}}</div>
-        <div>(영문){{data.item.kindNmEn}}</div>
+        <div>{{ data.item && data.item.kindNmKr }}({{ data.item && data.item.kindNmEn }})</div>
       </template>
 
     </b-table>

@@ -14,59 +14,98 @@
         <tr>
           <th>연구샘플 고유번호</th>
           <td colspan="3">
-            <b-input class="form-control"
-                     type="text"
-                     title="연구샘플 고유번호"
-                     name="연구샘플 고유번호"
-                     placeholder="작성하여주세요"
-                     v-model="model.uniqueNo"
-            />
+            <validation-provider
+                name="연구샘플 고유번호"
+                :rules="{ required: true }"
+                v-slot="validationContext"
+            >
+              <b-form-input
+                  v-model="model.uniqueNo"
+                  placeholder="작성하여 주세요."
+                  :state="getValidationState(validationContext)"
+              ></b-form-input>
+              <b-form-invalid-feedback>
+                {{ validationContext.errors[0] }}
+              </b-form-invalid-feedback>
+            </validation-provider>
           </td>
         </tr>
         <tr>
           <th>샘플명</th>
           <td>
-            <b-input class="form-control"
-                     type="text"
-                     title="샘플명"
-                     name="샘플명"
-                     placeholder="작성하여주세요"
-                     v-model="model.name"
-            />
+            <validation-provider
+                name="샘플명"
+                :rules="{ required: true }"
+                v-slot="validationContext"
+            >
+              <b-form-input
+                  v-model="model.name"
+                  placeholder="작성하여 주세요."
+                  :state="getValidationState(validationContext)"
+              ></b-form-input>
+              <b-form-invalid-feedback>
+                {{ validationContext.errors[0] }}
+              </b-form-invalid-feedback>
+            </validation-provider>
           </td>
           <th>샘플유래</th>
           <td>
-            <b-select class="form-control"
-                      placeholder="작성하여주세요."
-                      v-model="model.origin && model.origin.code"
-                      aria-invalid="false" style="">
-              <option label="인체유래" value="S01">인체유래</option>
-              <option label="세포주(cell line)" value="S02" selected="selected">세포주(cell line)</option>
-            </b-select>
+            <validation-provider
+                name="샘플유래"
+                :rules="{ required: true }"
+                v-slot="validationContext"
+            >
+              <b-select class="form-control"
+                        :state="getValidationState(validationContext)"
+                        v-model="model.origin && model.origin.code"
+              >
+                <option label="인체유래" value="S01">인체유래</option>
+                <option label="세포주(cell line)" value="S02" selected="selected">세포주(cell line)</option>
+              </b-select>
+              <b-form-invalid-feedback>
+                {{ validationContext.errors[0] }}
+              </b-form-invalid-feedback>
+            </validation-provider>
+
           </td>
 
         </tr>
         <tr>
           <th>샘플구분</th>
           <td>
-            <select class="form-control"
-                    placeholder="선택하여주세요."
-                    v-model="model.type.code"
-                    aria-invalid="false" style="">
-              <option label="해당없음" value="NONE" class="">해당없음</option>
-              <option label="Control" value="CONTROL">Control</option>
-              <option label="Patient" value="PATIENT">Patient</option>
-            </select>
+            <validation-provider
+                name="샘플구분"
+                :rules="{ required: true }"
+                v-slot="validationContext"
+            >
+              <b-select class="form-control"
+                        v-model="model.type.code"
+                        :state="getValidationState(validationContext)">
+                <option label="해당없음" value="NONE" class="">해당없음</option>
+                <option label="Control" value="CONTROL">Control</option>
+                <option label="Patient" value="PATIENT">Patient</option>
+              </b-select>
+              <b-form-invalid-feedback>
+                {{ validationContext.errors[0] }}
+              </b-form-invalid-feedback>
+            </validation-provider>
+
           </td>
           <th>질환명</th>
           <td>
-            <b-input class="form-control"
-                     type="text"
-                     title="질환명"
-                     name="disease"
-                     placeholder="작성하여주세요"
-                     v-model="model.disease"
-            />
+            <validation-provider
+                name="샘플구분"
+                :rules="{ required: true }"
+                v-slot="validationContext"
+            >
+              <b-input class="form-control"
+                       placeholder="작성하여주세요"
+                       v-model="model.disease"
+                       :state="getValidationState(validationContext)"/>
+                <b-form-invalid-feedback>
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
+            </validation-provider>
           </td>
         </tr>
 
@@ -229,6 +268,9 @@ export default {
     },
     close() {
       this.$bvModal.hide('sampleSavePopup')
+    },
+    getValidationState({dirty, validated, valid = null}) {
+      return dirty || validated ? valid : null;
     },
 
   }
