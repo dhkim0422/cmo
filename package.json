@@ -14,7 +14,7 @@
   "dependencies": {
     "@mdi/font": "^5.3.45",
     "@riophae/vue-treeselect": "0.0.38",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "bootstrap-vue": "^2.15.0",
     "cache-loader": "^4.1.0",
     "chart.js": "^2.9.3",
