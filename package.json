@@ -47,7 +47,7 @@
     "@vue/cli-service": "^3.7.0",
     "css-loader": "^2.1.1",
     "deepmerge": "^4.2.2",
-    "electron": "^9.0.0",
+    "electron": "^11.5.0",
     "electron-devtools-installer": "^3.1.0",
     "exports-loader": "^0.7.0",
     "fibers": "^5.0.0",
